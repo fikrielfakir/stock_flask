@@ -736,7 +736,8 @@
             }
             
             closeArticleForm();
-            loadArticles();
+            // Auto-refresh data without page reload
+            await loadArticles();
         } catch (error) {
             console.error('Error saving article:', error);
         }
@@ -754,7 +755,8 @@
         try {
             await apiRequest('DELETE', `/api/articles/${id}`);
             showToast('Article supprimé avec succès', 'success');
-            loadArticles();
+            // Auto-refresh data without page reload
+            await loadArticles();
         } catch (error) {
             console.error('Error deleting article:', error);
         }
@@ -865,7 +867,8 @@
             if (response.ok) {
                 showToast(result.message, 'success');
                 closeImportExport();
-                loadArticles(); // Reload articles to show new data
+                // Auto-refresh data without page reload
+                await loadArticles(); // Reload articles to show new data
                 
                 // Show detailed results if available
                 if (result.errors && result.errors.length > 0) {

@@ -305,7 +305,8 @@
             }
             
             closeSupplierForm();
-            loadSuppliers();
+            // Auto-refresh data without page reload
+            await loadSuppliers();
         } catch (error) {
             console.error('Error saving supplier:', error);
         }
@@ -323,7 +324,8 @@
         try {
             await apiRequest('DELETE', `/api/suppliers/${id}`);
             showToast('Fournisseur supprimé avec succès', 'success');
-            loadSuppliers();
+            // Auto-refresh data without page reload
+            await loadSuppliers();
         } catch (error) {
             console.error('Error deleting supplier:', error);
         }

@@ -327,7 +327,8 @@
             }
             
             closeRequestorForm();
-            loadRequestors();
+            // Auto-refresh data without page reload
+            await loadRequestors();
         } catch (error) {
             console.error('Error saving requestor:', error);
         }
@@ -345,7 +346,8 @@
         try {
             await apiRequest('DELETE', `/api/requestors/${id}`);
             showToast('Demandeur supprimé avec succès', 'success');
-            loadRequestors();
+            // Auto-refresh data without page reload
+            await loadRequestors();
         } catch (error) {
             console.error('Error deleting requestor:', error);
         }
