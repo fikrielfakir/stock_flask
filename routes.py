@@ -652,13 +652,35 @@ def register_routes(app, db):
     @app.route("/api/dashboard/stats", methods=['GET'])
     def get_dashboard_stats():
         try:
+            # Basic counts
             total_articles = Article.query.count()
             total_suppliers = Supplier.query.count()
             total_requestors = Requestor.query.count()
             total_requests = PurchaseRequest.query.count()
             total_receptions = Reception.query.count()
             total_outbounds = Outbound.query.count()
+            
+            # Low stock count (articles at or below minimum threshold)
             low_stock_count = Article.query.filter(Article.stock_actuel <= Article.seuil_minimum).count()
+            
+            # Pending purchase requests
+            pending_requests = PurchaseRequest.query.filter(PurchaseRequest.statut == 'en_attente').count()
+            
+            # Calculate total stock value
+            articles = Article.query.all()
+            stock_value = 0
+            for article in articles:
+                if article.stock_actuel > 0 and article.prix_unitaire:
+                    stock_value += article.stock_actuel * article.prix_unitaire
+            
+            # Get purchase request status distribution for charts
+            status_counts = {
+                'en_attente': PurchaseRequest.query.filter(PurchaseRequest.statut == 'en_attente').count(),
+                'approuve': PurchaseRequest.query.filter(PurchaseRequest.statut == 'approuve').count(),
+                'refuse': PurchaseRequest.query.filter(PurchaseRequest.statut == 'refuse').count(),
+                'commande': PurchaseRequest.query.filter(PurchaseRequest.statut == 'commande').count(),
+                'recu': PurchaseRequest.query.filter(PurchaseRequest.statut == 'recu').count()
+            }
             
             # Get recent activity
             recent_receptions = Reception.query.order_by(desc(Reception.date_reception)).limit(5).all()
@@ -671,7 +693,10 @@ def register_routes(app, db):
                 'totalRequests': total_requests,
                 'totalReceptions': total_receptions,
                 'totalOutbounds': total_outbounds,
-                'lowStockCount': low_stock_count,
+                'lowStock': low_stock_count,
+                'pendingRequests': pending_requests,
+                'stockValue': stock_value,
+                'statusCounts': status_counts,
                 'recentReceptions': [reception.to_dict() for reception in recent_receptions],
                 'recentOutbounds': [outbound.to_dict() for outbound in recent_outbounds]
             })

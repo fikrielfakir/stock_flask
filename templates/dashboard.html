@@ -13,18 +13,57 @@
     <div class="px-6">
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8" id="stats-cards">
-            <!-- Loading state -->
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 animate-pulse">
-                <div class="h-20 bg-gray-200 rounded"></div>
+            <!-- Initial empty state -->
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Total Articles</p>
+                        <p class="text-3xl font-bold text-gray-900">0</p>
+                        <p class="text-sm text-blue-600 mt-1">Articles référencés</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-boxes text-blue-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 animate-pulse">
-                <div class="h-20 bg-gray-200 rounded"></div>
+
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Stock Bas</p>
+                        <p class="text-3xl font-bold text-gray-900">0</p>
+                        <p class="text-sm text-red-600 mt-1">Attention requise</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 animate-pulse">
-                <div class="h-20 bg-gray-200 rounded"></div>
+
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Demandes en Cours</p>
+                        <p class="text-3xl font-bold text-gray-900">0</p>
+                        <p class="text-sm text-yellow-600 mt-1">0 en attente</p>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 animate-pulse">
-                <div class="h-20 bg-gray-200 rounded"></div>
+
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Valeur Stock</p>
+                        <p class="text-3xl font-bold text-gray-900">0,00 €</p>
+                        <p class="text-sm text-green-600 mt-1">Inventaire total</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -179,9 +218,8 @@
             const stats = await apiRequest('GET', '/api/dashboard/stats');
             updateStatsCards(stats);
             
-            // Load charts data (you can add these endpoints to your Flask routes)
-            // For now, we'll use sample data
-            updateCharts();
+            // Update charts with real data from database
+            updateCharts(stats);
             
         } catch (error) {
             console.error('Error loading dashboard data:', error);
@@ -189,72 +227,46 @@
     }
 
     function updateStatsCards(stats) {
-        const cardsContainer = document.getElementById('stats-cards');
-        cardsContainer.innerHTML = `
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Total Articles</p>
-                        <p class="text-3xl font-bold text-gray-900">${stats.totalArticles || 0}</p>
-                        <p class="text-sm text-blue-600 mt-1">Articles référencés</p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-boxes text-blue-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Stock Bas</p>
-                        <p class="text-3xl font-bold text-gray-900">${stats.lowStock || 0}</p>
-                        <p class="text-sm text-red-600 mt-1">Attention requise</p>
-                    </div>
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Demandes en Cours</p>
-                        <p class="text-3xl font-bold text-gray-900">${stats.pendingRequests || 0}</p>
-                        <p class="text-sm text-yellow-600 mt-1">${stats.pendingRequests || 0} en attente</p>
-                    </div>
-                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-shopping-cart text-yellow-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Valeur Stock</p>
-                        <p class="text-3xl font-bold text-gray-900">${formatCurrency(stats.stockValue || 0)}</p>
-                        <p class="text-sm text-green-600 mt-1">Inventaire total</p>
-                    </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-chart-line text-green-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-        `;
+        // Update individual cards with real data from database
+        const cards = document.querySelectorAll('#stats-cards > div');
+        
+        // Total Articles Card
+        if (cards[0]) {
+            const valueElement = cards[0].querySelector('.text-3xl');
+            if (valueElement) valueElement.textContent = stats.totalArticles || 0;
+        }
+        
+        // Low Stock Card  
+        if (cards[1]) {
+            const valueElement = cards[1].querySelector('.text-3xl');
+            if (valueElement) valueElement.textContent = stats.lowStock || 0;
+        }
+        
+        // Pending Requests Card
+        if (cards[2]) {
+            const valueElement = cards[2].querySelector('.text-3xl');
+            const statusElement = cards[2].querySelector('.text-yellow-600');
+            if (valueElement) valueElement.textContent = stats.pendingRequests || 0;
+            if (statusElement) statusElement.textContent = `${stats.pendingRequests || 0} en attente`;
+        }
+        
+        // Stock Value Card
+        if (cards[3]) {
+            const valueElement = cards[3].querySelector('.text-3xl');
+            if (valueElement) valueElement.textContent = formatCurrency(stats.stockValue || 0);
+        }
     }
 
-    function updateCharts() {
-        // Stock Evolution Chart
+    function updateCharts(stats) {
+        // Stock Evolution Chart - Simple month view with current data
         const stockCtx = document.getElementById('stock-evolution-chart').getContext('2d');
         stockEvolutionChart = new Chart(stockCtx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Fév', 'Mar', 'Avr'],
+                labels: ['Articles Total', 'Stock Bas', 'Stock OK'],
                 datasets: [{
-                    label: 'Evolution Stock',
-                    data: [120, 135, 150, 140],
+                    label: 'Répartition Stock',
+                    data: [stats.totalArticles || 0, stats.lowStock || 0, (stats.totalArticles || 0) - (stats.lowStock || 0)],
                     borderColor: '#3B82F6',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
                     tension: 0.4,
@@ -277,15 +289,53 @@
             }
         });
 
-        // Purchase Status Chart
+        // Purchase Status Chart - Real data from database
+        const statusCounts = stats.statusCounts || {};
+        const statusLabels = [];
+        const statusData = [];
+        const statusColors = [];
+        
+        if (statusCounts.en_attente > 0) {
+            statusLabels.push('En Attente');
+            statusData.push(statusCounts.en_attente);
+            statusColors.push('#F59E0B');
+        }
+        if (statusCounts.approuve > 0) {
+            statusLabels.push('Approuvé');
+            statusData.push(statusCounts.approuve);
+            statusColors.push('#10B981');
+        }
+        if (statusCounts.commande > 0) {
+            statusLabels.push('Commandé');
+            statusData.push(statusCounts.commande);
+            statusColors.push('#3B82F6');
+        }
+        if (statusCounts.recu > 0) {
+            statusLabels.push('Reçu');
+            statusData.push(statusCounts.recu);
+            statusColors.push('#8B5CF6');
+        }
+        if (statusCounts.refuse > 0) {
+            statusLabels.push('Refusé');
+            statusData.push(statusCounts.refuse);
+            statusColors.push('#EF4444');
+        }
+        
+        // If no data, show empty state
+        if (statusData.length === 0) {
+            statusLabels.push('Aucune demande');
+            statusData.push(1);
+            statusColors.push('#E5E7EB');
+        }
+
         const purchaseCtx = document.getElementById('purchase-status-chart').getContext('2d');
         purchaseStatusChart = new Chart(purchaseCtx, {
             type: 'doughnut',
             data: {
-                labels: ['En Attente', 'Approuvé', 'Commandé'],
+                labels: statusLabels,
                 datasets: [{
-                    data: [5, 3, 2],
-                    backgroundColor: ['#F59E0B', '#10B981', '#3B82F6'],
+                    data: statusData,
+                    backgroundColor: statusColors,
                 }]
             },
             options: {
