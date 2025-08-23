@@ -1,0 +1,151 @@
+<nav class="bg-white border-b border-gray-200">
+    <div class="px-6 py-4">
+        <div class="flex items-center justify-between">
+            <!-- Logo and Title -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-boxes text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">StockCéramique</h1>
+                        <p class="text-xs text-gray-500">Système de Gestion</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-lg mx-8">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400 text-sm"></i>
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Recherche globale..."
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        id="global-search"
+                    >
+                    <div id="search-results" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg mt-1 hidden max-h-96 overflow-y-auto z-10">
+                        <!-- Search results will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Menu -->
+            <div class="flex items-center space-x-4">
+                <button class="p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition duration-150 ease-in-out">
+                    <i class="fas fa-bell text-lg"></i>
+                </button>
+                <div class="relative">
+                    <button class="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out">
+                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-gray-600 text-sm"></i>
+                        </div>
+                        <span class="font-medium">Utilisateur</span>
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="mt-4">
+            <nav class="flex space-x-8">
+                <a href="/" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'dashboard' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/articles" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'articles' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                    <i class="fas fa-boxes"></i>
+                    <span>Articles</span>
+                </a>
+                <a href="/suppliers" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'suppliers' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                    <i class="fas fa-truck"></i>
+                    <span>Fournisseurs</span>
+                </a>
+                <a href="/requestors" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'requestors' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                    <i class="fas fa-users"></i>
+                    <span>Demandeurs</span>
+                </a>
+                <a href="/purchase-requests" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'purchase_requests' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Demandes</span>
+                </a>
+                <a href="/reception" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'reception' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Réception</span>
+                </a>
+                <a href="/outbound" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'outbound' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Sortie</span>
+                </a>
+                <a href="/analytics" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'analytics' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Global search functionality
+    let searchTimeout;
+    const searchInput = document.getElementById('global-search');
+    const searchResults = document.getElementById('search-results');
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            searchResults.classList.add('hidden');
+            return;
+        }
+
+        searchTimeout = setTimeout(async () => {
+            try {
+                const response = await fetch(`/api/search/global?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    displaySearchResults(data.results);
+                } else {
+                    searchResults.innerHTML = '<div class="p-4 text-gray-500 text-sm">Aucun résultat trouvé</div>';
+                    searchResults.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+            }
+        }, 300);
+    });
+
+    function displaySearchResults(results) {
+        const html = results.map(result => `
+            <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" onclick="navigateToResult('${result.path}')">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">${result.title}</p>
+                        <p class="text-xs text-gray-500">${result.subtitle}</p>
+                    </div>
+                    <div class="text-xs text-gray-400">${result.extra}</div>
+                </div>
+            </div>
+        `).join('');
+        
+        searchResults.innerHTML = html;
+        searchResults.classList.remove('hidden');
+    }
+
+    function navigateToResult(path) {
+        window.location.href = path;
+    }
+
+    // Hide search results when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
+</script>

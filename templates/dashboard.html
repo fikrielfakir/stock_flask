@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de Bord - StockCeramique{% endblock %}
+
+{% block content %}
+<div>
+    <!-- Page Header -->
+    <div class="bg-white border-b border-gray-200 px-6 py-4 mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900 mb-1">Tableau de Bord</h1>
+        <p class="text-sm text-gray-600">Vue d'ensemble de votre système de gestion de stock</p>
+    </div>
+
+    <div class="px-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8" id="stats-cards">
+            <!-- Loading state -->
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 animate-pulse">
+                <div class="h-20 bg-gray-200 rounded"></div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 animate-pulse">
+                <div class="h-20 bg-gray-200 rounded"></div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 animate-pulse">
+                <div class="h-20 bg-gray-200 rounded"></div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 animate-pulse">
+                <div class="h-20 bg-gray-200 rounded"></div>
+            </div>
+        </div>
+
+        <!-- Charts Section with Mica Effects -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+            <!-- Stock Evolution Chart -->
+            <div class="relative rounded-xl overflow-hidden mica-container">
+                <div class="absolute inset-0 bg-white/90 backdrop-blur-lg border border-white/20"></div>
+                <div class="relative z-10 p-6">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-1">Évolution du Stock</h3>
+                        <p class="text-sm text-gray-600">Depuis les 4 derniers mois</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="stock-evolution-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purchase Status Chart -->
+            <div class="relative rounded-xl overflow-hidden mica-container">
+                <div class="absolute inset-0 bg-white/90 backdrop-blur-lg border border-white/20"></div>
+                <div class="relative z-10 p-6">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-1">Statut des Demandes</h3>
+                        <p class="text-sm text-gray-600">Répartition des statuts d'achat</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="purchase-status-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="mb-8">
+            <div class="relative rounded-xl overflow-hidden mica-container">
+                <div class="absolute inset-0 bg-white/90 backdrop-blur-lg border border-white/20"></div>
+                <div class="relative z-10 p-6">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-1">Activité Récente</h3>
+                        <p class="text-sm text-gray-600">Derniers mouvements de stock</p>
+                    </div>
+                    <div class="h-64" id="recent-movements">
+                        <!-- Content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Stock Alerts -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-8">
+            <!-- Quick Actions -->
+            <div>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-900">Actions Rapides</h3>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <a href="/articles" class="block">
+                            <div class="w-full border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-blue-50 rounded-sm flex items-center justify-center mr-3">
+                                        <i class="fas fa-plus text-blue-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Ajouter Article</p>
+                                        <p class="text-xs text-gray-600">Nouveau produit</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="/purchase-requests" class="block">
+                            <div class="w-full border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-amber-50 rounded-sm flex items-center justify-center mr-3">
+                                        <i class="fas fa-shopping-cart text-yellow-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Demande Achat</p>
+                                        <p class="text-xs text-gray-600">Nouvelle demande</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="/reception" class="block">
+                            <div class="w-full border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-green-50 rounded-sm flex items-center justify-center mr-3">
+                                        <i class="fas fa-truck text-green-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Réception</p>
+                                        <p class="text-xs text-gray-600">Enregistrer livraison</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="/analytics" class="block">
+                            <div class="w-full border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-purple-50 rounded-sm flex items-center justify-center mr-3">
+                                        <i class="fas fa-file-alt text-purple-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Rapports</p>
+                                        <p class="text-xs text-gray-600">Export données</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock Alerts -->
+            <div class="xl:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+                    <div class="p-6 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Alertes Stock Bas</h3>
+                            <span id="low-stock-badge" class="hidden bg-red-600 text-white text-xs px-2 py-1 rounded-sm"></span>
+                        </div>
+                    </div>
+                    <div class="p-0" id="stock-alerts-content">
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-green-50 rounded-sm mx-auto mb-4 flex items-center justify-center">
+                                <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+                            </div>
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">Aucune alerte stock</h4>
+                            <p class="text-gray-600">Tous vos articles sont en stock suffisant</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let stockEvolutionChart, purchaseStatusChart;
+    
+    // Load dashboard data
+    async function loadDashboardData() {
+        try {
+            // Load stats
+            const stats = await apiRequest('GET', '/api/dashboard/stats');
+            updateStatsCards(stats);
+            
+            // Load charts data (you can add these endpoints to your Flask routes)
+            // For now, we'll use sample data
+            updateCharts();
+            
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+        }
+    }
+
+    function updateStatsCards(stats) {
+        const cardsContainer = document.getElementById('stats-cards');
+        cardsContainer.innerHTML = `
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Total Articles</p>
+                        <p class="text-3xl font-bold text-gray-900">${stats.totalArticles || 0}</p>
+                        <p class="text-sm text-blue-600 mt-1">Articles référencés</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-boxes text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Stock Bas</p>
+                        <p class="text-3xl font-bold text-gray-900">${stats.lowStock || 0}</p>
+                        <p class="text-sm text-red-600 mt-1">Attention requise</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Demandes en Cours</p>
+                        <p class="text-3xl font-bold text-gray-900">${stats.pendingRequests || 0}</p>
+                        <p class="text-sm text-yellow-600 mt-1">${stats.pendingRequests || 0} en attente</p>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Valeur Stock</p>
+                        <p class="text-3xl font-bold text-gray-900">${formatCurrency(stats.stockValue || 0)}</p>
+                        <p class="text-sm text-green-600 mt-1">Inventaire total</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function updateCharts() {
+        // Stock Evolution Chart
+        const stockCtx = document.getElementById('stock-evolution-chart').getContext('2d');
+        stockEvolutionChart = new Chart(stockCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr'],
+                datasets: [{
+                    label: 'Evolution Stock',
+                    data: [120, 135, 150, 140],
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Purchase Status Chart
+        const purchaseCtx = document.getElementById('purchase-status-chart').getContext('2d');
+        purchaseStatusChart = new Chart(purchaseCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['En Attente', 'Approuvé', 'Commandé'],
+                datasets: [{
+                    data: [5, 3, 2],
+                    backgroundColor: ['#F59E0B', '#10B981', '#3B82F6'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(value);
+    }
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', loadDashboardData);
+</script>
+{% endblock %}

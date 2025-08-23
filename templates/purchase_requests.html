@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block title %}Demandes d'Achat - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Demandes d'Achat</h1>
+            <p class="text-sm text-gray-600" id="requests-count">Chargement...</p>
+        </div>
+        <div class="flex space-x-3">
+            <button 
+                onclick="openRequestForm()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+                <i class="fas fa-plus mr-2"></i>
+                Nouvelle Demande
+            </button>
+        </div>
+    </div>
+
+    <!-- Purchase Requests Table -->
+    <div class="bg-white shadow rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-900">Liste des Demandes</h3>
+        </div>
+        
+        <div class="p-6 border-b border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                    <input 
+                        type="text" 
+                        placeholder="Numéro, demandeur..." 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="search-input"
+                        onkeyup="filterRequests()"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+                    <select 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="status-filter"
+                        onchange="filterRequests()"
+                    >
+                        <option value="all">Tous les statuts</option>
+                        <option value="en_attente">En Attente</option>
+                        <option value="approuve">Approuvé</option>
+                        <option value="rejete">Rejeté</option>
+                        <option value="commande">Commandé</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Demandeur</label>
+                    <select 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="requestor-filter"
+                        onchange="filterRequests()"
+                    >
+                        <option value="all">Tous les demandeurs</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                    <button 
+                        class="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        onclick="clearFilters()"
+                    >
+                        Effacer filtres
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-0">
+            <div id="requests-table-container">
+                <div class="p-6">
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Request Form Modal -->
+<div id="request-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border max-w-lg shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900" id="request-modal-title">
+                    Nouvelle Demande
+                </h3>
+                <button onclick="closeRequestForm()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="request-form" onsubmit="saveRequest(event)">
+                <input type="hidden" id="request-id" name="id">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Demandeur *</label>
+                        <select id="demandeurId" name="demandeurId" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Sélectionner un demandeur</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Motif *</label>
+                        <textarea id="motif" name="motif" required rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Décrivez le motif de la demande..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date de Besoin</label>
+                        <input type="date" id="dateBesoin" name="dateBesoin"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Priorité</label>
+                        <select id="priorite" name="priorite"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="normale">Normale</option>
+                            <option value="haute">Haute</option>
+                            <option value="urgente">Urgente</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeRequestForm()"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let purchaseRequests = [];
+    let filteredRequests = [];
+    let requestors = [];
+    let editingRequest = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadRequests();
+        loadRequestors();
+    });
+
+    async function loadRequests() {
+        try {
+            purchaseRequests = await apiRequest('GET', '/api/purchase-requests');
+            filteredRequests = [...purchaseRequests];
+            updateRequestsTable();
+        } catch (error) {
+            console.error('Error loading requests:', error);
+        }
+    }
+
+    async function loadRequestors() {
+        try {
+            requestors = await apiRequest('GET', '/api/requestors');
+            updateRequestorSelects();
+        } catch (error) {
+            console.error('Error loading requestors:', error);
+        }
+    }
+
+    function updateRequestsTable() {
+        const container = document.getElementById('requests-table-container');
+        const countElement = document.getElementById('requests-count');
+        
+        countElement.textContent = `${filteredRequests.length} demande(s) sur ${purchaseRequests.length} total`;
+
+        if (filteredRequests.length === 0) {
+            container.innerHTML = `
+                <div class="p-8 text-center text-gray-500">
+                    <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+                    <p class="text-lg font-medium">Aucune demande trouvée</p>
+                    <p class="text-sm">Commencez par créer votre première demande</p>
+                    <button onclick="openRequestForm()" 
+                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Nouvelle demande
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        const tableHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Numéro</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Demandeur</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Motif</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Date</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Statut</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredRequests.map(request => createRequestRow(request)).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        container.innerHTML = tableHTML;
+    }
+
+    function createRequestRow(request) {
+        const requestor = requestors.find(r => r.id === request.demandeurId);
+        const requestorName = requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu';
+        const statusConfig = getStatusConfig(request.statut);
+        
+        return `
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">${request.numeroDemande}</td>
+                <td class="p-4 text-sm text-gray-700">${requestorName}</td>
+                <td class="p-4 text-sm text-gray-500">${request.motif}</td>
+                <td class="p-4 text-sm text-gray-500">${new Date(request.dateCreation).toLocaleDateString('fr-FR')}</td>
+                <td class="p-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.class}">
+                        ${statusConfig.text}
+                    </span>
+                </td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="editRequest('${request.id}')" 
+                                title="Modifier"
+                                class="p-2 text-blue-600 hover:bg-blue-50 rounded">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteRequest('${request.id}')" 
+                                title="Supprimer"
+                                class="p-2 text-red-600 hover:bg-red-50 rounded">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+
+    function getStatusConfig(status) {
+        const configs = {
+            'en_attente': { class: 'bg-yellow-100 text-yellow-800', text: 'En Attente' },
+            'approuve': { class: 'bg-green-100 text-green-800', text: 'Approuvé' },
+            'rejete': { class: 'bg-red-100 text-red-800', text: 'Rejeté' },
+            'commande': { class: 'bg-blue-100 text-blue-800', text: 'Commandé' }
+        };
+        return configs[status] || { class: 'bg-gray-100 text-gray-800', text: status };
+    }
+
+    function updateRequestorSelects() {
+        const selects = ['demandeurId', 'requestor-filter'];
+        
+        selects.forEach(selectId => {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            
+            const isFilter = selectId.includes('filter');
+            if (isFilter) {
+                select.innerHTML = '<option value="all">Tous les demandeurs</option>';
+            } else {
+                select.innerHTML = '<option value="">Sélectionner un demandeur</option>';
+            }
+            
+            requestors.forEach(requestor => {
+                const option = document.createElement('option');
+                option.value = requestor.id;
+                option.textContent = `${requestor.prenom} ${requestor.nom}`;
+                select.appendChild(option);
+            });
+        });
+    }
+
+    function filterRequests() {
+        const search = document.getElementById('search-input').value.toLowerCase();
+        const statusFilter = document.getElementById('status-filter').value;
+        const requestorFilter = document.getElementById('requestor-filter').value;
+
+        filteredRequests = purchaseRequests.filter(request => {
+            const requestor = requestors.find(r => r.id === request.demandeurId);
+            const requestorName = requestor ? `${requestor.prenom} ${requestor.nom}`.toLowerCase() : '';
+            
+            const matchesSearch = !search || 
+                request.numeroDemande.toLowerCase().includes(search) ||
+                request.motif.toLowerCase().includes(search) ||
+                requestorName.includes(search);
+
+            const matchesStatus = statusFilter === 'all' || request.statut === statusFilter;
+            const matchesRequestor = requestorFilter === 'all' || request.demandeurId === requestorFilter;
+
+            return matchesSearch && matchesStatus && matchesRequestor;
+        });
+
+        updateRequestsTable();
+    }
+
+    function clearFilters() {
+        document.getElementById('search-input').value = '';
+        document.getElementById('status-filter').value = 'all';
+        document.getElementById('requestor-filter').value = 'all';
+        filterRequests();
+    }
+
+    function openRequestForm(requestId = null) {
+        editingRequest = requestId ? purchaseRequests.find(r => r.id === requestId) : null;
+        const modal = document.getElementById('request-modal');
+        const title = document.getElementById('request-modal-title');
+        const form = document.getElementById('request-form');
+        
+        title.textContent = editingRequest ? 'Modifier Demande' : 'Nouvelle Demande';
+        
+        if (editingRequest) {
+            populateRequestForm(editingRequest);
+        } else {
+            form.reset();
+            document.getElementById('request-id').value = '';
+        }
+        
+        modal.classList.remove('hidden');
+    }
+
+    function closeRequestForm() {
+        document.getElementById('request-modal').classList.add('hidden');
+        editingRequest = null;
+    }
+
+    function populateRequestForm(request) {
+        document.getElementById('request-id').value = request.id;
+        document.getElementById('demandeurId').value = request.demandeurId;
+        document.getElementById('motif').value = request.motif;
+        document.getElementById('dateBesoin').value = request.dateBesoin ? request.dateBesoin.split('T')[0] : '';
+        document.getElementById('priorite').value = request.priorite || 'normale';
+    }
+
+    async function saveRequest(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            if (editingRequest) {
+                await apiRequest('PUT', `/api/purchase-requests/${editingRequest.id}`, data);
+                showToast('Demande modifiée avec succès', 'success');
+            } else {
+                await apiRequest('POST', '/api/purchase-requests', data);
+                showToast('Demande créée avec succès', 'success');
+            }
+            
+            closeRequestForm();
+            loadRequests();
+        } catch (error) {
+            console.error('Error saving request:', error);
+        }
+    }
+
+    function editRequest(id) {
+        openRequestForm(id);
+    }
+
+    async function deleteRequest(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) {
+            return;
+        }
+
+        try {
+            await apiRequest('DELETE', `/api/purchase-requests/${id}`);
+            showToast('Demande supprimée avec succès', 'success');
+            loadRequests();
+        } catch (error) {
+            console.error('Error deleting request:', error);
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{
+  "appId": "com.stockceramique.desktop",
+  "productName": "StockCéramique",
+  "directories": {
+    "output": "dist-electron"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "node_modules/**/*"
+  ],
+  "extraResources": [
+    {
+      "from": "data",
+      "to": "data",
+      "filter": ["**/*"]
+    }
+  ],
+  "win": {
+    "target": "nsis",
+    "icon": "client/public/favicon.ico",
+    "requestedExecutionLevel": "asInvoker"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  },
+  "mac": {
+    "category": "public.app-category.business",
+    "icon": "client/public/favicon.ico"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Office"
+  }
+}

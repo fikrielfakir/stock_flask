@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block title %}Réception - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Réception de Stock</h1>
+            <p class="text-sm text-gray-600">Enregistrer les livraisons et mettre à jour les stocks</p>
+        </div>
+        <div class="flex space-x-3">
+            <button 
+                onclick="openReceptionForm()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+                <i class="fas fa-plus mr-2"></i>
+                Nouvelle Réception
+            </button>
+        </div>
+    </div>
+
+    <!-- Reception Table -->
+    <div class="bg-white shadow rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-900">Historique des Réceptions</h3>
+        </div>
+        
+        <div class="p-6 border-b border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                    <input 
+                        type="text" 
+                        placeholder="Article, fournisseur..." 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="search-input"
+                        onkeyup="filterReceptions()"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                    <input 
+                        type="date" 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="date-filter"
+                        onchange="filterReceptions()"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                    <button 
+                        class="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        onclick="clearFilters()"
+                    >
+                        Effacer filtres
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-0">
+            <div id="receptions-table-container">
+                <div class="p-6">
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reception Form Modal -->
+<div id="reception-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border max-w-lg shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">
+                    Nouvelle Réception
+                </h3>
+                <button onclick="closeReceptionForm()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="reception-form" onsubmit="saveReception(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Article *</label>
+                        <select id="articleId" name="articleId" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Sélectionner un article</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantité Reçue *</label>
+                        <input type="number" id="quantiteRecue" name="quantiteRecue" required min="1"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fournisseur</label>
+                        <select id="fournisseurId" name="fournisseurId"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Sélectionner un fournisseur</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Numéro Bon de Livraison</label>
+                        <input type="text" id="numeroBonLivraison" name="numeroBonLivraison"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Observations</label>
+                        <textarea id="observations" name="observations" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Remarques sur la livraison..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeReceptionForm()"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        Enregistrer Réception
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let receptions = [];
+    let filteredReceptions = [];
+    let articles = [];
+    let suppliers = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadReceptions();
+        loadArticles();
+        loadSuppliers();
+    });
+
+    async function loadReceptions() {
+        try {
+            receptions = await apiRequest('GET', '/api/receptions');
+            filteredReceptions = [...receptions];
+            updateReceptionsTable();
+        } catch (error) {
+            console.error('Error loading receptions:', error);
+        }
+    }
+
+    async function loadArticles() {
+        try {
+            articles = await apiRequest('GET', '/api/articles');
+            updateArticleSelect();
+        } catch (error) {
+            console.error('Error loading articles:', error);
+        }
+    }
+
+    async function loadSuppliers() {
+        try {
+            suppliers = await apiRequest('GET', '/api/suppliers');
+            updateSupplierSelect();
+        } catch (error) {
+            console.error('Error loading suppliers:', error);
+        }
+    }
+
+    function updateReceptionsTable() {
+        const container = document.getElementById('receptions-table-container');
+
+        if (filteredReceptions.length === 0) {
+            container.innerHTML = `
+                <div class="p-8 text-center text-gray-500">
+                    <i class="fas fa-truck text-4xl mb-4"></i>
+                    <p class="text-lg font-medium">Aucune réception enregistrée</p>
+                    <p class="text-sm">Commencez par enregistrer votre première réception</p>
+                    <button onclick="openReceptionForm()" 
+                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Nouvelle réception
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        const tableHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Date</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Article</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Quantité</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Fournisseur</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Bon de Livraison</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredReceptions.map(reception => createReceptionRow(reception)).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        container.innerHTML = tableHTML;
+    }
+
+    function createReceptionRow(reception) {
+        const article = articles.find(a => a.id === reception.articleId);
+        const supplier = suppliers.find(s => s.id === reception.fournisseurId);
+        
+        return `
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm text-gray-700">${new Date(reception.dateReception).toLocaleDateString('fr-FR')}</td>
+                <td class="p-4 text-sm font-medium text-gray-900">${article ? article.designation : 'Article supprimé'}</td>
+                <td class="p-4 text-sm text-gray-700">${reception.quantiteRecue}</td>
+                <td class="p-4 text-sm text-gray-500">${supplier ? supplier.nom : 'Non spécifié'}</td>
+                <td class="p-4 text-sm text-gray-500">${reception.numeroBonLivraison || '-'}</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="viewReception('${reception.id}')" 
+                                title="Voir détails"
+                                class="p-2 text-blue-600 hover:bg-blue-50 rounded">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="deleteReception('${reception.id}')" 
+                                title="Supprimer"
+                                class="p-2 text-red-600 hover:bg-red-50 rounded">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+
+    function updateArticleSelect() {
+        const select = document.getElementById('articleId');
+        select.innerHTML = '<option value="">Sélectionner un article</option>';
+        
+        articles.forEach(article => {
+            const option = document.createElement('option');
+            option.value = article.id;
+            option.textContent = `${article.codeArticle} - ${article.designation}`;
+            select.appendChild(option);
+        });
+    }
+
+    function updateSupplierSelect() {
+        const select = document.getElementById('fournisseurId');
+        select.innerHTML = '<option value="">Sélectionner un fournisseur</option>';
+        
+        suppliers.forEach(supplier => {
+            const option = document.createElement('option');
+            option.value = supplier.id;
+            option.textContent = supplier.nom;
+            select.appendChild(option);
+        });
+    }
+
+    function filterReceptions() {
+        const search = document.getElementById('search-input').value.toLowerCase();
+        const dateFilter = document.getElementById('date-filter').value;
+
+        filteredReceptions = receptions.filter(reception => {
+            const article = articles.find(a => a.id === reception.articleId);
+            const supplier = suppliers.find(s => s.id === reception.fournisseurId);
+            
+            const matchesSearch = !search || 
+                (article && article.designation.toLowerCase().includes(search)) ||
+                (article && article.codeArticle.toLowerCase().includes(search)) ||
+                (supplier && supplier.nom.toLowerCase().includes(search)) ||
+                (reception.numeroBonLivraison && reception.numeroBonLivraison.toLowerCase().includes(search));
+
+            const matchesDate = !dateFilter || 
+                reception.dateReception.startsWith(dateFilter);
+
+            return matchesSearch && matchesDate;
+        });
+
+        updateReceptionsTable();
+    }
+
+    function clearFilters() {
+        document.getElementById('search-input').value = '';
+        document.getElementById('date-filter').value = '';
+        filterReceptions();
+    }
+
+    function openReceptionForm() {
+        const modal = document.getElementById('reception-modal');
+        const form = document.getElementById('reception-form');
+        
+        form.reset();
+        modal.classList.remove('hidden');
+    }
+
+    function closeReceptionForm() {
+        document.getElementById('reception-modal').classList.add('hidden');
+    }
+
+    async function saveReception(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Convert numeric fields
+        data.quantiteRecue = parseInt(data.quantiteRecue);
+
+        try {
+            await apiRequest('POST', '/api/receptions', data);
+            showToast('Réception enregistrée avec succès', 'success');
+            closeReceptionForm();
+            loadReceptions();
+        } catch (error) {
+            console.error('Error saving reception:', error);
+        }
+    }
+
+    function viewReception(id) {
+        const reception = receptions.find(r => r.id === id);
+        if (reception) {
+            const article = articles.find(a => a.id === reception.articleId);
+            const supplier = suppliers.find(s => s.id === reception.fournisseurId);
+            
+            alert(`Détails de la réception:
+Article: ${article ? article.designation : 'Inconnu'}
+Quantité: ${reception.quantiteRecue}
+Fournisseur: ${supplier ? supplier.nom : 'Non spécifié'}
+Date: ${new Date(reception.dateReception).toLocaleDateString('fr-FR')}
+Observations: ${reception.observations || 'Aucune'}`);
+        }
+    }
+
+    async function deleteReception(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette réception ?')) {
+            return;
+        }
+
+        try {
+            await apiRequest('DELETE', `/api/receptions/${id}`);
+            showToast('Réception supprimée avec succès', 'success');
+            loadReceptions();
+        } catch (error) {
+            console.error('Error deleting reception:', error);
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,716 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Stock - Pièces Céramiques</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'ms-blue': '#0078D4',
+                    'ms-blue-dark': '#106EBE',
+                    'ms-light-blue': '#00BCF2',
+                    'ms-green': '#107C10',
+                    'ms-amber': '#FFB900',
+                    'ms-red': '#D13438',
+                    'ms-gray-light': '#F3F2F1',
+                    'ms-gray': '#605E5C',
+                    'ms-gray-dark': '#323130'
+                },
+                fontFamily: {
+                    'system': ['Segoe UI', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif']
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .sidebar-item:hover {
+            background-color: #F3F2F1;
+        }
+        .sidebar-item.active {
+            background-color: #0078D4;
+            color: white;
+        }
+        .card-hover:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        .transition-smooth {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-system">
+    <!-- @COMPONENT: MainLayout -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- @COMPONENT: Sidebar -->
+        <div class="w-64 bg-white shadow-lg flex flex-col">
+            <!-- Logo/Header -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-ms-blue rounded-lg flex items-center justify-center">
+                        <i class="fas fa-boxes text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-ms-gray-dark">StockCéramique</h1>
+                        <p class="text-xs text-ms-gray">Gestion de Stock</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 space-y-2">
+                <!-- @STATE: activeModule:string = "dashboard" -->
+                <div class="sidebar-item active px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="dashboard">
+                    <i class="fas fa-tachometer-alt w-5"></i>
+                    <span class="text-sm font-medium">Tableau de Bord</span>
+                </div>
+                
+                <div class="sidebar-item px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="articles">
+                    <i class="fas fa-cogs w-5 text-ms-gray"></i>
+                    <span class="text-sm font-medium text-ms-gray-dark">Articles</span>
+                </div>
+                
+                <div class="sidebar-item px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="purchase-requests">
+                    <i class="fas fa-shopping-cart w-5 text-ms-gray"></i>
+                    <span class="text-sm font-medium text-ms-gray-dark">Demandes d'Achat</span>
+                </div>
+                
+                <div class="sidebar-item px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="reception">
+                    <i class="fas fa-truck w-5 text-ms-gray"></i>
+                    <span class="text-sm font-medium text-ms-gray-dark">Réception</span>
+                </div>
+                
+                <div class="sidebar-item px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="outbound">
+                    <i class="fas fa-sign-out-alt w-5 text-ms-gray"></i>
+                    <span class="text-sm font-medium text-ms-gray-dark">Sortie de Stock</span>
+                </div>
+                
+                <div class="sidebar-item px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="suppliers">
+                    <i class="fas fa-building w-5 text-ms-gray"></i>
+                    <span class="text-sm font-medium text-ms-gray-dark">Fournisseurs</span>
+                </div>
+                
+                <div class="sidebar-item px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="requestors">
+                    <i class="fas fa-users w-5 text-ms-gray"></i>
+                    <span class="text-sm font-medium text-ms-gray-dark">Demandeurs</span>
+                </div>
+                
+                <hr class="my-4 border-gray-200">
+                
+                <div class="sidebar-item px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="reports">
+                    <i class="fas fa-chart-line w-5 text-ms-gray"></i>
+                    <span class="text-sm font-medium text-ms-gray-dark">Rapports</span>
+                </div>
+                
+                <div class="sidebar-item px-3 py-2 rounded-lg cursor-pointer transition-smooth flex items-center space-x-3" data-module="settings">
+                    <i class="fas fa-cog w-5 text-ms-gray"></i>
+                    <span class="text-sm font-medium text-ms-gray-dark">Paramètres</span>
+                </div>
+            </nav>
+
+            <!-- Footer -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center space-x-2 text-xs text-ms-gray">
+                    <div class="w-2 h-2 bg-ms-green rounded-full"></div>
+                    <span>Mode Hors Ligne</span>
+                </div>
+                <div class="text-xs text-ms-gray mt-1">Version 1.0.0</div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Bar -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-ms-gray-dark">Tableau de Bord</h2>
+                        <p class="text-sm text-ms-gray">Vue d'ensemble de votre stock</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-ms-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-ms-blue-dark transition-colors flex items-center space-x-2">
+                            <i class="fas fa-download"></i>
+                            <span>Sauvegarde</span>
+                        </button>
+                        <div class="text-sm text-ms-gray">
+                            <span data-bind="currentDate">Lundi 15 Janvier 2024</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                    <!-- @MAP: dashboardStats.map(stat => ( -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover transition-smooth">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-ms-gray">Total Articles</p>
+                                <p class="text-2xl font-bold text-ms-gray-dark" data-bind="stats.totalArticles">1,247</p>
+                                <p class="text-xs text-ms-green mt-1">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+12 ce mois</span>
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-boxes text-ms-blue text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover transition-smooth">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-ms-gray">Stock Bas</p>
+                                <p class="text-2xl font-bold text-ms-red" data-bind="stats.lowStock">23</p>
+                                <p class="text-xs text-ms-red mt-1">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>Attention requise</span>
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-ms-red text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover transition-smooth">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-ms-gray">Demandes en Cours</p>
+                                <p class="text-2xl font-bold text-ms-gray-dark" data-bind="stats.pendingRequests">8</p>
+                                <p class="text-xs text-ms-amber mt-1">
+                                    <i class="fas fa-clock"></i>
+                                    <span>En attente</span>
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-shopping-cart text-ms-amber text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover transition-smooth">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-ms-gray">Valeur Stock</p>
+                                <p class="text-2xl font-bold text-ms-gray-dark" data-bind="stats.stockValue">€45,236</p>
+                                <p class="text-xs text-ms-green mt-1">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+5.2% ce mois</span>
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-euro-sign text-ms-green text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+
+                <!-- Recent Activity & Quick Actions -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+                    <!-- Recent Activity -->
+                    <div class="xl:col-span-2">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold text-ms-gray-dark">Activités Récentes</h3>
+                                    <button class="text-ms-blue text-sm font-medium hover:text-ms-blue-dark">Voir tout</button>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <!-- @MAP: recentActivities.map(activity => ( -->
+                                <div class="flex items-start space-x-4 mb-4">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-plus text-ms-blue text-xs"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-ms-gray-dark" data-mock="true">Réception - Joint étanchéité JE-205</p>
+                                        <p class="text-xs text-ms-gray" data-mock="true">Quantité: 50 | Fournisseur: CéramiTech</p>
+                                        <p class="text-xs text-ms-gray" data-mock="true">Il y a 15 minutes</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-4 mb-4">
+                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-minus text-ms-red text-xs"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-ms-gray-dark" data-mock="true">Sortie - Résistance chauffante RC-150W</p>
+                                        <p class="text-xs text-ms-gray" data-mock="true">Quantité: 2 | Demandeur: Service Technique</p>
+                                        <p class="text-xs text-ms-gray" data-mock="true">Il y a 1 heure</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-4 mb-4">
+                                    <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-shopping-cart text-ms-amber text-xs"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-ms-gray-dark" data-mock="true">Nouvelle demande - Thermostat TH-300C</p>
+                                        <p class="text-xs text-ms-gray" data-mock="true">Quantité: 10 | Demandeur: Marie Dubois</p>
+                                        <p class="text-xs text-ms-gray" data-mock="true">Il y a 2 heures</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-check text-ms-green text-xs"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-ms-gray-dark" data-mock="true">Commande livrée - Lot PL-001</p>
+                                        <p class="text-xs text-ms-gray" data-mock="true">15 articles | Fournisseur: ProCéramique</p>
+                                        <p class="text-xs text-ms-gray" data-mock="true">Il y a 3 heures</p>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div>
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-ms-gray-dark">Actions Rapides</h3>
+                            </div>
+                            <div class="p-6 space-y-3">
+                                <button class="w-full text-left p-4 bg-ms-gray-light rounded-lg hover:bg-gray-200 transition-colors" data-event="click:navigateToModule" data-module="articles">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-ms-blue rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-plus text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-ms-gray-dark">Ajouter Article</p>
+                                            <p class="text-xs text-ms-gray">Nouveau produit</p>
+                                        </div>
+                                    </div>
+                                </button>
+
+                                <button class="w-full text-left p-4 bg-ms-gray-light rounded-lg hover:bg-gray-200 transition-colors" data-event="click:navigateToModule" data-module="purchase-requests">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-ms-amber rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-shopping-cart text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-ms-gray-dark">Demande d'Achat</p>
+                                            <p class="text-xs text-ms-gray">Nouvelle demande</p>
+                                        </div>
+                                    </div>
+                                </button>
+
+                                <button class="w-full text-left p-4 bg-ms-gray-light rounded-lg hover:bg-gray-200 transition-colors" data-event="click:navigateToModule" data-module="reception">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-ms-green rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-truck text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-ms-gray-dark">Réception</p>
+                                            <p class="text-xs text-ms-gray">Enregistrer livraison</p>
+                                        </div>
+                                    </div>
+                                </button>
+
+                                <button class="w-full text-left p-4 bg-ms-gray-light rounded-lg hover:bg-gray-200 transition-colors" data-event="click:navigateToModule" data-module="reports">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-ms-light-blue rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-file-export text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-ms-gray-dark">Export Données</p>
+                                            <p class="text-xs text-ms-gray">Excel/PDF</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock Alerts -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-ms-gray-dark">Alertes Stock Bas</h3>
+                            <span class="bg-ms-red text-white text-xs px-2 py-1 rounded-full" data-bind="lowStockCount">23 articles</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-ms-gray-light">
+                                <tr>
+                                    <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Code Article</th>
+                                    <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Désignation</th>
+                                    <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Catégorie</th>
+                                    <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Stock Actuel</th>
+                                    <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Seuil Minimum</th>
+                                    <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Fournisseur</th>
+                                    <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- @MAP: lowStockItems.map(item => ( -->
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="p-4 text-sm font-medium text-ms-gray-dark" data-mock="true">JE-205</td>
+                                    <td class="p-4 text-sm text-ms-gray-dark" data-mock="true">Joint étanchéité diamètre 20.5mm</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">Joints</td>
+                                    <td class="p-4 text-sm font-medium text-ms-red" data-mock="true">5</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">20</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">CéramiTech</td>
+                                    <td class="p-4">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-ms-blue text-white px-3 py-1 rounded text-xs hover:bg-ms-blue-dark transition-colors">
+                                                Commander
+                                            </button>
+                                            <button class="bg-gray-200 text-ms-gray-dark px-3 py-1 rounded text-xs hover:bg-gray-300 transition-colors">
+                                                Détails
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="p-4 text-sm font-medium text-ms-gray-dark" data-mock="true">RC-150W</td>
+                                    <td class="p-4 text-sm text-ms-gray-dark" data-mock="true">Résistance chauffante 150W</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">Électrique</td>
+                                    <td class="p-4 text-sm font-medium text-ms-red" data-mock="true">2</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">10</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">ElectroPlus</td>
+                                    <td class="p-4">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-ms-blue text-white px-3 py-1 rounded text-xs hover:bg-ms-blue-dark transition-colors">
+                                                Commander
+                                            </button>
+                                            <button class="bg-gray-200 text-ms-gray-dark px-3 py-1 rounded text-xs hover:bg-gray-300 transition-colors">
+                                                Détails
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="p-4 text-sm font-medium text-ms-gray-dark" data-mock="true">TH-300C</td>
+                                    <td class="p-4 text-sm text-ms-gray-dark" data-mock="true">Thermostat 300°C</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">Régulation</td>
+                                    <td class="p-4 text-sm font-medium text-ms-red" data-mock="true">1</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">5</td>
+                                    <td class="p-4 text-sm text-ms-gray" data-mock="true">TempControl</td>
+                                    <td class="p-4">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-ms-blue text-white px-3 py-1 rounded text-xs hover:bg-ms-blue-dark transition-colors">
+                                                Commander
+                                            </button>
+                                            <button class="bg-gray-200 text-ms-gray-dark px-3 py-1 rounded text-xs hover:bg-gray-300 transition-colors">
+                                                Détails
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 bg-ms-gray-light">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm text-ms-gray">3 de 23 articles affichés</p>
+                            <button class="text-ms-blue text-sm font-medium hover:text-ms-blue-dark">Voir tous les articles en rupture</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden Forms - Articles Module -->
+                <!-- @COMPONENT: ArticlesModule (hidden by default) -->
+                <div id="articles-module" class="hidden">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-semibold text-ms-gray-dark">Gestion des Articles</h3>
+                                <button class="bg-ms-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-ms-blue-dark transition-colors flex items-center space-x-2">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Nouvel Article</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search and Filters -->
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-ms-gray-dark mb-2">Rechercher</label>
+                                    <input type="text" placeholder="Code, désignation..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ms-gray-dark mb-2">Catégorie</label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent">
+                                        <option>Toutes les catégories</option>
+                                        <option data-mock="true">Joints</option>
+                                        <option data-mock="true">Électrique</option>
+                                        <option data-mock="true">Régulation</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ms-gray-dark mb-2">Marque</label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent">
+                                        <option>Toutes les marques</option>
+                                        <option data-mock="true">CéramiTech</option>
+                                        <option data-mock="true">ProCéramique</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ms-gray-dark mb-2">Stock</label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent">
+                                        <option>Tous</option>
+                                        <option>Stock bas</option>
+                                        <option>Stock normal</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Articles Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-ms-gray-light">
+                                    <tr>
+                                        <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Code Article</th>
+                                        <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Désignation</th>
+                                        <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Catégorie</th>
+                                        <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Marque</th>
+                                        <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Stock</th>
+                                        <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Prix Unitaire</th>
+                                        <th class="text-left p-4 text-sm font-medium text-ms-gray-dark">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- @MAP: articles.map(article => ( -->
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="p-4 text-sm font-medium text-ms-gray-dark" data-mock="true">JE-205</td>
+                                        <td class="p-4 text-sm text-ms-gray-dark" data-mock="true">Joint étanchéité diamètre 20.5mm</td>
+                                        <td class="p-4 text-sm text-ms-gray" data-mock="true">Joints</td>
+                                        <td class="p-4 text-sm text-ms-gray" data-mock="true">CéramiTech</td>
+                                        <td class="p-4 text-sm font-medium text-ms-red" data-mock="true">5 pcs</td>
+                                        <td class="p-4 text-sm text-ms-gray" data-mock="true">€12.50</td>
+                                        <td class="p-4">
+                                            <div class="flex space-x-2">
+                                                <button class="text-ms-blue hover:text-ms-blue-dark" title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="text-ms-gray hover:text-ms-gray-dark" title="Voir">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="text-ms-red hover:text-red-700" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- @END_MAP )) -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: ArticlesModule -->
+            </main>
+        </div>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: MainLayout -->
+
+    <!-- Article Form Modal -->
+    <!-- @COMPONENT: ArticleFormModal (hidden by default) -->
+    <div id="article-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-ms-gray-dark">Nouvel Article</h3>
+                    <button class="text-ms-gray hover:text-ms-gray-dark">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form class="p-6 space-y-6">
+                <!-- @FUNCTIONALITY: Form should validate required fields and handle CRUD operations -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-ms-gray-dark mb-2">Code Article *</label>
+                        <input type="text" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent" placeholder="Ex: JE-205">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-ms-gray-dark mb-2">Référence</label>
+                        <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent" placeholder="Référence fournisseur">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-ms-gray-dark mb-2">Désignation *</label>
+                    <input type="text" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent" placeholder="Ex: Joint étanchéité diamètre 20.5mm">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-ms-gray-dark mb-2">Catégorie *</label>
+                        <select required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent">
+                            <option value="">Sélectionner une catégorie</option>
+                            <option data-mock="true">Joints</option>
+                            <option data-mock="true">Électrique</option>
+                            <option data-mock="true">Régulation</option>
+                            <option data-mock="true">Mécanique</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-ms-gray-dark mb-2">Marque</label>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent">
+                            <option value="">Sélectionner une marque</option>
+                            <option data-mock="true">CéramiTech</option>
+                            <option data-mock="true">ProCéramique</option>
+                            <option data-mock="true">ElectroPlus</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-ms-gray-dark mb-2">Stock Initial *</label>
+                        <input type="number" required min="0" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-ms-gray-dark mb-2">Unité</label>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent">
+                            <option data-mock="true">pcs</option>
+                            <option data-mock="true">kg</option>
+                            <option data-mock="true">m</option>
+                            <option data-mock="true">L</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-ms-gray-dark mb-2">Prix Unitaire (€)</label>
+                        <input type="number" step="0.01" min="0" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-ms-gray-dark mb-2">Fournisseur Principal</label>
+                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ms-blue focus:border-transparent">
+                        <option value="">Sélectionner un fournisseur</option>
+                        <option data-mock="true">CéramiTech SAS</option>
+                        <option data-mock="true">ProCéramique SARL</option>
+                        <option data-mock="true">ElectroPlus Ltd</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <button type="button" class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-ms-gray-dark hover:bg-gray-50 transition-colors">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-ms-blue text-white rounded-lg text-sm font-medium hover:bg-ms-blue-dark transition-colors" data-event="click:saveArticle">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ArticleFormModal -->
+
+    <script>
+        // TODO: Implement module navigation system
+        // TODO: Implement CRUD operations for all entities
+        // TODO: Implement offline data persistence using SQLite
+        // TODO: Implement real-time stock calculations
+        // TODO: Implement export functionality
+        // TODO: Implement backup/restore system
+        
+        (function() {
+            // Module navigation
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    sidebarItems.forEach(i => i.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    const module = this.dataset.module;
+                    // TODO: Implement module switching logic
+                    console.log('Switching to module:', module);
+                });
+            });
+
+            // Modal handling
+            const modalTriggers = document.querySelectorAll('[data-modal]');
+            const modals = document.querySelectorAll('.modal');
+            
+            modalTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function() {
+                    const modalId = this.dataset.modal;
+                    const modal = document.getElementById(modalId);
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Close modals on background click or close button
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('bg-black') || e.target.closest('.fa-times')) {
+                    const openModal = document.querySelector('.fixed:not(.hidden)');
+                    if (openModal) {
+                        openModal.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Search functionality placeholder
+            const searchInputs = document.querySelectorAll('input[type="text"]');
+            searchInputs.forEach(input => {
+                if (input.placeholder.includes('Rechercher') || input.placeholder.includes('Code, désignation')) {
+                    input.addEventListener('input', function() {
+                        // TODO: Implement real-time search functionality
+                        console.log('Searching for:', this.value);
+                    });
+                }
+            });
+
+            // Form submission handling
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // TODO: Implement form validation and submission
+                    console.log('Form submitted:', this);
+                });
+            });
+
+            // Initialize dashboard with mock data
+            function initializeDashboard() {
+                // TODO: Load actual data from SQLite database
+                const mockData = {
+                    totalArticles: 1247,
+                    lowStock: 23,
+                    pendingRequests: 8,
+                    stockValue: '€45,236'
+                };
+                
+                console.log('Dashboard initialized with data:', mockData);
+            }
+
+            // Initialize application
+            initializeDashboard();
+        })();
+    </script>
+</body>
+</html>

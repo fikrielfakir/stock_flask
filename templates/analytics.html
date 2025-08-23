@@ -1,0 +1,552 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Analytics et Rapports</h1>
+            <p class="text-sm text-gray-600">Analyse avancée de vos données de stock</p>
+        </div>
+        <div class="flex space-x-3">
+            <button 
+                onclick="refreshData()"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            >
+                <i class="fas fa-sync-alt mr-2"></i>
+                Actualiser
+            </button>
+            <button 
+                onclick="exportReport()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+                <i class="fas fa-download mr-2"></i>
+                Exporter Rapport
+            </button>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Rotation Stock</dt>
+                        <dd class="text-lg font-medium text-gray-900" id="stock-turnover">-</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+                        <i class="fas fa-euro-sign text-white text-sm"></i>
+                    </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Valeur Mouvement</dt>
+                        <dd class="text-lg font-medium text-gray-900" id="movement-value">-</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                    </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Articles Critiques</dt>
+                        <dd class="text-lg font-medium text-gray-900" id="critical-items">-</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+                        <i class="fas fa-clock text-white text-sm"></i>
+                    </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Délai Moyen</dt>
+                        <dd class="text-lg font-medium text-gray-900" id="avg-delivery">-</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <!-- Stock Evolution -->
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Évolution du Stock</h3>
+                <select id="evolution-period" class="text-sm border-gray-300 rounded-md" onchange="updateEvolutionChart()">
+                    <option value="7">7 derniers jours</option>
+                    <option value="30">30 derniers jours</option>
+                    <option value="90" selected>90 derniers jours</option>
+                </select>
+            </div>
+            <div class="h-64">
+                <canvas id="evolution-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Category Distribution -->
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Répartition par Catégorie</h3>
+                <select id="category-metric" class="text-sm border-gray-300 rounded-md" onchange="updateCategoryChart()">
+                    <option value="count">Nombre d'articles</option>
+                    <option value="value">Valeur stock</option>
+                </select>
+            </div>
+            <div class="h-64">
+                <canvas id="category-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Movement Analysis -->
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Analyse des Mouvements</h3>
+                <select id="movement-period" class="text-sm border-gray-300 rounded-md" onchange="updateMovementChart()">
+                    <option value="7">7 derniers jours</option>
+                    <option value="30" selected>30 derniers jours</option>
+                    <option value="90">90 derniers jours</option>
+                </select>
+            </div>
+            <div class="h-64">
+                <canvas id="movement-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top Articles -->
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Top Articles</h3>
+                <select id="top-metric" class="text-sm border-gray-300 rounded-md" onchange="updateTopArticles()">
+                    <option value="movement">Plus de mouvements</option>
+                    <option value="value">Plus de valeur</option>
+                    <option value="low_stock">Stock le plus bas</option>
+                </select>
+            </div>
+            <div class="h-64 overflow-y-auto" id="top-articles-list">
+                <!-- Top articles list will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts and Recommendations -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <!-- Smart Alerts -->
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Alertes Intelligentes</h3>
+            <div id="smart-alerts" class="space-y-3">
+                <!-- Smart alerts will be populated here -->
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recommandations</h3>
+            <div id="recommendations" class="space-y-3">
+                <!-- Recommendations will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let evolutionChart, categoryChart, movementChart;
+    let analyticsData = {};
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAnalyticsData();
+    });
+
+    async function loadAnalyticsData() {
+        try {
+            // Load basic data
+            const [articles, receptions, outbounds] = await Promise.all([
+                apiRequest('GET', '/api/articles'),
+                apiRequest('GET', '/api/receptions'),
+                apiRequest('GET', '/api/outbounds')
+            ]);
+
+            analyticsData = { articles, receptions, outbounds };
+            
+            updateMetrics();
+            updateCharts();
+            updateTopArticles();
+            updateAlerts();
+            updateRecommendations();
+        } catch (error) {
+            console.error('Error loading analytics data:', error);
+        }
+    }
+
+    function updateMetrics() {
+        const { articles, receptions, outbounds } = analyticsData;
+        
+        // Calculate metrics
+        const totalValue = articles.reduce((sum, article) => 
+            sum + (article.prixUnitaire || 0) * article.stockActuel, 0);
+        
+        const criticalItems = articles.filter(article => 
+            article.stockActuel <= (article.seuilMinimum || 10) * 0.5).length;
+        
+        const totalMovements = receptions.length + outbounds.length;
+        const movementValue = receptions.reduce((sum, r) => sum + (r.quantiteRecue || 0), 0);
+        
+        // Update DOM
+        document.getElementById('stock-turnover').textContent = `${totalMovements} mvts`;
+        document.getElementById('movement-value').textContent = formatCurrency(movementValue * 10); // Estimate
+        document.getElementById('critical-items').textContent = criticalItems;
+        document.getElementById('avg-delivery').textContent = '3.2 jours';
+    }
+
+    function updateCharts() {
+        updateEvolutionChart();
+        updateCategoryChart();
+        updateMovementChart();
+    }
+
+    function updateEvolutionChart() {
+        const ctx = document.getElementById('evolution-chart').getContext('2d');
+        const period = parseInt(document.getElementById('evolution-period').value);
+        
+        if (evolutionChart) {
+            evolutionChart.destroy();
+        }
+
+        // Generate sample data for demonstration
+        const labels = [];
+        const data = [];
+        for (let i = period; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            labels.push(date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }));
+            data.push(Math.floor(Math.random() * 100) + 50);
+        }
+
+        evolutionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Mouvements',
+                    data: data,
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function updateCategoryChart() {
+        const ctx = document.getElementById('category-chart').getContext('2d');
+        const metric = document.getElementById('category-metric').value;
+        
+        if (categoryChart) {
+            categoryChart.destroy();
+        }
+
+        const { articles } = analyticsData;
+        const categoryData = {};
+
+        articles.forEach(article => {
+            const category = article.categorie || 'Non catégorisé';
+            if (!categoryData[category]) {
+                categoryData[category] = { count: 0, value: 0 };
+            }
+            categoryData[category].count++;
+            categoryData[category].value += (article.prixUnitaire || 0) * article.stockActuel;
+        });
+
+        const labels = Object.keys(categoryData);
+        const data = labels.map(label => categoryData[label][metric]);
+
+        categoryChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
+                        '#8B5CF6', '#F97316', '#06B6D4', '#84CC16'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    function updateMovementChart() {
+        const ctx = document.getElementById('movement-chart').getContext('2d');
+        const period = parseInt(document.getElementById('movement-period').value);
+        
+        if (movementChart) {
+            movementChart.destroy();
+        }
+
+        // Generate sample data
+        const labels = [];
+        const receptionsData = [];
+        const outboundsData = [];
+        
+        for (let i = period; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            labels.push(date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }));
+            receptionsData.push(Math.floor(Math.random() * 20) + 5);
+            outboundsData.push(Math.floor(Math.random() * 15) + 3);
+        }
+
+        movementChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Entrées',
+                    data: receptionsData,
+                    backgroundColor: '#10B981',
+                }, {
+                    label: 'Sorties',
+                    data: outboundsData,
+                    backgroundColor: '#EF4444',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function updateTopArticles() {
+        const metric = document.getElementById('top-metric').value;
+        const { articles } = analyticsData;
+        const container = document.getElementById('top-articles-list');
+        
+        let sortedArticles = [...articles];
+        
+        switch (metric) {
+            case 'movement':
+                // For demo, use random movement count
+                sortedArticles = sortedArticles.map(article => ({
+                    ...article,
+                    movements: Math.floor(Math.random() * 50)
+                })).sort((a, b) => b.movements - a.movements);
+                break;
+            case 'value':
+                sortedArticles.sort((a, b) => 
+                    ((b.prixUnitaire || 0) * b.stockActuel) - ((a.prixUnitaire || 0) * a.stockActuel));
+                break;
+            case 'low_stock':
+                sortedArticles.sort((a, b) => 
+                    (a.stockActuel / (a.seuilMinimum || 10)) - (b.stockActuel / (b.seuilMinimum || 10)));
+                break;
+        }
+
+        const html = sortedArticles.slice(0, 8).map((article, index) => {
+            let value = '';
+            switch (metric) {
+                case 'movement':
+                    value = `${article.movements} mouvements`;
+                    break;
+                case 'value':
+                    value = formatCurrency((article.prixUnitaire || 0) * article.stockActuel);
+                    break;
+                case 'low_stock':
+                    const ratio = article.stockActuel / (article.seuilMinimum || 10);
+                    value = `${Math.round(ratio * 100)}% du seuil`;
+                    break;
+            }
+            
+            return `
+                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-md">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm font-medium text-gray-500 w-6">${index + 1}</span>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">${article.designation}</p>
+                            <p class="text-xs text-gray-500">${article.codeArticle}</p>
+                        </div>
+                    </div>
+                    <span class="text-sm text-gray-700">${value}</span>
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML = html;
+    }
+
+    function updateAlerts() {
+        const { articles } = analyticsData;
+        const container = document.getElementById('smart-alerts');
+        
+        const alerts = [];
+        
+        // Stock bas
+        const lowStock = articles.filter(a => a.stockActuel <= (a.seuilMinimum || 10));
+        if (lowStock.length > 0) {
+            alerts.push({
+                type: 'warning',
+                icon: 'fas fa-exclamation-triangle',
+                title: `${lowStock.length} article(s) en stock bas`,
+                description: 'Réapprovisionnement recommandé'
+            });
+        }
+        
+        // Stock critique
+        const criticalStock = articles.filter(a => a.stockActuel <= (a.seuilMinimum || 10) * 0.5);
+        if (criticalStock.length > 0) {
+            alerts.push({
+                type: 'error',
+                icon: 'fas fa-times-circle',
+                title: `${criticalStock.length} article(s) en stock critique`,
+                description: 'Action immédiate requise'
+            });
+        }
+        
+        // Stock élevé
+        const highStock = articles.filter(a => a.stockActuel > (a.seuilMinimum || 10) * 3);
+        if (highStock.length > 0) {
+            alerts.push({
+                type: 'info',
+                icon: 'fas fa-info-circle',
+                title: `${highStock.length} article(s) en surstock`,
+                description: 'Optimisation possible'
+            });
+        }
+
+        const html = alerts.map(alert => {
+            const colorClass = alert.type === 'error' ? 'text-red-600 bg-red-50' : 
+                              alert.type === 'warning' ? 'text-yellow-600 bg-yellow-50' : 
+                              'text-blue-600 bg-blue-50';
+            
+            return `
+                <div class="flex items-start space-x-3 p-3 ${colorClass} rounded-md">
+                    <i class="${alert.icon} mt-0.5"></i>
+                    <div>
+                        <p class="text-sm font-medium">${alert.title}</p>
+                        <p class="text-xs">${alert.description}</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML = html || '<p class="text-sm text-gray-500">Aucune alerte</p>';
+    }
+
+    function updateRecommendations() {
+        const container = document.getElementById('recommendations');
+        
+        const recommendations = [
+            {
+                icon: 'fas fa-shopping-cart',
+                title: 'Optimiser les commandes',
+                description: 'Grouper les commandes par fournisseur pour réduire les coûts'
+            },
+            {
+                icon: 'fas fa-chart-line',
+                title: 'Analyser la rotation',
+                description: 'Revoir les seuils pour les articles à rotation lente'
+            },
+            {
+                icon: 'fas fa-clock',
+                title: 'Délais de livraison',
+                description: 'Négocier des délais plus courts avec les fournisseurs principaux'
+            }
+        ];
+
+        const html = recommendations.map(rec => `
+            <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-md">
+                <i class="${rec.icon} text-blue-600 mt-0.5"></i>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">${rec.title}</p>
+                    <p class="text-xs text-gray-600">${rec.description}</p>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = html;
+    }
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(value);
+    }
+
+    function refreshData() {
+        showLoading();
+        loadAnalyticsData().finally(() => {
+            hideLoading();
+            showToast('Données actualisées', 'success');
+        });
+    }
+
+    function exportReport() {
+        showToast('Export en cours de développement', 'info');
+    }
+</script>
+{% endblock %}

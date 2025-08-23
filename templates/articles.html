@@ -1,0 +1,639 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Articles - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6" data-testid="articles-page">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Gestion des Articles</h1>
+            <p class="text-sm text-gray-600" id="articles-count">
+                Chargement...
+            </p>
+        </div>
+        <div class="flex space-x-3">
+            <button 
+                onclick="toggleAnalytics()"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                id="analytics-toggle"
+            >
+                <i class="fas fa-chart-bar mr-2"></i>
+                Analytics
+            </button>
+            <button 
+                onclick="openImportExport()"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+                <i class="fas fa-upload mr-2"></i>
+                Import/Export
+            </button>
+            <button 
+                onclick="openArticleForm()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+                <i class="fas fa-plus mr-2"></i>
+                Nouvel Article
+            </button>
+        </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div id="analytics-section" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Articles par Catégorie</h3>
+            <canvas id="category-chart" height="200"></canvas>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Niveaux de Stock</h3>
+            <canvas id="stock-level-chart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Articles Table Card -->
+    <div class="bg-white shadow rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-gray-900">Liste des Articles</h3>
+                <div class="flex space-x-3">
+                    <button 
+                        onclick="exportData()"
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 mr-2"
+                    >
+                        <i class="fas fa-download mr-2"></i>
+                        Export PDF
+                    </button>
+                    <button 
+                        onclick="openImportExport()"
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        data-testid="button-import-export"
+                    >
+                        <i class="fas fa-upload mr-2"></i>
+                        Import/Export
+                    </button>
+                    <button 
+                        onclick="openArticleForm()"
+                        class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                        data-testid="button-add-article"
+                    >
+                        <i class="fas fa-plus mr-2"></i>
+                        Nouvel Article
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="p-6 border-b border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                    <input 
+                        type="text" 
+                        placeholder="Code, désignation..." 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="search-input"
+                        data-testid="input-search"
+                        onkeyup="filterArticles()"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
+                    <select 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="category-filter"
+                        data-testid="select-category"
+                        onchange="filterArticles()"
+                    >
+                        <option value="all">Toutes les catégories</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+                    <select 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="stock-filter"
+                        data-testid="select-stock"
+                        onchange="filterArticles()"
+                    >
+                        <option value="all">Tous</option>
+                        <option value="low">Stock bas</option>
+                        <option value="normal">Stock normal</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                    <button 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        onclick="clearFilters()"
+                        data-testid="button-clear-filters"
+                    >
+                        Effacer filtres
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Articles Table -->
+        <div class="p-0">
+            <div id="articles-table-container">
+                <!-- Loading state -->
+                <div class="p-6">
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Article Form Modal -->
+<div id="article-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900" id="modal-title">
+                    Nouvel Article
+                </h3>
+                <button onclick="closeArticleForm()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="article-form" onsubmit="saveArticle(event)">
+                <input type="hidden" id="article-id" name="id">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Code Article *</label>
+                        <input type="text" id="codeArticle" name="codeArticle" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Désignation *</label>
+                        <input type="text" id="designation" name="designation" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie *</label>
+                        <input type="text" id="categorie" name="categorie" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Marque</label>
+                            <input type="text" id="marque" name="marque"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Référence</label>
+                            <input type="text" id="reference" name="reference"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Stock Initial *</label>
+                            <input type="number" id="stockInitial" name="stockInitial" required min="0"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Unité</label>
+                            <select id="unite" name="unite"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="pcs">Pièces</option>
+                                <option value="kg">Kilogrammes</option>
+                                <option value="m">Mètres</option>
+                                <option value="l">Litres</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Prix Unitaire</label>
+                            <input type="number" id="prixUnitaire" name="prixUnitaire" step="0.01" min="0"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Seuil Minimum</label>
+                            <input type="number" id="seuilMinimum" name="seuilMinimum" min="0" value="10"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeArticleForm()"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let articles = [];
+    let filteredArticles = [];
+    let suppliers = [];
+    let editingArticle = null;
+    let categoryChart = null;
+    let stockChart = null;
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        loadArticles();
+        loadSuppliers();
+    });
+
+    async function loadArticles() {
+        try {
+            articles = await apiRequest('GET', '/api/articles');
+            filteredArticles = [...articles];
+            updateArticlesTable();
+            updateFilters();
+            updateAnalytics();
+        } catch (error) {
+            console.error('Error loading articles:', error);
+        }
+    }
+
+    async function loadSuppliers() {
+        try {
+            suppliers = await apiRequest('GET', '/api/suppliers');
+        } catch (error) {
+            console.error('Error loading suppliers:', error);
+        }
+    }
+
+    function updateArticlesTable() {
+        const container = document.getElementById('articles-table-container');
+        const countElement = document.getElementById('articles-count');
+        
+        countElement.textContent = `${filteredArticles.length} article(s) sur ${articles.length} total`;
+
+        if (filteredArticles.length === 0) {
+            container.innerHTML = `
+                <div class="p-8 text-center text-gray-500" data-testid="empty-state">
+                    <i class="fas fa-boxes text-4xl mb-4"></i>
+                    <p class="text-lg font-medium">Aucun article trouvé</p>
+                    <p class="text-sm">Commencez par ajouter votre premier article</p>
+                    <button onclick="openArticleForm()" 
+                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            data-testid="button-add-first-article">
+                        Ajouter un article
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        const tableHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Code Article</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Désignation</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Catégorie</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Stock</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Prix Unitaire</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Fournisseur</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredArticles.map(article => createArticleRow(article)).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        container.innerHTML = tableHTML;
+    }
+
+    function createArticleRow(article) {
+        const stockStatus = getStockStatus(article);
+        const supplierName = getSupplierName(article.fournisseurId);
+        
+        return `
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">${article.codeArticle}</td>
+                <td class="p-4 text-sm text-gray-700">${article.designation}</td>
+                <td class="p-4 text-sm text-gray-500">${article.categorie}</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="${stockStatus.icon} ${stockStatus.color}"></i>
+                        <span class="font-medium ${stockStatus.color}">
+                            ${article.stockActuel} ${article.unite}
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">${article.prixUnitaire ? `${article.prixUnitaire} EUR` : '-'}</td>
+                <td class="p-4 text-sm text-gray-500">${supplierName}</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('${article.id}')" 
+                                title="Générer QR Code"
+                                class="p-2 text-green-600 hover:bg-green-50 rounded"
+                                data-testid="button-qr-${article.id}">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('${article.id}')" 
+                                title="Modifier"
+                                class="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                                data-testid="button-edit-${article.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('${article.id}')" 
+                                title="Supprimer"
+                                class="p-2 text-red-600 hover:bg-red-50 rounded"
+                                data-testid="button-delete-${article.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+
+    function getStockStatus(article) {
+        if (article.stockActuel <= (article.seuilMinimum || 10)) {
+            return { color: "text-red-600", icon: "fas fa-exclamation-triangle" };
+        }
+        return { color: "text-green-600", icon: "fas fa-check-circle" };
+    }
+
+    function getSupplierName(supplierId) {
+        if (!supplierId) return "Non défini";
+        const supplier = suppliers.find(s => s.id === supplierId);
+        return supplier?.nom || "Inconnu";
+    }
+
+    function updateFilters() {
+        const categories = [...new Set(articles.map(a => a.categorie))];
+        const categoryFilter = document.getElementById('category-filter');
+        
+        // Clear existing options except "all"
+        categoryFilter.innerHTML = '<option value="all">Toutes les catégories</option>';
+        
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categoryFilter.appendChild(option);
+        });
+    }
+
+    function filterArticles() {
+        const search = document.getElementById('search-input').value.toLowerCase();
+        const categoryFilter = document.getElementById('category-filter').value;
+        const stockFilter = document.getElementById('stock-filter').value;
+
+        filteredArticles = articles.filter(article => {
+            const matchesSearch = !search || 
+                article.designation.toLowerCase().includes(search) ||
+                article.codeArticle.toLowerCase().includes(search) ||
+                (article.marque && article.marque.toLowerCase().includes(search)) ||
+                (article.reference && article.reference.toLowerCase().includes(search)) ||
+                article.categorie.toLowerCase().includes(search);
+
+            const matchesCategory = categoryFilter === 'all' || article.categorie === categoryFilter;
+
+            const matchesStock = stockFilter === 'all' || 
+                (stockFilter === 'low' && article.stockActuel < (article.seuilMinimum || 10)) ||
+                (stockFilter === 'normal' && article.stockActuel >= (article.seuilMinimum || 10));
+
+            return matchesSearch && matchesCategory && matchesStock;
+        });
+
+        updateArticlesTable();
+        updateAnalytics();
+    }
+
+    function clearFilters() {
+        document.getElementById('search-input').value = '';
+        document.getElementById('category-filter').value = 'all';
+        document.getElementById('stock-filter').value = 'all';
+        filterArticles();
+    }
+
+    function toggleAnalytics() {
+        const section = document.getElementById('analytics-section');
+        const toggle = document.getElementById('analytics-toggle');
+        
+        if (section.classList.contains('hidden')) {
+            section.classList.remove('hidden');
+            toggle.classList.add('bg-blue-600', 'text-white');
+            toggle.classList.remove('bg-white', 'text-gray-700');
+            updateAnalytics();
+        } else {
+            section.classList.add('hidden');
+            toggle.classList.remove('bg-blue-600', 'text-white');
+            toggle.classList.add('bg-white', 'text-gray-700');
+        }
+    }
+
+    function updateAnalytics() {
+        if (document.getElementById('analytics-section').classList.contains('hidden')) return;
+
+        // Category chart data
+        const categoryData = filteredArticles.reduce((acc, article) => {
+            const cat = article.categorie || 'Non catégorisé';
+            if (!acc[cat]) acc[cat] = 0;
+            acc[cat]++;
+            return acc;
+        }, {});
+
+        // Stock level data
+        const stockLevelData = filteredArticles.reduce((acc, article) => {
+            const seuil = article.seuilMinimum || 10;
+            let level = 'Normal';
+            if (article.stockActuel <= seuil * 0.5) level = 'Critique';
+            else if (article.stockActuel <= seuil) level = 'Bas';
+            else if (article.stockActuel > seuil * 2) level = 'Élevé';
+            
+            if (!acc[level]) acc[level] = 0;
+            acc[level]++;
+            return acc;
+        }, {});
+
+        // Update charts
+        updateCategoryChart(categoryData);
+        updateStockChart(stockLevelData);
+    }
+
+    function updateCategoryChart(data) {
+        const ctx = document.getElementById('category-chart').getContext('2d');
+        
+        if (categoryChart) {
+            categoryChart.destroy();
+        }
+
+        categoryChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    label: 'Nombre d\'articles',
+                    data: Object.values(data),
+                    backgroundColor: '#3B82F6',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    function updateStockChart(data) {
+        const ctx = document.getElementById('stock-level-chart').getContext('2d');
+        
+        if (stockChart) {
+            stockChart.destroy();
+        }
+
+        stockChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    data: Object.values(data),
+                    backgroundColor: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Modal functions
+    function openArticleForm(articleId = null) {
+        editingArticle = articleId ? articles.find(a => a.id === articleId) : null;
+        const modal = document.getElementById('article-modal');
+        const title = document.getElementById('modal-title');
+        const form = document.getElementById('article-form');
+        
+        title.textContent = editingArticle ? 'Modifier Article' : 'Nouvel Article';
+        
+        if (editingArticle) {
+            populateForm(editingArticle);
+        } else {
+            form.reset();
+            document.getElementById('article-id').value = '';
+        }
+        
+        modal.classList.remove('hidden');
+    }
+
+    function closeArticleForm() {
+        document.getElementById('article-modal').classList.add('hidden');
+        editingArticle = null;
+    }
+
+    function populateForm(article) {
+        document.getElementById('article-id').value = article.id;
+        document.getElementById('codeArticle').value = article.codeArticle;
+        document.getElementById('designation').value = article.designation;
+        document.getElementById('categorie').value = article.categorie;
+        document.getElementById('marque').value = article.marque || '';
+        document.getElementById('reference').value = article.reference || '';
+        document.getElementById('stockInitial').value = article.stockInitial;
+        document.getElementById('unite').value = article.unite;
+        document.getElementById('prixUnitaire').value = article.prixUnitaire || '';
+        document.getElementById('seuilMinimum').value = article.seuilMinimum || 10;
+    }
+
+    async function saveArticle(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Convert numeric fields
+        data.stockInitial = parseInt(data.stockInitial);
+        data.prixUnitaire = data.prixUnitaire ? parseFloat(data.prixUnitaire) : null;
+        data.seuilMinimum = parseInt(data.seuilMinimum);
+
+        try {
+            if (editingArticle) {
+                await apiRequest('PUT', `/api/articles/${editingArticle.id}`, data);
+                showToast('Article modifié avec succès', 'success');
+            } else {
+                await apiRequest('POST', '/api/articles', data);
+                showToast('Article créé avec succès', 'success');
+            }
+            
+            closeArticleForm();
+            loadArticles();
+        } catch (error) {
+            console.error('Error saving article:', error);
+        }
+    }
+
+    function editArticle(id) {
+        openArticleForm(id);
+    }
+
+    async function deleteArticle(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
+            return;
+        }
+
+        try {
+            await apiRequest('DELETE', `/api/articles/${id}`);
+            showToast('Article supprimé avec succès', 'success');
+            loadArticles();
+        } catch (error) {
+            console.error('Error deleting article:', error);
+        }
+    }
+
+    function generateQR(id) {
+        const article = articles.find(a => a.id === id);
+        if (article) {
+            showToast(`QR Code généré pour ${article.designation}`, 'info');
+            // Here you would integrate QR code generation
+        }
+    }
+
+    function openImportExport() {
+        showToast('Fonctionnalité Import/Export en cours de développement', 'info');
+    }
+
+    function exportData() {
+        showToast('Export PDF en cours de développement', 'info');
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+Quick Desktop Build for StockCeramique...
+Installing Electron and builder tools...
+
+added 1 package, and audited 376 packages in 1s
+
+63 packages are looking for funding
+  run `npm fund` for details
+
+1 high severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+Building desktop version...
+Need to install the following packages:
+esbuild@0.25.9
+Ok to proceed? (y) y
+
+X [ERROR] The entry point "server/index-desktop.ts" cannot be marked as external
+
+1 error
+node:child_process:921
+    throw err;
+    ^
+
+Error: Command failed: C:\Users\fikri\AppData\Local\npm-cache\_npx\beb367dfa21eb3f5\node_modules\@esbuild\win32-x64\esbuild.exe server/index-desktop.ts --platform=node --packages=external --bundle --format=esm --outdir=dist-desktop
+    at genericNodeError (node:internal/errors:983:15)
+    at wrappedFn (node:internal/errors:537:14)
+    at checkExecSyncError (node:child_process:882:11)
+    at Object.execFileSync (node:child_process:918:15)
+    at Object.<anonymous> (C:\Users\fikri\AppData\Local\npm-cache\_npx\beb367dfa21eb3f5\node_modules\esbuild\bin\esbuild:222:28)
+    at Module._compile (node:internal/modules/cjs/loader:1554:14)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14) {
+  status: 1,
+  signal: null,
+  output: [ null, null, null ],
+  pid: 13008,
+  stdout: null,
+  stderr: null
+}
+
+Node.js v22.14.0
+0 File(s) copied
+The system cannot find the file specified.
+Creating Windows executable...
+  • electron-builder  version=26.0.12 os=10.0.26100
+  ⨯ ENOENT: no such file or directory, open 'C:\Windows\System32\dist-desktop\package.json'  failedTask=build stackTrace=Error: ENOENT: no such file or directory, open 'C:\Windows\System32\dist-desktop\package.json'
+    at open (node:internal/fs/promises:638:25)
+    at Object.readFile (node:internal/fs/promises:1242:14)
+    at readConfig (C:\Windows\System32\node_modules\app-builder-lib\src\util\config\load.ts:17:16)
+    at getConfig (C:\Windows\System32\node_modules\app-builder-lib\src\util\config\config.ts:43:34)
+    at Packager.validateConfig (C:\Windows\System32\node_modules\app-builder-lib\src\packager.ts:361:27)
+    at Packager.build (C:\Windows\System32\node_modules\app-builder-lib\src\packager.ts:392:5)
+    at executeFinally (C:\Windows\System32\node_modules\builder-util\src\promise.ts:12:14)
+
+======================================
+DESKTOP BUILD COMPLETE!
+======================================
+
+Find your installer at: dist-desktop\dist\StockCeramique Setup.exe
+
+Press any key to continue . . .

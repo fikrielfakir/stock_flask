@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Fournisseurs - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Gestion des Fournisseurs</h1>
+            <p class="text-sm text-gray-600" id="suppliers-count">Chargement...</p>
+        </div>
+        <div class="flex space-x-3">
+            <button 
+                onclick="openSupplierForm()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+                <i class="fas fa-plus mr-2"></i>
+                Nouveau Fournisseur
+            </button>
+        </div>
+    </div>
+
+    <!-- Suppliers Table -->
+    <div class="bg-white shadow rounded-lg border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-900">Liste des Fournisseurs</h3>
+        </div>
+        
+        <div class="p-6 border-b border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                    <input 
+                        type="text" 
+                        placeholder="Nom, contact..." 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        id="search-input"
+                        onkeyup="filterSuppliers()"
+                    >
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                    <button 
+                        class="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        onclick="clearFilters()"
+                    >
+                        Effacer filtres
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-0">
+            <div id="suppliers-table-container">
+                <div class="p-6">
+                    <div class="animate-pulse space-y-4">
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Supplier Form Modal -->
+<div id="supplier-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900" id="supplier-modal-title">
+                    Nouveau Fournisseur
+                </h3>
+                <button onclick="closeSupplierForm()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="supplier-form" onsubmit="saveSupplier(event)">
+                <input type="hidden" id="supplier-id" name="id">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                        <input type="text" id="nom" name="nom" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+                        <input type="text" id="contact" name="contact"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                            <input type="text" id="telephone" name="telephone"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" id="email" name="email"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+                        <textarea id="adresse" name="adresse" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Conditions Paiement</label>
+                            <input type="text" id="conditionsPaiement" name="conditionsPaiement"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Délai Livraison (jours)</label>
+                            <input type="number" id="delaiLivraison" name="delaiLivraison" min="0"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeSupplierForm()"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let suppliers = [];
+    let filteredSuppliers = [];
+    let editingSupplier = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSuppliers();
+    });
+
+    async function loadSuppliers() {
+        try {
+            suppliers = await apiRequest('GET', '/api/suppliers');
+            filteredSuppliers = [...suppliers];
+            updateSuppliersTable();
+        } catch (error) {
+            console.error('Error loading suppliers:', error);
+        }
+    }
+
+    function updateSuppliersTable() {
+        const container = document.getElementById('suppliers-table-container');
+        const countElement = document.getElementById('suppliers-count');
+        
+        countElement.textContent = `${filteredSuppliers.length} fournisseur(s) sur ${suppliers.length} total`;
+
+        if (filteredSuppliers.length === 0) {
+            container.innerHTML = `
+                <div class="p-8 text-center text-gray-500">
+                    <i class="fas fa-truck text-4xl mb-4"></i>
+                    <p class="text-lg font-medium">Aucun fournisseur trouvé</p>
+                    <p class="text-sm">Commencez par ajouter votre premier fournisseur</p>
+                    <button onclick="openSupplierForm()" 
+                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Ajouter un fournisseur
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        const tableHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Nom</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Contact</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Téléphone</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Email</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Délai Livraison</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredSuppliers.map(supplier => createSupplierRow(supplier)).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        container.innerHTML = tableHTML;
+    }
+
+    function createSupplierRow(supplier) {
+        return `
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">${supplier.nom}</td>
+                <td class="p-4 text-sm text-gray-700">${supplier.contact || '-'}</td>
+                <td class="p-4 text-sm text-gray-500">${supplier.telephone || '-'}</td>
+                <td class="p-4 text-sm text-gray-500">${supplier.email || '-'}</td>
+                <td class="p-4 text-sm text-gray-500">${supplier.delaiLivraison ? `${supplier.delaiLivraison} jours` : '-'}</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="editSupplier('${supplier.id}')" 
+                                title="Modifier"
+                                class="p-2 text-blue-600 hover:bg-blue-50 rounded">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteSupplier('${supplier.id}')" 
+                                title="Supprimer"
+                                class="p-2 text-red-600 hover:bg-red-50 rounded">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+
+    function filterSuppliers() {
+        const search = document.getElementById('search-input').value.toLowerCase();
+
+        filteredSuppliers = suppliers.filter(supplier => {
+            return !search || 
+                supplier.nom.toLowerCase().includes(search) ||
+                (supplier.contact && supplier.contact.toLowerCase().includes(search)) ||
+                (supplier.telephone && supplier.telephone.toLowerCase().includes(search)) ||
+                (supplier.email && supplier.email.toLowerCase().includes(search));
+        });
+
+        updateSuppliersTable();
+    }
+
+    function clearFilters() {
+        document.getElementById('search-input').value = '';
+        filterSuppliers();
+    }
+
+    function openSupplierForm(supplierId = null) {
+        editingSupplier = supplierId ? suppliers.find(s => s.id === supplierId) : null;
+        const modal = document.getElementById('supplier-modal');
+        const title = document.getElementById('supplier-modal-title');
+        const form = document.getElementById('supplier-form');
+        
+        title.textContent = editingSupplier ? 'Modifier Fournisseur' : 'Nouveau Fournisseur';
+        
+        if (editingSupplier) {
+            populateSupplierForm(editingSupplier);
+        } else {
+            form.reset();
+            document.getElementById('supplier-id').value = '';
+        }
+        
+        modal.classList.remove('hidden');
+    }
+
+    function closeSupplierForm() {
+        document.getElementById('supplier-modal').classList.add('hidden');
+        editingSupplier = null;
+    }
+
+    function populateSupplierForm(supplier) {
+        document.getElementById('supplier-id').value = supplier.id;
+        document.getElementById('nom').value = supplier.nom;
+        document.getElementById('contact').value = supplier.contact || '';
+        document.getElementById('telephone').value = supplier.telephone || '';
+        document.getElementById('email').value = supplier.email || '';
+        document.getElementById('adresse').value = supplier.adresse || '';
+        document.getElementById('conditionsPaiement').value = supplier.conditionsPaiement || '';
+        document.getElementById('delaiLivraison').value = supplier.delaiLivraison || '';
+    }
+
+    async function saveSupplier(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Convert numeric fields
+        data.delaiLivraison = data.delaiLivraison ? parseInt(data.delaiLivraison) : null;
+
+        try {
+            if (editingSupplier) {
+                await apiRequest('PUT', `/api/suppliers/${editingSupplier.id}`, data);
+                showToast('Fournisseur modifié avec succès', 'success');
+            } else {
+                await apiRequest('POST', '/api/suppliers', data);
+                showToast('Fournisseur créé avec succès', 'success');
+            }
+            
+            closeSupplierForm();
+            loadSuppliers();
+        } catch (error) {
+            console.error('Error saving supplier:', error);
+        }
+    }
+
+    function editSupplier(id) {
+        openSupplierForm(id);
+    }
+
+    async function deleteSupplier(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?')) {
+            return;
+        }
+
+        try {
+            await apiRequest('DELETE', `/api/suppliers/${id}`);
+            showToast('Fournisseur supprimé avec succès', 'success');
+            loadSuppliers();
+        } catch (error) {
+            console.error('Error deleting supplier:', error);
+        }
+    }
+</script>
+{% endblock %}

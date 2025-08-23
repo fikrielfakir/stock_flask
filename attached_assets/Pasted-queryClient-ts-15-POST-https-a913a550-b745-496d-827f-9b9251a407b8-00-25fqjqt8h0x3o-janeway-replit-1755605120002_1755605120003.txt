@@ -1,0 +1,55 @@
+queryClient.ts:15  POST https://a913a550-b745-496d-827f-9b9251a407b8-00-25fqjqt8h0x3o.janeway.replit.dev/api/purchase-requests 400 (Bad Request)
+apiRequest @ queryClient.ts:15
+mutationFn @ EnhancedPurchaseRequestForm.tsx:117
+fn @ @tanstack_react-query.js?v=73a77f22:1236
+run @ @tanstack_react-query.js?v=73a77f22:513
+start @ @tanstack_react-query.js?v=73a77f22:555
+execute @ @tanstack_react-query.js?v=73a77f22:1272
+await in execute
+mutate @ @tanstack_react-query.js?v=73a77f22:2692
+(anonymous) @ @tanstack_react-query.js?v=73a77f22:3415
+onSubmit @ EnhancedPurchaseRequestForm.tsx:184
+(anonymous) @ chunk-ZDQXM6G4.js?v=bcd5e53b:1506
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=bcd5e53b:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=bcd5e53b:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=bcd5e53b:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=bcd5e53b:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=bcd5e53b:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=bcd5e53b:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=bcd5e53b:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=bcd5e53b:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=bcd5e53b:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=bcd5e53b:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=bcd5e53b:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=bcd5e53b:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=bcd5e53b:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=bcd5e53b:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=bcd5e53b:5449
+EnhancedPurchaseRequestForm.tsx:151 Purchase request creation error: Error: 400: {"message":"Données invalides","error":{"issues":[{"code":"invalid_type","expected":"string","received":"undefined","path":["dateDemande"],"message":"Required"}],"name":"ZodError"}}
+    at throwIfResNotOk (queryClient.ts:6:11)
+    at async apiRequest (queryClient.ts:22:3)
+    at async Object.mutationFn (EnhancedPurchaseRequestForm.tsx:117:24)
+onError @ EnhancedPurchaseRequestForm.tsx:151
+execute @ @tanstack_react-query.js?v=73a77f22:1301
+await in execute
+mutate @ @tanstack_react-query.js?v=73a77f22:2692
+(anonymous) @ @tanstack_react-query.js?v=73a77f22:3415
+onSubmit @ EnhancedPurchaseRequestForm.tsx:184
+(anonymous) @ chunk-ZDQXM6G4.js?v=bcd5e53b:1506
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=bcd5e53b:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=bcd5e53b:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=bcd5e53b:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=bcd5e53b:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=bcd5e53b:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=bcd5e53b:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=bcd5e53b:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=bcd5e53b:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=bcd5e53b:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=bcd5e53b:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=bcd5e53b:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=bcd5e53b:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=bcd5e53b:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=bcd5e53b:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=bcd5e53b:5449
