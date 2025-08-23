@@ -247,6 +247,146 @@
         </div>
     </div>
 </div>
+
+<!-- Import/Export Modal -->
+<div id="import-export-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50" data-testid="import-export-modal">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div class="flex items-center justify-between border-b pb-4">
+            <h3 class="text-lg font-medium text-gray-900">Import/Export Articles</h3>
+            <button onclick="closeImportExport()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Export Section -->
+                <div class="space-y-4">
+                    <h4 class="text-md font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-download mr-2 text-blue-600"></i>Exporter Articles
+                    </h4>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-4">
+                            Téléchargez tous vos articles dans le format de votre choix.
+                        </p>
+                        
+                        <div class="space-y-3">
+                            <button 
+                                onclick="exportData('csv')"
+                                class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                data-testid="button-export-csv"
+                            >
+                                <i class="fas fa-file-csv mr-2"></i>
+                                Exporter en CSV
+                            </button>
+                            
+                            <button 
+                                onclick="exportData('excel')"
+                                class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                data-testid="button-export-excel"
+                            >
+                                <i class="fas fa-file-excel mr-2"></i>
+                                Exporter en Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Section -->
+                <div class="space-y-4">
+                    <h4 class="text-md font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-upload mr-2 text-green-600"></i>Importer Articles
+                    </h4>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-4">
+                            Importez vos articles depuis un fichier CSV ou Excel. 
+                            Téléchargez d'abord le template pour voir le format requis.
+                        </p>
+                        
+                        <div class="space-y-3">
+                            <button 
+                                onclick="downloadTemplate()"
+                                class="w-full flex items-center justify-center px-4 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
+                                data-testid="button-download-template"
+                            >
+                                <i class="fas fa-download mr-2"></i>
+                                Télécharger Template
+                            </button>
+                            
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                                <input 
+                                    type="file" 
+                                    id="import-file-input" 
+                                    accept=".csv,.xlsx,.xls" 
+                                    onchange="onFileSelected()"
+                                    class="hidden"
+                                    data-testid="input-import-file"
+                                >
+                                <label 
+                                    for="import-file-input" 
+                                    class="cursor-pointer block text-center"
+                                >
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <p class="text-sm text-gray-600">
+                                        Cliquez pour sélectionner un fichier
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        CSV, XLSX ou XLS (max 10MB)
+                                    </p>
+                                </label>
+                            </div>
+                            
+                            <p id="file-name" class="text-sm text-gray-600 text-center">
+                                Aucun fichier sélectionné
+                            </p>
+                            
+                            <button 
+                                id="import-btn"
+                                onclick="importArticles()"
+                                disabled
+                                class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                data-testid="button-import-articles"
+                            >
+                                <i class="fas fa-upload mr-2"></i>
+                                Importer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Notes -->
+            <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                <div class="flex">
+                    <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="text-sm font-medium text-yellow-800">Important</h4>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>Les colonnes <strong>Code Article</strong>, <strong>Désignation</strong> et <strong>Catégorie</strong> sont obligatoires</li>
+                                <li>Si un article avec le même code existe, il sera mis à jour</li>
+                                <li>Les nouveaux articles seront créés automatiquement</li>
+                                <li>Formats supportés: CSV, XLSX, XLS</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end mt-6">
+            <button 
+                onclick="closeImportExport()"
+                class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                data-testid="button-close-import-export"
+            >
+                Fermer
+            </button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -629,11 +769,139 @@
     }
 
     function openImportExport() {
-        showToast('Fonctionnalité Import/Export en cours de développement', 'info');
+        document.getElementById('import-export-modal').classList.remove('hidden');
     }
 
-    function exportData() {
-        showToast('Export PDF en cours de développement', 'info');
+    function closeImportExport() {
+        document.getElementById('import-export-modal').classList.add('hidden');
+        // Reset file input
+        const fileInput = document.getElementById('import-file-input');
+        if (fileInput) fileInput.value = '';
+    }
+
+    async function exportData(format = 'csv') {
+        try {
+            const response = await fetch(`/api/articles/export?format=${format}`);
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `articles_export_${new Date().toISOString().slice(0,10)}.${format === 'excel' ? 'xlsx' : 'csv'}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                showToast(`Export ${format.toUpperCase()} terminé avec succès`, 'success');
+            } else {
+                const error = await response.json();
+                showToast(`Erreur lors de l'export: ${error.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('Export error:', error);
+            showToast('Erreur lors de l\'export des données', 'error');
+        }
+    }
+
+    async function downloadTemplate() {
+        try {
+            const response = await fetch('/api/articles/template');
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'template_import_articles.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                showToast('Template téléchargé avec succès', 'success');
+            } else {
+                const error = await response.json();
+                showToast(`Erreur lors du téléchargement: ${error.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('Template download error:', error);
+            showToast('Erreur lors du téléchargement du template', 'error');
+        }
+    }
+
+    async function importArticles() {
+        const fileInput = document.getElementById('import-file-input');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            showToast('Veuillez sélectionner un fichier', 'warning');
+            return;
+        }
+
+        // Validate file extension
+        const allowedExtensions = ['.csv', '.xlsx', '.xls'];
+        const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+        
+        if (!allowedExtensions.includes(fileExtension)) {
+            showToast('Format de fichier non supporté. Utilisez CSV ou Excel.', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            // Show loading state
+            const importBtn = document.getElementById('import-btn');
+            const originalText = importBtn.innerHTML;
+            importBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Import en cours...';
+            importBtn.disabled = true;
+
+            const response = await fetch('/api/articles/import', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            
+            if (response.ok) {
+                showToast(result.message, 'success');
+                closeImportExport();
+                loadArticles(); // Reload articles to show new data
+                
+                // Show detailed results if available
+                if (result.errors && result.errors.length > 0) {
+                    console.warn('Import errors:', result.errors);
+                }
+            } else {
+                showToast(`Erreur d'import: ${result.message}`, 'error');
+            }
+
+            // Reset button state
+            importBtn.innerHTML = originalText;
+            importBtn.disabled = false;
+            
+        } catch (error) {
+            console.error('Import error:', error);
+            showToast('Erreur lors de l\'import des données', 'error');
+            
+            // Reset button state
+            const importBtn = document.getElementById('import-btn');
+            importBtn.innerHTML = '<i class="fas fa-upload mr-2"></i>Importer';
+            importBtn.disabled = false;
+        }
+    }
+
+    function onFileSelected() {
+        const fileInput = document.getElementById('import-file-input');
+        const fileName = document.getElementById('file-name');
+        const importBtn = document.getElementById('import-btn');
+        
+        if (fileInput.files.length > 0) {
+            fileName.textContent = fileInput.files[0].name;
+            importBtn.disabled = false;
+        } else {
+            fileName.textContent = 'Aucun fichier sélectionné';
+            importBtn.disabled = true;
+        }
     }
 </script>
 {% endblock %}

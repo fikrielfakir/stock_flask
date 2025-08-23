@@ -1,7 +1,11 @@
-from flask import jsonify, request
+from flask import jsonify, request, send_file, make_response
 from datetime import datetime
 import uuid
 from sqlalchemy import or_, func, desc
+import pandas as pd
+import io
+import csv
+from werkzeug.utils import secure_filename
 
 def register_routes(app, db):
     from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound
@@ -758,3 +762,218 @@ def register_routes(app, db):
             return jsonify([cat[0] for cat in categories if cat[0]])
         except Exception as e:
             return jsonify({'message': 'Erreur lors de la récupération des catégories'}), 500
+
+    # Bulk Import/Export Articles
+    @app.route("/api/articles/export", methods=['GET'])
+    def export_articles():
+        try:
+            # Get export format from query parameters
+            format_type = request.args.get('format', 'csv')
+            
+            # Get all articles
+            articles = Article.query.all()
+            
+            # Convert to list of dictionaries
+            data = []
+            for article in articles:
+                data.append({
+                    'Code Article': article.code_article,
+                    'Désignation': article.designation,
+                    'Catégorie': article.categorie,
+                    'Marque': article.marque or '',
+                    'Référence': article.reference or '',
+                    'Stock Initial': article.stock_initial,
+                    'Stock Actuel': article.stock_actuel,
+                    'Unité': article.unite,
+                    'Prix Unitaire': float(article.prix_unitaire) if article.prix_unitaire else 0,
+                    'Seuil Minimum': article.seuil_minimum,
+                    'Fournisseur ID': article.fournisseur_id or '',
+                    'Date Création': article.created_at.strftime('%Y-%m-%d %H:%M:%S') if article.created_at else ''
+                })
+            
+            # Create dataframe
+            df = pd.DataFrame(data)
+            
+            if format_type == 'excel':
+                # Export to Excel
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    df.to_excel(writer, sheet_name='Articles', index=False)
+                output.seek(0)
+                
+                response = make_response(output.getvalue())
+                response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                response.headers['Content-Disposition'] = f'attachment; filename=articles_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+                return response
+            else:
+                # Export to CSV
+                output = io.StringIO()
+                df.to_csv(output, index=False, encoding='utf-8')
+                output.seek(0)
+                
+                response = make_response(output.getvalue())
+                response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+                response.headers['Content-Disposition'] = f'attachment; filename=articles_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+                return response
+                
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de l\'export: {str(e)}'}), 500
+
+    @app.route("/api/articles/import", methods=['POST'])
+    def import_articles():
+        try:
+            if 'file' not in request.files:
+                return jsonify({'message': 'Aucun fichier fourni'}), 400
+            
+            file = request.files['file']
+            if file.filename == '':
+                return jsonify({'message': 'Nom de fichier vide'}), 400
+            
+            # Check file extension
+            filename = secure_filename(file.filename)
+            file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+            
+            if file_ext not in ['csv', 'xlsx', 'xls']:
+                return jsonify({'message': 'Format de fichier non supporté. Utilisez CSV ou Excel.'}), 400
+            
+            # Read file content
+            try:
+                if file_ext == 'csv':
+                    df = pd.read_csv(file)
+                else:
+                    df = pd.read_excel(file)
+            except Exception as e:
+                return jsonify({'message': f'Erreur lors de la lecture du fichier: {str(e)}'}), 400
+            
+            # Expected columns (mapping from display names to database fields)
+            expected_columns = {
+                'Code Article': 'code_article',
+                'Désignation': 'designation', 
+                'Catégorie': 'categorie',
+                'Marque': 'marque',
+                'Référence': 'reference',
+                'Stock Initial': 'stock_initial',
+                'Stock Actuel': 'stock_actuel',
+                'Unité': 'unite',
+                'Prix Unitaire': 'prix_unitaire',
+                'Seuil Minimum': 'seuil_minimum',
+                'Fournisseur ID': 'fournisseur_id'
+            }
+            
+            # Check required columns
+            required_columns = ['Code Article', 'Désignation', 'Catégorie']
+            missing_columns = [col for col in required_columns if col not in df.columns]
+            if missing_columns:
+                return jsonify({'message': f'Colonnes manquantes: {", ".join(missing_columns)}'}), 400
+            
+            # Process rows
+            created_count = 0
+            updated_count = 0
+            errors = []
+            
+            for index, row in df.iterrows():
+                try:
+                    # Check if article exists
+                    existing_article = Article.query.filter_by(code_article=row['Code Article']).first()
+                    
+                    if existing_article:
+                        # Update existing article
+                        for display_name, db_field in expected_columns.items():
+                            if display_name in df.columns and pd.notna(row[display_name]):
+                                value = row[display_name]
+                                if db_field in ['stock_initial', 'stock_actuel', 'seuil_minimum']:
+                                    value = int(value) if pd.notna(value) else 0
+                                elif db_field == 'prix_unitaire':
+                                    value = float(value) if pd.notna(value) else None
+                                elif db_field in ['marque', 'reference', 'fournisseur_id']:
+                                    value = str(value) if pd.notna(value) else None
+                                else:
+                                    value = str(value) if pd.notna(value) else ''
+                                setattr(existing_article, db_field, value)
+                        updated_count += 1
+                    else:
+                        # Create new article
+                        article_data = {}
+                        for display_name, db_field in expected_columns.items():
+                            if display_name in df.columns:
+                                value = row[display_name]
+                                if db_field in ['stock_initial', 'stock_actuel', 'seuil_minimum']:
+                                    article_data[db_field] = int(value) if pd.notna(value) else (10 if db_field == 'seuil_minimum' else 0)
+                                elif db_field == 'prix_unitaire':
+                                    article_data[db_field] = float(value) if pd.notna(value) else None
+                                elif db_field in ['marque', 'reference', 'fournisseur_id']:
+                                    article_data[db_field] = str(value) if pd.notna(value) else None
+                                else:
+                                    article_data[db_field] = str(value) if pd.notna(value) else ('pcs' if db_field == 'unite' else '')
+                        
+                        # Set defaults for required fields
+                        if 'unite' not in article_data or not article_data['unite']:
+                            article_data['unite'] = 'pcs'
+                        if 'seuil_minimum' not in article_data:
+                            article_data['seuil_minimum'] = 10
+                        if 'stock_initial' not in article_data:
+                            article_data['stock_initial'] = 0
+                        if 'stock_actuel' not in article_data:
+                            article_data['stock_actuel'] = article_data['stock_initial']
+                        
+                        article = Article(**article_data)
+                        db.session.add(article)
+                        created_count += 1
+                        
+                except Exception as e:
+                    errors.append(f'Ligne {index + 2}: {str(e)}')
+                    continue
+            
+            # Commit changes
+            try:
+                db.session.commit()
+                message = f'Import terminé: {created_count} articles créés, {updated_count} articles mis à jour'
+                if errors:
+                    message += f'. Erreurs: {len(errors)} lignes ignorées'
+                return jsonify({
+                    'message': message,
+                    'created': created_count,
+                    'updated': updated_count,
+                    'errors': errors[:5]  # Show first 5 errors only
+                }), 200
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'message': f'Erreur lors de la sauvegarde: {str(e)}'}), 500
+                
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de l\'import: {str(e)}'}), 500
+
+    @app.route("/api/articles/template", methods=['GET'])
+    def get_import_template():
+        try:
+            # Create template with headers and example data
+            template_data = [{
+                'Code Article': 'ART001',
+                'Désignation': 'Exemple Article',
+                'Catégorie': 'Électronique',
+                'Marque': 'Samsung',
+                'Référence': 'REF001',
+                'Stock Initial': 100,
+                'Stock Actuel': 95,
+                'Unité': 'pcs',
+                'Prix Unitaire': 25.50,
+                'Seuil Minimum': 10,
+                'Fournisseur ID': '',
+                'Date Création': ''
+            }]
+            
+            df = pd.DataFrame(template_data)
+            
+            # Export as Excel template
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, sheet_name='Template Articles', index=False)
+            output.seek(0)
+            
+            response = make_response(output.getvalue())
+            response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            response.headers['Content-Disposition'] = 'attachment; filename=template_import_articles.xlsx'
+            return response
+            
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de la génération du template: {str(e)}'}), 500
