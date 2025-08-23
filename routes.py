@@ -489,15 +489,26 @@ def register_routes(app, db):
                 if not item:
                     continue
                 
+                # Get supplier_id from form data first, then from item, then from article's default supplier
+                supplier_id = reception_article.get('supplierId') or item.supplier_id
+                if not supplier_id:
+                    # Fallback: get from article's default supplier
+                    article = Article.query.get(item.article_id)
+                    if article and article.fournisseur_id:
+                        supplier_id = article.fournisseur_id
+                
+                if not supplier_id:
+                    return jsonify({'message': f'Fournisseur manquant pour l\'article {item.article.designation if item.article else "inconnu"}'}), 400
+                
                 # Create reception record
                 reception = Reception(
                     date_reception=datetime.strptime(data['dateReception'], '%Y-%m-%d').date(),
-                    supplier_id=item.supplier_id,
+                    supplier_id=supplier_id,
                     article_id=item.article_id,
                     quantite_recue=reception_article['quantiteRecue'],
                     prix_unitaire=reception_article['prixUnitaire'],
                     numero_bon_livraison=data.get('numeroBonLivraison'),
-                    observations=data.get('observations')
+                    observations=data.get('observations', f"Réception pour demande d'achat #{purchase_request.id[:8]}")
                 )
                 db.session.add(reception)
                 

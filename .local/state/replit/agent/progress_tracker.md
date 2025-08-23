@@ -23,4 +23,5 @@
 [x] 7. Successfully start Flask application on port 5000
 [x] 8. Fix JavaScript getStatusColor error in purchase requests
 [x] 9. Prevent duplicate articles in purchase request form
-[x] 10. Complete migration and verify functionality
+[x] 10. Fix supplier_id constraint error in purchase request conversion
+[x] 11. Complete migration and verify functionality
