@@ -14,8 +14,8 @@ def create_app():
     # Initialize Flask app
     app = Flask(__name__, static_folder='dist', static_url_path='')
 
-    # Configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://localhost/stockceramique')
+    # Configuration - Local SQLite Database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///stockceramique.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
 
