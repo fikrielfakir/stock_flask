@@ -561,6 +561,15 @@
         const article = articles.find(a => a.id === articleId);
         if (!article) return;
 
+        // Check if this article is already selected in another line
+        const existingArticleInputs = document.querySelectorAll('.article-id');
+        for (let input of existingArticleInputs) {
+            if (input.value === articleId && input.dataset.line !== lineNumber.toString()) {
+                showToast('warning', 'Cet article est déjà sélectionné dans une autre ligne');
+                return;
+            }
+        }
+
         const line = document.getElementById(`article-line-${lineNumber}`);
         const autocompleteInput = line.querySelector('.article-autocomplete');
         const hiddenInput = line.querySelector('.article-id');
@@ -914,9 +923,7 @@
                                     <div>
                                         <div class="text-sm text-gray-600">Statut</div>
                                         <div class="font-medium">
-                                            <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(request.statut)}">
-                                                ${getStatusText(request.statut)}
-                                            </span>
+                                            ${getStatusBadge(request.statut)}
                                         </div>
                                     </div>
                                     <div>
