@@ -1,0 +1,196 @@
+Core Features
+
+Multi-Article Requests: Multiple items per request with quantity, price, and supplier.
+
+Approval Workflow: Four-stage lifecycle — Pending → Approved → Refused → Ordered.
+
+Smart Forms:
+
+Article autocomplete (3-character trigger).
+
+Supplier suggestions with estimated prices.
+
+Dynamic total calculations.
+
+Document Management: Generate/export purchase orders (PDF) with supplier and request details.
+
+Reception Integration: Convert approved requests directly into goods receptions.
+
+Approval Workflow Process
+1. Status Management System
+
+en_attente (Pending): Initial state when request is created.
+
+approuve (Approved): Approved by authorized personnel.
+
+refuse (Refused): Declined.
+
+commande (Ordered): Items ordered from supplier.
+
+2. Status Change to Approved
+
+Visual Indicators
+
+Status badge: Green (text-green-600 dark:text-green-400)
+
+Label: "Approuvé" with CheckCircle icon
+
+Action Triggers
+
+Status dropdown in /purchase-requests
+
+"Approuver" button in /purchase-follow
+
+Real-time updates with cache invalidation
+
+Toast: "Statut mis à jour - Le statut de la demande a été mis à jour"
+
+3. Convert to Reception Button Activation
+
+Conditional Display
+
+{request.statut === "approuve" && (
+  <ConvertToReceptionDialog purchaseRequest={request} />
+)}
+
+
+Button Specs
+
+Style: bg-green-600 hover:bg-green-700
+
+Icon: Package2 (Lucide React)
+
+Label: "Convertir en Réception"
+
+Size: sm
+
+Test ID: button-convert-${purchaseRequest.id}
+
+Shown only if status = "approuve"
+
+Disabled during conversion
+
+4. Convert to Reception Modal
+
+Dialog Specs
+
+Width: max-w-6xl | Height: max-h-[90vh] (scrollable)
+
+Test ID: dialog-convert-reception
+
+Title: "Convertir en Réception" + Package2 icon
+
+(a) Request Summary Card
+
+Style: Blue accent (bg-blue-50 dark:bg-blue-950/20)
+
+Shows: Request ID (#xxxx), article count, status badge, metadata grid
+
+(b) Articles Reception Table
+Column	Purpose	Input Type
+No	Row number	Display
+Article	Designation	Display
+Qté commandée	Requested quantity	Display
+Qté reçue	Received quantity	Number input (0–max)
+PU (MAD)	Unit price	Number input (step=0.01)
+Fournisseur	Supplier	Display
+Action	Remove item	Trash icon
+
+Test IDs: input-quantite-recue-${i}, input-prix-${i}
+
+(c) Reception Details Form
+
+Fields: Date de Réception, N° Bon de Livraison, Observations
+
+Defaults:
+
+{
+  dateReception: "today",
+  numeroBonLivraison: "",
+  observations: "Réception pour demande d'achat #xxxx"
+}
+
+5. Conversion Process
+
+Multi-Reception Creation
+
+Each article generates its own reception record
+
+apiRequest("POST", "/api/receptions", { ... });
+
+
+Status Update → "recu"
+
+await apiRequest("PUT", `/api/purchase-requests/${id}`, { statut: "recu" });
+
+
+Automatic Updates
+
+Inventory levels
+
+Cache invalidation (articles, dashboard, receptions)
+
+Movement history for audit
+
+Success Flow
+
+Toast: "Conversion réussie - La demande d'achat a été convertie en réceptions multiples"
+
+Cache refresh + modal close + form reset
+
+Error Flow
+
+Toast: "Erreur - Impossible de convertir la demande d'achat"
+
+Logs error to console, keeps form open
+
+Ensures no data corruption
+
+Additional Details
+Performance
+
+Conditional query loading (only when modal open)
+
+Optimistic UI updates
+
+Intelligent caching with TanStack Query
+
+Lazy loading heavy components
+
+UX Enhancements
+
+Loading spinners during processing
+
+Real-time validation feedback
+
+Action confirmation before submission
+
+Responsive + accessible design (ARIA, keyboard nav)
+
+Security & Audit
+
+Role-based permissions for approval/conversion
+
+Server-side validation of inputs
+
+Transaction logging with timestamps
+
+Error boundaries to prevent data loss
+
+Integrations
+
+Dashboard stats auto-refresh
+
+Stock system updates
+
+Supplier linkage
+
+Analytics & reporting feeds
+
+Localization
+
+UI in French (fr-FR)
+
+Currency formatting in MAD (dirhams)
+
+Status labels localized

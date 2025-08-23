@@ -100,23 +100,25 @@ class PurchaseRequest(db.Model):
     __tablename__ = 'purchase_requests'
     
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
+    numero_demande = db.Column(db.String(50), unique=True)
     date_demande = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     requestor_id = db.Column(db.String(36), nullable=False)
-    date_initiation = db.Column(db.DateTime, default=datetime.utcnow)
     observations = db.Column(db.Text)
-    statut = db.Column(db.Text, nullable=False, default='en_attente')
+    statut = db.Column(db.Text, nullable=False, default='en_attente')  # en_attente, approuve, refuse, commande, recu
     total_articles = db.Column(db.Integer, nullable=False, default=0)
+    total_estime = db.Column(db.Numeric(10, 2), default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def to_dict(self):
         return {
             'id': self.id,
+            'numeroDemande': self.numero_demande,
             'dateDemande': self.date_demande.isoformat() if self.date_demande else None,
             'requestorId': self.requestor_id,
-            'dateInitiation': self.date_initiation.isoformat() if self.date_initiation else None,
             'observations': self.observations,
             'statut': self.statut,
             'totalArticles': self.total_articles,
+            'totalEstime': float(self.total_estime) if self.total_estime else 0,
             'createdAt': self.created_at.isoformat() if self.created_at else None
         }
 
@@ -125,13 +127,19 @@ class PurchaseRequestItem(db.Model):
     __tablename__ = 'purchase_request_items'
     
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
-    purchase_request_id = db.Column(db.String(36), nullable=False)
-    article_id = db.Column(db.String(36), nullable=False)
+    purchase_request_id = db.Column(db.String(36), db.ForeignKey('purchase_requests.id'), nullable=False)
+    article_id = db.Column(db.String(36), db.ForeignKey('articles.id'), nullable=False)
+    supplier_id = db.Column(db.String(36), db.ForeignKey('suppliers.id'))
     quantite_demandee = db.Column(db.Integer, nullable=False)
-    supplier_id = db.Column(db.String(36))
     prix_unitaire_estime = db.Column(db.Numeric(10, 2))
+    sous_total = db.Column(db.Numeric(10, 2))
     observations = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    purchase_request = db.relationship('PurchaseRequest', backref='items')
+    article = db.relationship('Article')
+    supplier = db.relationship('Supplier')
     
     def to_dict(self):
         return {
@@ -141,7 +149,10 @@ class PurchaseRequestItem(db.Model):
             'quantiteDemandee': self.quantite_demandee,
             'supplierId': self.supplier_id,
             'prixUnitaireEstime': float(self.prix_unitaire_estime) if self.prix_unitaire_estime else None,
+            'sousTotal': float(self.sous_total) if self.sous_total else 0,
             'observations': self.observations,
+            'article': self.article.to_dict() if self.article else None,
+            'supplier': self.supplier.to_dict() if self.supplier else None,
             'createdAt': self.created_at.isoformat() if self.created_at else None
         }
 

@@ -1,151 +1,266 @@
 {% extends "base.html" %}
 
-{% block title %}Demandes d'Achat - StockCeramique{% endblock %}
+{% block title %}Demandes d'Achat - StockCéramique{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
+<div class="space-y-6" data-testid="purchase-requests-page">
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-semibold text-gray-900">Demandes d'Achat</h1>
-            <p class="text-sm text-gray-600" id="requests-count">Chargement...</p>
+            <p class="text-sm text-gray-600">Workflow multi-articles avec approbation</p>
         </div>
         <div class="flex space-x-3">
-            <button 
-                onclick="openRequestForm()"
-                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-            >
+            <button onclick="refreshRequests()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <i class="fas fa-sync-alt mr-2"></i>
+                Actualiser
+            </button>
+            <button onclick="openRequestForm()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700" data-testid="button-new-request">
                 <i class="fas fa-plus mr-2"></i>
                 Nouvelle Demande
             </button>
         </div>
     </div>
 
-    <!-- Purchase Requests Table -->
-    <div class="bg-white shadow rounded-lg border border-gray-200">
-        <div class="p-6 border-b border-gray-200">
-            <h3 class="text-xl font-semibold text-gray-900">Liste des Demandes</h3>
-        </div>
-        
-        <div class="p-6 border-b border-gray-200">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                    <input 
-                        type="text" 
-                        placeholder="Numéro, demandeur..." 
-                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        id="search-input"
-                        onkeyup="filterRequests()"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
-                    <select 
-                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        id="status-filter"
-                        onchange="filterRequests()"
-                    >
-                        <option value="all">Tous les statuts</option>
-                        <option value="en_attente">En Attente</option>
-                        <option value="approuve">Approuvé</option>
-                        <option value="rejete">Rejeté</option>
-                        <option value="commande">Commandé</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Demandeur</label>
-                    <select 
-                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        id="requestor-filter"
-                        onchange="filterRequests()"
-                    >
-                        <option value="all">Tous les demandeurs</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
-                    <button 
-                        class="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                        onclick="clearFilters()"
-                    >
-                        Effacer filtres
-                    </button>
-                </div>
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                <input type="text" placeholder="Numéro, demandeur..." 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                       id="search-input" onkeyup="filterRequests()">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        id="status-filter" onchange="filterRequests()">
+                    <option value="all">Tous les statuts</option>
+                    <option value="en_attente">En Attente</option>
+                    <option value="approuve">Approuvé</option>
+                    <option value="refuse">Refusé</option>
+                    <option value="commande">Commandé</option>
+                    <option value="recu">Reçu</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Demandeur</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        id="requestor-filter" onchange="filterRequests()">
+                    <option value="all">Tous les demandeurs</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                <button onclick="clearFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    Effacer filtres
+                </button>
             </div>
         </div>
+    </div>
 
-        <div class="p-0">
-            <div id="requests-table-container">
-                <div class="p-6">
-                    <div class="animate-pulse space-y-4">
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                    </div>
-                </div>
-            </div>
+    <!-- Requests Table -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Liste des Demandes</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200" id="requests-table">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N° Demande</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Demandeur</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Articles</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Estimé</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="requests-tbody" class="bg-white divide-y divide-gray-200">
+                    <!-- Table content will be populated here -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- Request Form Modal -->
+<!-- Multi-Article Request Form Modal -->
 <div id="request-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border max-w-lg shadow-lg rounded-md bg-white">
+    <div class="relative top-10 mx-auto p-5 border max-w-6xl shadow-lg rounded-md bg-white" style="max-height: 90vh; overflow-y: auto;">
         <div class="mt-3">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-medium text-gray-900" id="request-modal-title">
-                    Nouvelle Demande
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-medium text-gray-900 flex items-center">
+                    <i class="fas fa-shopping-cart text-blue-600 mr-2"></i>
+                    <span id="request-modal-title">Nouvelle Demande d'Achat Multi-Articles</span>
                 </h3>
                 <button onclick="closeRequestForm()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
+                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
             <form id="request-form" onsubmit="saveRequest(event)">
                 <input type="hidden" id="request-id" name="id">
                 
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Demandeur *</label>
-                        <select id="demandeurId" name="demandeurId" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Sélectionner un demandeur</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Motif *</label>
-                        <textarea id="motif" name="motif" required rows="3"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                  placeholder="Décrivez le motif de la demande..."></textarea>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Date de Besoin</label>
-                        <input type="date" id="dateBesoin" name="dateBesoin"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Priorité</label>
-                        <select id="priorite" name="priorite"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                            <option value="normale">Normale</option>
-                            <option value="haute">Haute</option>
-                            <option value="urgente">Urgente</option>
-                        </select>
+                <!-- Request Header -->
+                <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Informations de la Demande</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Demandeur *</label>
+                            <select id="requestor-id" name="requestorId" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Sélectionner un demandeur</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date de Besoin</label>
+                            <input type="date" id="date-besoin" name="dateBesoin"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observations</label>
+                            <textarea id="observations" name="observations" rows="2"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                      placeholder="Commentaires sur la demande..."></textarea>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" onclick="closeRequestForm()"
-                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+
+                <!-- Articles Section -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-medium text-gray-900">Articles Demandés</h4>
+                        <button type="button" onclick="addArticleLine()" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                            <i class="fas fa-plus mr-2"></i>
+                            Ajouter Article
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">N°</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Article</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prix Unit. (MAD)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseur</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sous-total</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="articles-tbody" class="bg-white divide-y divide-gray-200">
+                                <!-- Article lines will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="mt-4 flex justify-end">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="text-right">
+                                <span class="text-lg font-medium text-gray-900">Total Estimé: </span>
+                                <span id="total-estime" class="text-xl font-bold text-blue-600">0.00 MAD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeRequestForm()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
                         Annuler
                     </button>
-                    <button type="submit"
-                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                        Enregistrer
+                    <button type="submit" id="save-request-btn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        <i class="fas fa-save mr-2"></i>
+                        Enregistrer Demande
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Convert to Reception Modal -->
+<div id="convert-reception-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50" data-testid="dialog-convert-reception">
+    <div class="relative top-10 mx-auto p-5 border max-w-6xl shadow-lg rounded-md bg-white" style="max-height: 90vh; overflow-y: auto;">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-medium text-gray-900 flex items-center">
+                    <i class="fas fa-box text-green-600 mr-2"></i>
+                    Convertir en Réception
+                </h3>
+                <button onclick="closeConvertModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Request Summary -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-medium text-gray-900 mb-4">Résumé de la Demande</h4>
+                <div id="request-summary-content">
+                    <!-- Will be populated dynamically -->
+                </div>
+            </div>
+
+            <form id="convert-form" onsubmit="convertToReception(event)">
+                <input type="hidden" id="convert-request-id">
+                
+                <!-- Reception Details -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Détails de la Réception</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date de Réception *</label>
+                            <input type="date" id="date-reception" name="dateReception" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">N° Bon de Livraison</label>
+                            <input type="text" id="numero-bon-livraison" name="numeroBonLivraison"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="BL-2025-001">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observations</label>
+                            <input type="text" id="reception-observations" name="receptionObservations"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Articles Reception Table -->
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Articles à Réceptionner</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">N°</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Article</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Commandée</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Reçue</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">PU (MAD)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseur</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reception-articles-tbody" class="bg-white divide-y divide-gray-200">
+                                <!-- Will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeConvertModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </button>
+                    <button type="submit" id="convert-btn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                        <i class="fas fa-check mr-2"></i>
+                        Confirmer Réception
                     </button>
                 </div>
             </form>
@@ -159,159 +274,576 @@
     let purchaseRequests = [];
     let filteredRequests = [];
     let requestors = [];
-    let editingRequest = null;
+    let articles = [];
+    let suppliers = [];
+    let articleLineCounter = 0;
 
     document.addEventListener('DOMContentLoaded', function() {
-        loadRequests();
-        loadRequestors();
+        loadData();
+        // Set today's date as default
+        document.getElementById('date-reception').value = new Date().toISOString().split('T')[0];
     });
 
-    async function loadRequests() {
+    async function loadData() {
+        try {
+            await Promise.all([
+                loadPurchaseRequests(),
+                loadRequestors(),
+                loadArticles(),
+                loadSuppliers()
+            ]);
+            updateRequestsTable();
+            updateRequestorFilter();
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+    async function loadPurchaseRequests() {
         try {
             purchaseRequests = await apiRequest('GET', '/api/purchase-requests');
             filteredRequests = [...purchaseRequests];
-            updateRequestsTable();
         } catch (error) {
-            console.error('Error loading requests:', error);
+            console.error('Error loading purchase requests:', error);
+            purchaseRequests = [];
+            filteredRequests = [];
         }
     }
 
     async function loadRequestors() {
         try {
             requestors = await apiRequest('GET', '/api/requestors');
-            updateRequestorSelects();
         } catch (error) {
             console.error('Error loading requestors:', error);
+            requestors = [];
         }
     }
 
-    function updateRequestsTable() {
-        const container = document.getElementById('requests-table-container');
-        const countElement = document.getElementById('requests-count');
-        
-        countElement.textContent = `${filteredRequests.length} demande(s) sur ${purchaseRequests.length} total`;
+    async function loadArticles() {
+        try {
+            articles = await apiRequest('GET', '/api/articles');
+        } catch (error) {
+            console.error('Error loading articles:', error);
+            articles = [];
+        }
+    }
 
+    async function loadSuppliers() {
+        try {
+            suppliers = await apiRequest('GET', '/api/suppliers');
+        } catch (error) {
+            console.error('Error loading suppliers:', error);
+            suppliers = [];
+        }
+    }
+
+    function updateRequestorFilter() {
+        const requestorSelect = document.getElementById('requestor-filter');
+        const formRequestorSelect = document.getElementById('requestor-id');
+        
+        requestorSelect.innerHTML = '<option value="all">Tous les demandeurs</option>';
+        formRequestorSelect.innerHTML = '<option value="">Sélectionner un demandeur</option>';
+        
+        requestors.forEach(requestor => {
+            const option1 = document.createElement('option');
+            option1.value = requestor.id;
+            option1.textContent = `${requestor.prenom} ${requestor.nom}`;
+            requestorSelect.appendChild(option1);
+            
+            const option2 = document.createElement('option');
+            option2.value = requestor.id;
+            option2.textContent = `${requestor.prenom} ${requestor.nom}`;
+            formRequestorSelect.appendChild(option2);
+        });
+    }
+
+    function updateRequestsTable() {
+        const tbody = document.getElementById('requests-tbody');
+        
         if (filteredRequests.length === 0) {
-            container.innerHTML = `
-                <div class="p-8 text-center text-gray-500">
-                    <i class="fas fa-shopping-cart text-4xl mb-4"></i>
-                    <p class="text-lg font-medium">Aucune demande trouvée</p>
-                    <p class="text-sm">Commencez par créer votre première demande</p>
-                    <button onclick="openRequestForm()" 
-                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                        Nouvelle demande
-                    </button>
-                </div>
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                        <i class="fas fa-inbox text-3xl mb-2"></i>
+                        <p>Aucune demande d'achat trouvée</p>
+                    </td>
+                </tr>
             `;
             return;
         }
 
-        const tableHTML = `
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Numéro</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Demandeur</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Motif</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Date</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Statut</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filteredRequests.map(request => createRequestRow(request)).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
-        
-        container.innerHTML = tableHTML;
-    }
-
-    function createRequestRow(request) {
-        const requestor = requestors.find(r => r.id === request.demandeurId);
-        const requestorName = requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu';
-        const statusConfig = getStatusConfig(request.statut);
-        
-        return `
-            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="p-4 text-sm font-medium text-gray-900">${request.numeroDemande}</td>
-                <td class="p-4 text-sm text-gray-700">${requestorName}</td>
-                <td class="p-4 text-sm text-gray-500">${request.motif}</td>
-                <td class="p-4 text-sm text-gray-500">${new Date(request.dateCreation).toLocaleDateString('fr-FR')}</td>
-                <td class="p-4">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.class}">
-                        ${statusConfig.text}
-                    </span>
-                </td>
-                <td class="p-4">
-                    <div class="flex space-x-1">
-                        <button onclick="editRequest('${request.id}')" 
-                                title="Modifier"
-                                class="p-2 text-blue-600 hover:bg-blue-50 rounded">
-                            <i class="fas fa-edit"></i>
+        tbody.innerHTML = filteredRequests.map(request => {
+            const requestor = requestors.find(r => r.id === request.requestorId);
+            const requestorName = requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu';
+            const statusBadge = getStatusBadge(request.statut);
+            
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        #${request.numeroDemande || request.id.substring(0, 8)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${requestorName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${request.totalArticles} article(s)</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatCurrency(request.totalEstime)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${new Date(request.dateDemande).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <button onclick="viewRequest('${request.id}')" class="text-blue-600 hover:text-blue-900">
+                            <i class="fas fa-eye"></i>
                         </button>
-                        <button onclick="deleteRequest('${request.id}')" 
-                                title="Supprimer"
-                                class="p-2 text-red-600 hover:bg-red-50 rounded">
+                        ${request.statut === 'en_attente' ? `
+                            <button onclick="editRequest('${request.id}')" class="text-yellow-600 hover:text-yellow-900">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="approveRequest('${request.id}')" class="text-green-600 hover:text-green-900" title="Approuver">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button onclick="rejectRequest('${request.id}')" class="text-red-600 hover:text-red-900" title="Refuser">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        ` : ''}
+                        ${request.statut === 'approuve' ? `
+                            <button onclick="openConvertModal('${request.id}')" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs" 
+                                    data-testid="button-convert-${request.id}" title="Convertir en Réception">
+                                <i class="fas fa-box mr-1"></i>
+                                Convertir
+                            </button>
+                        ` : ''}
+                        <button onclick="deleteRequest('${request.id}')" class="text-red-600 hover:text-red-900">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </div>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function getStatusBadge(status) {
+        const badges = {
+            'en_attente': '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">En Attente</span>',
+            'approuve': '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Approuvé</span>',
+            'refuse': '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Refusé</span>',
+            'commande': '<span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Commandé</span>',
+            'recu': '<span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">Reçu</span>'
+        };
+        return badges[status] || status;
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('fr-MA', {
+            style: 'currency',
+            currency: 'MAD'
+        }).format(amount || 0);
+    }
+
+    function openRequestForm(editId = null) {
+        const modal = document.getElementById('request-modal');
+        const title = document.getElementById('request-modal-title');
+        
+        if (editId) {
+            title.textContent = 'Modifier Demande d\'Achat';
+            loadRequestForEdit(editId);
+        } else {
+            title.textContent = 'Nouvelle Demande d\'Achat Multi-Articles';
+            document.getElementById('request-form').reset();
+            document.getElementById('request-id').value = '';
+            clearArticleLines();
+            addArticleLine(); // Add first line
+        }
+        
+        modal.classList.remove('hidden');
+    }
+
+    function closeRequestForm() {
+        document.getElementById('request-modal').classList.add('hidden');
+        document.getElementById('request-form').reset();
+        clearArticleLines();
+    }
+
+    function addArticleLine() {
+        articleLineCounter++;
+        const tbody = document.getElementById('articles-tbody');
+        const tr = document.createElement('tr');
+        tr.id = `article-line-${articleLineCounter}`;
+        
+        tr.innerHTML = `
+            <td class="px-4 py-3 text-sm text-gray-500">${articleLineCounter}</td>
+            <td class="px-4 py-3">
+                <input type="text" class="w-full px-2 py-1 border border-gray-300 rounded text-sm article-autocomplete" 
+                       data-line="${articleLineCounter}" placeholder="Tapez 3 caractères..." onkeyup="handleArticleAutocomplete(this)">
+                <input type="hidden" class="article-id" data-line="${articleLineCounter}">
+                <div class="autocomplete-results hidden absolute bg-white border border-gray-300 rounded shadow-lg max-h-48 overflow-y-auto z-10"></div>
+            </td>
+            <td class="px-4 py-3">
+                <input type="number" min="1" class="w-full px-2 py-1 border border-gray-300 rounded text-sm quantity-input" 
+                       data-line="${articleLineCounter}" onchange="calculateSubtotal(${articleLineCounter})">
+            </td>
+            <td class="px-4 py-3">
+                <input type="number" step="0.01" min="0" class="w-full px-2 py-1 border border-gray-300 rounded text-sm price-input" 
+                       data-line="${articleLineCounter}" onchange="calculateSubtotal(${articleLineCounter})">
+            </td>
+            <td class="px-4 py-3">
+                <select class="w-full px-2 py-1 border border-gray-300 rounded text-sm supplier-select" data-line="${articleLineCounter}">
+                    <option value="">Sélectionner</option>
+                    ${suppliers.map(s => `<option value="${s.id}">${s.nom}</option>`).join('')}
+                </select>
+            </td>
+            <td class="px-4 py-3">
+                <span class="text-sm font-medium subtotal-display" data-line="${articleLineCounter}">0.00 MAD</span>
+            </td>
+            <td class="px-4 py-3">
+                <button type="button" onclick="removeArticleLine(${articleLineCounter})" class="text-red-600 hover:text-red-900">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        tbody.appendChild(tr);
+    }
+
+    function removeArticleLine(lineNumber) {
+        const line = document.getElementById(`article-line-${lineNumber}`);
+        if (line) {
+            line.remove();
+            calculateTotal();
+        }
+    }
+
+    function clearArticleLines() {
+        document.getElementById('articles-tbody').innerHTML = '';
+        articleLineCounter = 0;
+        calculateTotal();
+    }
+
+    function handleArticleAutocomplete(input) {
+        const query = input.value;
+        const lineNumber = input.dataset.line;
+        
+        if (query.length < 3) {
+            hideAutocompleteResults(input);
+            return;
+        }
+
+        const filteredArticles = articles.filter(article => 
+            article.designation.toLowerCase().includes(query.toLowerCase()) ||
+            article.codeArticle.toLowerCase().includes(query.toLowerCase())
+        );
+
+        showAutocompleteResults(input, filteredArticles, lineNumber);
+    }
+
+    function showAutocompleteResults(input, results, lineNumber) {
+        const resultsDiv = input.parentElement.querySelector('.autocomplete-results');
+        
+        if (results.length === 0) {
+            hideAutocompleteResults(input);
+            return;
+        }
+
+        resultsDiv.innerHTML = results.map(article => `
+            <div class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectArticle('${article.id}', ${lineNumber})">
+                <div class="font-medium">${article.designation}</div>
+                <div class="text-sm text-gray-500">${article.codeArticle} - Stock: ${article.stockActuel}</div>
+            </div>
+        `).join('');
+        
+        resultsDiv.classList.remove('hidden');
+    }
+
+    function hideAutocompleteResults(input) {
+        const resultsDiv = input.parentElement.querySelector('.autocomplete-results');
+        resultsDiv.classList.add('hidden');
+    }
+
+    function selectArticle(articleId, lineNumber) {
+        const article = articles.find(a => a.id === articleId);
+        if (!article) return;
+
+        const line = document.getElementById(`article-line-${lineNumber}`);
+        const autocompleteInput = line.querySelector('.article-autocomplete');
+        const hiddenInput = line.querySelector('.article-id');
+        const priceInput = line.querySelector('.price-input');
+
+        autocompleteInput.value = article.designation;
+        hiddenInput.value = articleId;
+        
+        // Set estimated price if available
+        if (article.prixUnitaire) {
+            priceInput.value = article.prixUnitaire;
+        }
+
+        hideAutocompleteResults(autocompleteInput);
+        calculateSubtotal(lineNumber);
+    }
+
+    function calculateSubtotal(lineNumber) {
+        const line = document.getElementById(`article-line-${lineNumber}`);
+        const quantity = parseFloat(line.querySelector('.quantity-input').value) || 0;
+        const price = parseFloat(line.querySelector('.price-input').value) || 0;
+        const subtotal = quantity * price;
+        
+        line.querySelector('.subtotal-display').textContent = formatCurrency(subtotal);
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        let total = 0;
+        document.querySelectorAll('.subtotal-display').forEach(span => {
+            const lineNumber = span.dataset.line;
+            const line = document.getElementById(`article-line-${lineNumber}`);
+            if (line) {
+                const quantity = parseFloat(line.querySelector('.quantity-input').value) || 0;
+                const price = parseFloat(line.querySelector('.price-input').value) || 0;
+                total += quantity * price;
+            }
+        });
+        
+        document.getElementById('total-estime').textContent = formatCurrency(total);
+    }
+
+    async function saveRequest(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const requestId = formData.get('id');
+        
+        // Collect articles data
+        const articlesData = [];
+        document.querySelectorAll('#articles-tbody tr').forEach(tr => {
+            const lineNumber = tr.id.split('-')[2];
+            const articleId = tr.querySelector('.article-id').value;
+            const quantity = tr.querySelector('.quantity-input').value;
+            const price = tr.querySelector('.price-input').value;
+            const supplierId = tr.querySelector('.supplier-select').value;
+            
+            if (articleId && quantity && price) {
+                articlesData.push({
+                    articleId,
+                    quantiteDemandee: parseInt(quantity),
+                    prixUnitaireEstime: parseFloat(price),
+                    supplierId: supplierId || null
+                });
+            }
+        });
+
+        if (articlesData.length === 0) {
+            showToast('Veuillez ajouter au moins un article', 'error');
+            return;
+        }
+
+        const requestData = {
+            requestorId: formData.get('requestorId'),
+            observations: formData.get('observations'),
+            articles: articlesData
+        };
+
+        try {
+            if (requestId) {
+                await apiRequest('PUT', `/api/purchase-requests/${requestId}`, requestData);
+                showToast('Demande modifiée avec succès', 'success');
+            } else {
+                await apiRequest('POST', '/api/purchase-requests', requestData);
+                showToast('Demande créée avec succès', 'success');
+            }
+            
+            closeRequestForm();
+            loadPurchaseRequests();
+            updateRequestsTable();
+        } catch (error) {
+            console.error('Error saving request:', error);
+            showToast('Erreur lors de l\'enregistrement', 'error');
+        }
+    }
+
+    async function approveRequest(requestId) {
+        if (!confirm('Êtes-vous sûr de vouloir approuver cette demande ?')) return;
+        
+        try {
+            await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'approuve' });
+            showToast('Statut mis à jour - La demande a été approuvée', 'success');
+            loadPurchaseRequests();
+            updateRequestsTable();
+        } catch (error) {
+            console.error('Error approving request:', error);
+            showToast('Erreur lors de l\'approbation', 'error');
+        }
+    }
+
+    async function rejectRequest(requestId) {
+        if (!confirm('Êtes-vous sûr de vouloir refuser cette demande ?')) return;
+        
+        try {
+            await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'refuse' });
+            showToast('Statut mis à jour - La demande a été refusée', 'success');
+            loadPurchaseRequests();
+            updateRequestsTable();
+        } catch (error) {
+            console.error('Error rejecting request:', error);
+            showToast('Erreur lors du refus', 'error');
+        }
+    }
+
+    async function openConvertModal(requestId) {
+        const request = purchaseRequests.find(r => r.id === requestId);
+        if (!request) return;
+
+        document.getElementById('convert-request-id').value = requestId;
+        
+        // Load request items and populate summary
+        try {
+            const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
+            populateRequestSummary(request, items);
+            populateReceptionTable(items);
+            
+            document.getElementById('convert-reception-modal').classList.remove('hidden');
+        } catch (error) {
+            console.error('Error loading request items:', error);
+            showToast('Erreur lors du chargement des articles', 'error');
+        }
+    }
+
+    function populateRequestSummary(request, items) {
+        const requestor = requestors.find(r => r.id === request.requestorId);
+        const content = document.getElementById('request-summary-content');
+        
+        content.innerHTML = `
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <div class="text-sm text-gray-600">N° Demande</div>
+                    <div class="font-medium">#${request.numeroDemande || request.id.substring(0, 8)}</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Demandeur</div>
+                    <div class="font-medium">${requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu'}</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Articles</div>
+                    <div class="font-medium">${items.length} article(s)</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Statut</div>
+                    <div>${getStatusBadge(request.statut)}</div>
+                </div>
+            </div>
         `;
     }
 
-    function getStatusConfig(status) {
-        const configs = {
-            'en_attente': { class: 'bg-yellow-100 text-yellow-800', text: 'En Attente' },
-            'approuve': { class: 'bg-green-100 text-green-800', text: 'Approuvé' },
-            'rejete': { class: 'bg-red-100 text-red-800', text: 'Rejeté' },
-            'commande': { class: 'bg-blue-100 text-blue-800', text: 'Commandé' }
-        };
-        return configs[status] || { class: 'bg-gray-100 text-gray-800', text: status };
+    function populateReceptionTable(items) {
+        const tbody = document.getElementById('reception-articles-tbody');
+        
+        tbody.innerHTML = items.map((item, index) => {
+            const article = articles.find(a => a.id === item.articleId);
+            const supplier = suppliers.find(s => s.id === item.supplierId);
+            
+            return `
+                <tr>
+                    <td class="px-4 py-3 text-sm text-gray-500">${index + 1}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${article ? article.designation : 'Article inconnu'}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.quantiteDemandee}</td>
+                    <td class="px-4 py-3">
+                        <input type="number" min="0" max="${item.quantiteDemandee}" value="${item.quantiteDemandee}" 
+                               data-testid="input-quantite-recue-${index}"
+                               class="w-20 px-2 py-1 border border-gray-300 rounded text-sm quantite-recue" 
+                               data-item-id="${item.id}">
+                    </td>
+                    <td class="px-4 py-3">
+                        <input type="number" step="0.01" min="0" value="${item.prixUnitaireEstime || ''}" 
+                               data-testid="input-prix-${index}"
+                               class="w-24 px-2 py-1 border border-gray-300 rounded text-sm prix-reception" 
+                               data-item-id="${item.id}">
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${supplier ? supplier.nom : 'Non spécifié'}</td>
+                    <td class="px-4 py-3">
+                        <button type="button" onclick="removeReceptionLine(this)" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
-    function updateRequestorSelects() {
-        const selects = ['demandeurId', 'requestor-filter'];
+    function removeReceptionLine(button) {
+        button.closest('tr').remove();
+    }
+
+    function closeConvertModal() {
+        document.getElementById('convert-reception-modal').classList.add('hidden');
+    }
+
+    async function convertToReception(event) {
+        event.preventDefault();
         
-        selects.forEach(selectId => {
-            const select = document.getElementById(selectId);
-            if (!select) return;
+        const requestId = document.getElementById('convert-request-id').value;
+        const formData = new FormData(event.target);
+        
+        // Collect reception data
+        const receptionData = {
+            dateReception: formData.get('dateReception'),
+            numeroBonLivraison: formData.get('numeroBonLivraison'),
+            observations: formData.get('receptionObservations') || `Réception pour demande d'achat #${requestId.substring(0, 8)}`,
+            articles: []
+        };
+
+        // Collect articles data
+        document.querySelectorAll('#reception-articles-tbody tr').forEach(tr => {
+            const quantiteRecue = tr.querySelector('.quantite-recue').value;
+            const prix = tr.querySelector('.prix-reception').value;
+            const itemId = tr.querySelector('.quantite-recue').dataset.itemId;
             
-            const isFilter = selectId.includes('filter');
-            if (isFilter) {
-                select.innerHTML = '<option value="all">Tous les demandeurs</option>';
-            } else {
-                select.innerHTML = '<option value="">Sélectionner un demandeur</option>';
+            if (quantiteRecue && parseFloat(quantiteRecue) > 0) {
+                receptionData.articles.push({
+                    itemId,
+                    quantiteRecue: parseInt(quantiteRecue),
+                    prixUnitaire: parseFloat(prix) || 0
+                });
             }
-            
-            requestors.forEach(requestor => {
-                const option = document.createElement('option');
-                option.value = requestor.id;
-                option.textContent = `${requestor.prenom} ${requestor.nom}`;
-                select.appendChild(option);
-            });
         });
+
+        if (receptionData.articles.length === 0) {
+            showToast('Veuillez spécifier au moins un article à réceptionner', 'error');
+            return;
+        }
+
+        try {
+            showLoading();
+            
+            // Convert to reception
+            await apiRequest('POST', `/api/purchase-requests/${requestId}/convert-reception`, receptionData);
+            
+            // Update status to received
+            await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'recu' });
+            
+            showToast('Conversion réussie - La demande d\'achat a été convertie en réceptions multiples', 'success');
+            closeConvertModal();
+            loadPurchaseRequests();
+            updateRequestsTable();
+        } catch (error) {
+            console.error('Error converting to reception:', error);
+            showToast('Erreur - Impossible de convertir la demande d\'achat', 'error');
+        } finally {
+            hideLoading();
+        }
     }
 
     function filterRequests() {
         const search = document.getElementById('search-input').value.toLowerCase();
-        const statusFilter = document.getElementById('status-filter').value;
-        const requestorFilter = document.getElementById('requestor-filter').value;
+        const status = document.getElementById('status-filter').value;
+        const requestorId = document.getElementById('requestor-filter').value;
 
         filteredRequests = purchaseRequests.filter(request => {
-            const requestor = requestors.find(r => r.id === request.demandeurId);
+            const requestor = requestors.find(r => r.id === request.requestorId);
             const requestorName = requestor ? `${requestor.prenom} ${requestor.nom}`.toLowerCase() : '';
             
             const matchesSearch = !search || 
-                request.numeroDemande.toLowerCase().includes(search) ||
-                request.motif.toLowerCase().includes(search) ||
+                (request.numeroDemande && request.numeroDemande.toLowerCase().includes(search)) ||
+                request.id.toLowerCase().includes(search) ||
                 requestorName.includes(search);
-
-            const matchesStatus = statusFilter === 'all' || request.statut === statusFilter;
-            const matchesRequestor = requestorFilter === 'all' || request.demandeurId === requestorFilter;
+                
+            const matchesStatus = status === 'all' || request.statut === status;
+            const matchesRequestor = requestorId === 'all' || request.requestorId === requestorId;
 
             return matchesSearch && matchesStatus && matchesRequestor;
         });
@@ -323,78 +855,45 @@
         document.getElementById('search-input').value = '';
         document.getElementById('status-filter').value = 'all';
         document.getElementById('requestor-filter').value = 'all';
-        filterRequests();
+        filteredRequests = [...purchaseRequests];
+        updateRequestsTable();
     }
 
-    function openRequestForm(requestId = null) {
-        editingRequest = requestId ? purchaseRequests.find(r => r.id === requestId) : null;
-        const modal = document.getElementById('request-modal');
-        const title = document.getElementById('request-modal-title');
-        const form = document.getElementById('request-form');
-        
-        title.textContent = editingRequest ? 'Modifier Demande' : 'Nouvelle Demande';
-        
-        if (editingRequest) {
-            populateRequestForm(editingRequest);
-        } else {
-            form.reset();
-            document.getElementById('request-id').value = '';
-        }
-        
-        modal.classList.remove('hidden');
+    function refreshRequests() {
+        loadData();
+        showToast('Données actualisées', 'success');
     }
 
-    function closeRequestForm() {
-        document.getElementById('request-modal').classList.add('hidden');
-        editingRequest = null;
-    }
-
-    function populateRequestForm(request) {
-        document.getElementById('request-id').value = request.id;
-        document.getElementById('demandeurId').value = request.demandeurId;
-        document.getElementById('motif').value = request.motif;
-        document.getElementById('dateBesoin').value = request.dateBesoin ? request.dateBesoin.split('T')[0] : '';
-        document.getElementById('priorite').value = request.priorite || 'normale';
-    }
-
-    async function saveRequest(event) {
-        event.preventDefault();
+    async function deleteRequest(requestId) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) return;
         
-        const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries());
-
         try {
-            if (editingRequest) {
-                await apiRequest('PUT', `/api/purchase-requests/${editingRequest.id}`, data);
-                showToast('Demande modifiée avec succès', 'success');
-            } else {
-                await apiRequest('POST', '/api/purchase-requests', data);
-                showToast('Demande créée avec succès', 'success');
-            }
-            
-            closeRequestForm();
-            loadRequests();
-        } catch (error) {
-            console.error('Error saving request:', error);
-        }
-    }
-
-    function editRequest(id) {
-        openRequestForm(id);
-    }
-
-    async function deleteRequest(id) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) {
-            return;
-        }
-
-        try {
-            await apiRequest('DELETE', `/api/purchase-requests/${id}`);
+            await apiRequest('DELETE', `/api/purchase-requests/${requestId}`);
             showToast('Demande supprimée avec succès', 'success');
-            loadRequests();
+            loadPurchaseRequests();
+            updateRequestsTable();
         } catch (error) {
             console.error('Error deleting request:', error);
+            showToast('Erreur lors de la suppression', 'error');
         }
     }
+
+    function viewRequest(requestId) {
+        // This would open a view-only modal with request details
+        showToast('Fonctionnalité de visualisation en cours de développement', 'info');
+    }
+
+    function editRequest(requestId) {
+        openRequestForm(requestId);
+    }
+
+    // Close autocomplete when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.article-autocomplete')) {
+            document.querySelectorAll('.autocomplete-results').forEach(div => {
+                div.classList.add('hidden');
+            });
+        }
+    });
 </script>
 {% endblock %}

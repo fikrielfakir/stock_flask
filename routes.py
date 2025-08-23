@@ -321,20 +321,48 @@ def register_routes(app, db):
             requests = PurchaseRequest.query.all()
             return jsonify([request.to_dict() for request in requests])
         except Exception as e:
-            return jsonify({'message': 'Erreur lors de la récupération des demandes d\'achat'}), 500
+            print(f"Purchase requests error: {str(e)}")
+            return jsonify({'message': f'Erreur lors de la récupération des demandes d\'achat: {str(e)}'}), 500
 
     @app.route("/api/purchase-requests", methods=['POST'])
     def create_purchase_request():
         try:
             data = request.get_json()
+            
+            # Generate request number
+            count = PurchaseRequest.query.count() + 1
+            numero_demande = f"DA-{datetime.utcnow().strftime('%Y')}-{count:04d}"
+            
+            # Calculate total
+            total_estime = sum(item['quantiteDemandee'] * item['prixUnitaireEstime'] 
+                             for item in data.get('articles', []))
+            
             purchase_request = PurchaseRequest(
+                numero_demande=numero_demande,
                 date_demande=datetime.fromisoformat(data['dateDemande'].replace('Z', '+00:00')) if 'dateDemande' in data else datetime.utcnow(),
                 requestor_id=data['requestorId'],
                 observations=data.get('observations'),
                 statut=data.get('statut', 'en_attente'),
-                total_articles=0
+                total_articles=len(data.get('articles', [])),
+                total_estime=total_estime
             )
             db.session.add(purchase_request)
+            db.session.flush()  # Get the ID
+            
+            # Add articles
+            for article_data in data.get('articles', []):
+                sous_total = article_data['quantiteDemandee'] * article_data['prixUnitaireEstime']
+                
+                item = PurchaseRequestItem(
+                    purchase_request_id=purchase_request.id,
+                    article_id=article_data['articleId'],
+                    supplier_id=article_data.get('supplierId'),
+                    quantite_demandee=article_data['quantiteDemandee'],
+                    prix_unitaire_estime=article_data['prixUnitaireEstime'],
+                    sous_total=sous_total
+                )
+                db.session.add(item)
+            
             db.session.commit()
             return jsonify(purchase_request.to_dict()), 201
         except Exception as e:
@@ -356,6 +384,30 @@ def register_routes(app, db):
             
             if 'observations' in data:
                 purchase_request.observations = data['observations']
+            
+            # If updating articles, delete existing and recreate
+            if 'articles' in data:
+                # Delete existing items
+                PurchaseRequestItem.query.filter_by(purchase_request_id=request_id).delete()
+                
+                # Add new articles
+                total_estime = 0
+                for article_data in data['articles']:
+                    sous_total = article_data['quantiteDemandee'] * article_data['prixUnitaireEstime']
+                    total_estime += sous_total
+                    
+                    item = PurchaseRequestItem(
+                        purchase_request_id=request_id,
+                        article_id=article_data['articleId'],
+                        supplier_id=article_data.get('supplierId'),
+                        quantite_demandee=article_data['quantiteDemandee'],
+                        prix_unitaire_estime=article_data['prixUnitaireEstime'],
+                        sous_total=sous_total
+                    )
+                    db.session.add(item)
+                
+                purchase_request.total_articles = len(data['articles'])
+                purchase_request.total_estime = total_estime
             
             db.session.commit()
             return jsonify(purchase_request.to_dict())
@@ -406,13 +458,61 @@ def register_routes(app, db):
             db.session.rollback()
             return jsonify({'message': 'Données invalides', 'error': str(e)}), 400
 
-    @app.route("/api/purchase-request-items/<purchase_request_id>", methods=['GET'])
-    def get_purchase_request_items(purchase_request_id):
+    @app.route("/api/purchase-requests/<request_id>/items", methods=['GET'])
+    def get_purchase_request_items(request_id):
         try:
-            items = PurchaseRequestItem.query.filter_by(purchase_request_id=purchase_request_id).all()
+            items = PurchaseRequestItem.query.filter_by(purchase_request_id=request_id).all()
             return jsonify([item.to_dict() for item in items])
         except Exception as e:
             return jsonify({'message': 'Erreur lors de la récupération des éléments'}), 500
+    
+    # Convert Purchase Request to Reception
+    @app.route("/api/purchase-requests/<request_id>/convert-reception", methods=['POST'])
+    def convert_purchase_request_to_reception(request_id):
+        try:
+            data = request.get_json()
+            
+            # Get purchase request and items
+            purchase_request = PurchaseRequest.query.get_or_404(request_id)
+            items = PurchaseRequestItem.query.filter_by(purchase_request_id=request_id).all()
+            
+            # Create reception records for each article
+            receptions_created = []
+            
+            for reception_article in data.get('articles', []):
+                # Find corresponding item
+                item = next((i for i in items if i.id == reception_article['itemId']), None)
+                if not item:
+                    continue
+                
+                # Create reception record
+                reception = Reception(
+                    date_reception=datetime.strptime(data['dateReception'], '%Y-%m-%d').date(),
+                    supplier_id=item.supplier_id,
+                    article_id=item.article_id,
+                    quantite_recue=reception_article['quantiteRecue'],
+                    prix_unitaire=reception_article['prixUnitaire'],
+                    numero_bon_livraison=data.get('numeroBonLivraison'),
+                    observations=data.get('observations')
+                )
+                db.session.add(reception)
+                
+                # Update article stock
+                article = Article.query.get(item.article_id)
+                if article:
+                    article.stock_actuel += reception_article['quantiteRecue']
+                
+                receptions_created.append(reception)
+            
+            db.session.commit()
+            
+            return jsonify({
+                'message': f'{len(receptions_created)} réceptions créées avec succès',
+                'receptions': [r.to_dict() for r in receptions_created]
+            }), 201
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'message': f'Erreur lors de la conversion: {str(e)}'}), 500
 
     # Complete purchase request creation
     @app.route("/api/purchase-requests/complete", methods=['POST'])
@@ -572,7 +672,8 @@ def register_routes(app, db):
                 'recentOutbounds': [outbound.to_dict() for outbound in recent_outbounds]
             })
         except Exception as e:
-            return jsonify({'message': 'Erreur lors de la récupération des statistiques'}), 500
+            print(f"Dashboard stats error: {str(e)}")
+            return jsonify({'message': f'Erreur lors de la récupération des statistiques: {str(e)}'}), 500
 
     # Stock status analytics
     @app.route("/api/stock-status/analytics", methods=['GET'])
