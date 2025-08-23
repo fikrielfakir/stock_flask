@@ -41,6 +41,12 @@
                 <button onclick="switchTab('integrations')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="integrations">
                     Intégrations
                 </button>
+                <button onclick="switchTab('advanced')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="advanced">
+                    Avancé
+                </button>
+                <button onclick="switchTab('customization')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="customization">
+                    Personnalisation
+                </button>
             </nav>
         </div>
 
@@ -447,6 +453,316 @@
                 </div>
             </div>
         </div>
+
+        <!-- Advanced Settings -->
+        <div id="advanced-tab" class="settings-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Configuration Base de Données</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pool de Connexions</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="db-pool-size">
+                                <option value="5">5 connexions</option>
+                                <option value="10" selected>10 connexions</option>
+                                <option value="20">20 connexions</option>
+                                <option value="50">50 connexions</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Timeout Requête (sec)</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="db-timeout">
+                                <option value="30" selected>30 secondes</option>
+                                <option value="60">60 secondes</option>
+                                <option value="120">120 secondes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="db-auto-vacuum">
+                            <span class="ml-2 text-sm text-gray-700">Nettoyage automatique de la base</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Fonctionnalités Avancées</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Mode Debug</span>
+                                <p class="text-xs text-gray-500">Active les logs détaillés et les informations de débogage</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="debug-mode">
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Cache Intelligent</span>
+                                <p class="text-xs text-gray-500">Améliore les performances en mettant en cache les requêtes fréquentes</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="smart-cache" checked>
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Validation Stricte</span>
+                                <p class="text-xs text-gray-500">Contrôles de données plus rigoureux</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="strict-validation">
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Mode Maintenance</span>
+                                <p class="text-xs text-gray-500">Bloque l'accès pour maintenance système</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="maintenance-mode">
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Paramètres de Performance</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Limite Recherche</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="search-limit">
+                                <option value="100">100 résultats</option>
+                                <option value="500" selected>500 résultats</option>
+                                <option value="1000">1000 résultats</option>
+                                <option value="-1">Illimité</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cache Durée (min)</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="cache-duration">
+                                <option value="5">5 minutes</option>
+                                <option value="15" selected>15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="60">1 heure</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Batch Size</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="batch-size">
+                                <option value="50">50 éléments</option>
+                                <option value="100" selected>100 éléments</option>
+                                <option value="500">500 éléments</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Surveillance Système</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Métriques</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="metrics-cpu" checked>
+                                    <span class="ml-2 text-sm text-gray-700">Utilisation CPU</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="metrics-memory" checked>
+                                    <span class="ml-2 text-sm text-gray-700">Utilisation Mémoire</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="metrics-disk">
+                                    <span class="ml-2 text-sm text-gray-700">Espace Disque</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Alertes Performance</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="alert-slow-queries">
+                                    <span class="ml-2 text-sm text-gray-700">Requêtes lentes</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="alert-high-cpu">
+                                    <span class="ml-2 text-sm text-gray-700">CPU élevé</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="alert-errors">
+                                    <span class="ml-2 text-sm text-gray-700">Erreurs système</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customization Settings -->
+        <div id="customization-tab" class="settings-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Interface Utilisateur</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Couleur Principale</label>
+                            <input type="color" value="#3B82F6" class="w-full h-10 border border-gray-300 rounded-md" id="primary-color">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Couleur Secondaire</label>
+                            <input type="color" value="#6B7280" class="w-full h-10 border border-gray-300 rounded-md" id="secondary-color">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Style de Navigation</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="nav-style">
+                                <option value="sidebar">Barre latérale</option>
+                                <option value="top" selected>Barre supérieure</option>
+                                <option value="tabs">Onglets</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Densité d'affichage</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="display-density">
+                                <option value="compact">Compact</option>
+                                <option value="comfortable" selected>Confortable</option>
+                                <option value="spacious">Espacé</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="rounded-corners" checked>
+                            <span class="ml-2 text-sm text-gray-700">Coins arrondis</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Logo et Branding</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Logo de l'entreprise</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <i class="fas fa-image text-gray-400 text-3xl mb-2"></i>
+                                <p class="text-sm text-gray-600 mb-2">Glissez votre logo ici ou cliquez pour sélectionner</p>
+                                <input type="file" accept="image/*" class="hidden" id="logo-upload">
+                                <button onclick="document.getElementById('logo-upload').click()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                                    Choisir un fichier
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nom de l'entreprise</label>
+                            <input type="text" value="StockCéramique" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                   id="company-name">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Slogan/Tagline</label>
+                            <input type="text" placeholder="Votre système de gestion d'inventaire" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                   id="company-tagline">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Modules et Fonctionnalités</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Module Analytics</span>
+                                <p class="text-xs text-gray-500">Rapports et analyses avancées</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="module-analytics" checked>
+                        </label>
+                        
+                        <label class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Module QR Codes</span>
+                                <p class="text-xs text-gray-500">Génération et scan de codes QR</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="module-qr" checked>
+                        </label>
+                        
+                        <label class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Export Avancé</span>
+                                <p class="text-xs text-gray-500">Exports PDF, Excel personnalisés</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="module-export" checked>
+                        </label>
+                        
+                        <label class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Workflow Avancé</span>
+                                <p class="text-xs text-gray-500">Approbations multi-niveaux</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="module-workflow">
+                        </label>
+                        
+                        <label class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Alertes Intelligentes</span>
+                                <p class="text-xs text-gray-500">Notifications prédictives</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="module-smart-alerts">
+                        </label>
+                        
+                        <label class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Mode Hors-ligne</span>
+                                <p class="text-xs text-gray-500">Fonctionnement sans connexion</p>
+                            </div>
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="module-offline">
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Dashboard Personnalisé</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Widgets Actifs</label>
+                            <div class="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded-md p-3">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="widget-stats" checked>
+                                    <span class="ml-2 text-sm text-gray-700">Statistiques générales</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="widget-charts" checked>
+                                    <span class="ml-2 text-sm text-gray-700">Graphiques</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="widget-alerts" checked>
+                                    <span class="ml-2 text-sm text-gray-700">Alertes stock</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="widget-recent" checked>
+                                    <span class="ml-2 text-sm text-gray-700">Activité récente</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="widget-requests">
+                                    <span class="ml-2 text-sm text-gray-700">Demandes en attente</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Layout Dashboard</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 mb-4" id="dashboard-layout">
+                                <option value="grid">Grille</option>
+                                <option value="masonry" selected>Mosaïque</option>
+                                <option value="list">Liste</option>
+                            </select>
+                            
+                            <button onclick="resetDashboard()" class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                                Réinitialiser le Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -524,6 +840,45 @@
                     apiEnabled: false,
                     scannerEnabled: false,
                     scannerType: 'camera'
+                },
+                advanced: {
+                    dbPoolSize: 10,
+                    dbTimeout: 30,
+                    dbAutoVacuum: false,
+                    debugMode: false,
+                    smartCache: true,
+                    strictValidation: false,
+                    maintenanceMode: false,
+                    searchLimit: 500,
+                    cacheDuration: 15,
+                    batchSize: 100,
+                    metricsCpu: true,
+                    metricsMemory: true,
+                    metricsDisk: false,
+                    alertSlowQueries: false,
+                    alertHighCpu: false,
+                    alertErrors: false
+                },
+                customization: {
+                    primaryColor: '#3B82F6',
+                    secondaryColor: '#6B7280',
+                    navStyle: 'top',
+                    displayDensity: 'comfortable',
+                    roundedCorners: true,
+                    companyName: 'StockCéramique',
+                    companyTagline: '',
+                    moduleAnalytics: true,
+                    moduleQr: true,
+                    moduleExport: true,
+                    moduleWorkflow: false,
+                    moduleSmartAlerts: false,
+                    moduleOffline: false,
+                    widgetStats: true,
+                    widgetCharts: true,
+                    widgetAlerts: true,
+                    widgetRecent: true,
+                    widgetRequests: false,
+                    dashboardLayout: 'masonry'
                 }
             };
         }
@@ -572,6 +927,52 @@
             document.getElementById('api-enabled').checked = settings.integrations.apiEnabled || false;
             document.getElementById('scanner-enabled').checked = settings.integrations.scannerEnabled || false;
             document.getElementById('scanner-type').value = settings.integrations.scannerType || 'camera';
+        }
+
+        // Apply advanced settings
+        if (settings.advanced) {
+            document.getElementById('db-pool-size').value = settings.advanced.dbPoolSize || 10;
+            document.getElementById('db-timeout').value = settings.advanced.dbTimeout || 30;
+            document.getElementById('db-auto-vacuum').checked = settings.advanced.dbAutoVacuum || false;
+            document.getElementById('debug-mode').checked = settings.advanced.debugMode || false;
+            document.getElementById('smart-cache').checked = settings.advanced.smartCache || true;
+            document.getElementById('strict-validation').checked = settings.advanced.strictValidation || false;
+            document.getElementById('maintenance-mode').checked = settings.advanced.maintenanceMode || false;
+            document.getElementById('search-limit').value = settings.advanced.searchLimit || 500;
+            document.getElementById('cache-duration').value = settings.advanced.cacheDuration || 15;
+            document.getElementById('batch-size').value = settings.advanced.batchSize || 100;
+            document.getElementById('metrics-cpu').checked = settings.advanced.metricsCpu || true;
+            document.getElementById('metrics-memory').checked = settings.advanced.metricsMemory || true;
+            document.getElementById('metrics-disk').checked = settings.advanced.metricsDisk || false;
+            document.getElementById('alert-slow-queries').checked = settings.advanced.alertSlowQueries || false;
+            document.getElementById('alert-high-cpu').checked = settings.advanced.alertHighCpu || false;
+            document.getElementById('alert-errors').checked = settings.advanced.alertErrors || false;
+        }
+
+        // Apply customization settings
+        if (settings.customization) {
+            document.getElementById('primary-color').value = settings.customization.primaryColor || '#3B82F6';
+            document.getElementById('secondary-color').value = settings.customization.secondaryColor || '#6B7280';
+            document.getElementById('nav-style').value = settings.customization.navStyle || 'top';
+            document.getElementById('display-density').value = settings.customization.displayDensity || 'comfortable';
+            document.getElementById('rounded-corners').checked = settings.customization.roundedCorners || true;
+            document.getElementById('company-name').value = settings.customization.companyName || 'StockCéramique';
+            document.getElementById('company-tagline').value = settings.customization.companyTagline || '';
+            document.getElementById('module-analytics').checked = settings.customization.moduleAnalytics || true;
+            document.getElementById('module-qr').checked = settings.customization.moduleQr || true;
+            document.getElementById('module-export').checked = settings.customization.moduleExport || true;
+            document.getElementById('module-workflow').checked = settings.customization.moduleWorkflow || false;
+            document.getElementById('module-smart-alerts').checked = settings.customization.moduleSmartAlerts || false;
+            document.getElementById('module-offline').checked = settings.customization.moduleOffline || false;
+            document.getElementById('widget-stats').checked = settings.customization.widgetStats || true;
+            document.getElementById('widget-charts').checked = settings.customization.widgetCharts || true;
+            document.getElementById('widget-alerts').checked = settings.customization.widgetAlerts || true;
+            document.getElementById('widget-recent').checked = settings.customization.widgetRecent || true;
+            document.getElementById('widget-requests').checked = settings.customization.widgetRequests || false;
+            document.getElementById('dashboard-layout').value = settings.customization.dashboardLayout || 'masonry';
+            
+            // Apply theme colors
+            applyCustomColors();
         }
     }
 
@@ -695,6 +1096,45 @@
                 apiEnabled: document.getElementById('api-enabled').checked,
                 scannerEnabled: document.getElementById('scanner-enabled').checked,
                 scannerType: document.getElementById('scanner-type').value
+            },
+            advanced: {
+                dbPoolSize: parseInt(document.getElementById('db-pool-size').value),
+                dbTimeout: parseInt(document.getElementById('db-timeout').value),
+                dbAutoVacuum: document.getElementById('db-auto-vacuum').checked,
+                debugMode: document.getElementById('debug-mode').checked,
+                smartCache: document.getElementById('smart-cache').checked,
+                strictValidation: document.getElementById('strict-validation').checked,
+                maintenanceMode: document.getElementById('maintenance-mode').checked,
+                searchLimit: parseInt(document.getElementById('search-limit').value),
+                cacheDuration: parseInt(document.getElementById('cache-duration').value),
+                batchSize: parseInt(document.getElementById('batch-size').value),
+                metricsCpu: document.getElementById('metrics-cpu').checked,
+                metricsMemory: document.getElementById('metrics-memory').checked,
+                metricsDisk: document.getElementById('metrics-disk').checked,
+                alertSlowQueries: document.getElementById('alert-slow-queries').checked,
+                alertHighCpu: document.getElementById('alert-high-cpu').checked,
+                alertErrors: document.getElementById('alert-errors').checked
+            },
+            customization: {
+                primaryColor: document.getElementById('primary-color').value,
+                secondaryColor: document.getElementById('secondary-color').value,
+                navStyle: document.getElementById('nav-style').value,
+                displayDensity: document.getElementById('display-density').value,
+                roundedCorners: document.getElementById('rounded-corners').checked,
+                companyName: document.getElementById('company-name').value,
+                companyTagline: document.getElementById('company-tagline').value,
+                moduleAnalytics: document.getElementById('module-analytics').checked,
+                moduleQr: document.getElementById('module-qr').checked,
+                moduleExport: document.getElementById('module-export').checked,
+                moduleWorkflow: document.getElementById('module-workflow').checked,
+                moduleSmartAlerts: document.getElementById('module-smart-alerts').checked,
+                moduleOffline: document.getElementById('module-offline').checked,
+                widgetStats: document.getElementById('widget-stats').checked,
+                widgetCharts: document.getElementById('widget-charts').checked,
+                widgetAlerts: document.getElementById('widget-alerts').checked,
+                widgetRecent: document.getElementById('widget-recent').checked,
+                widgetRequests: document.getElementById('widget-requests').checked,
+                dashboardLayout: document.getElementById('dashboard-layout').value
             }
         };
 
@@ -707,6 +1147,12 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
+
+        // Apply custom colors
+        applyCustomColors();
+        
+        // Save to backend
+        saveSettingsToBackend();
 
         showToast('Paramètres sauvegardés avec succès', 'success');
     }
@@ -764,5 +1210,77 @@
     function configureNotifications() {
         showToast('Configuration notifications en cours de développement', 'info');
     }
+
+    function applyCustomColors() {
+        if (settings.customization) {
+            const root = document.documentElement;
+            root.style.setProperty('--primary-color', settings.customization.primaryColor);
+            root.style.setProperty('--secondary-color', settings.customization.secondaryColor);
+            
+            // Apply to various elements
+            const primaryElements = document.querySelectorAll('.bg-blue-600, .text-blue-600, .border-blue-500');
+            primaryElements.forEach(el => {
+                if (el.classList.contains('bg-blue-600')) {
+                    el.style.backgroundColor = settings.customization.primaryColor;
+                }
+                if (el.classList.contains('text-blue-600')) {
+                    el.style.color = settings.customization.primaryColor;
+                }
+                if (el.classList.contains('border-blue-500')) {
+                    el.style.borderColor = settings.customization.primaryColor;
+                }
+            });
+        }
+    }
+
+    async function saveSettingsToBackend() {
+        try {
+            await apiRequest('POST', '/api/settings', settings);
+        } catch (error) {
+            console.warn('Could not save settings to backend:', error);
+        }
+    }
+
+    function resetDashboard() {
+        if (confirm('Êtes-vous sûr de vouloir réinitialiser le dashboard ?')) {
+            // Reset dashboard widgets to default
+            settings.customization.widgetStats = true;
+            settings.customization.widgetCharts = true;
+            settings.customization.widgetAlerts = true;
+            settings.customization.widgetRecent = true;
+            settings.customization.widgetRequests = false;
+            settings.customization.dashboardLayout = 'masonry';
+            
+            applySettings();
+            showToast('Dashboard réinitialisé', 'success');
+        }
+    }
+
+    // Handle logo upload
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoUpload = document.getElementById('logo-upload');
+        if (logoUpload) {
+            logoUpload.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        settings.customization.logoData = e.target.result;
+                        showToast('Logo téléchargé avec succès', 'success');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Add color change listeners
+        const colorInputs = ['primary-color', 'secondary-color'];
+        colorInputs.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('change', applyCustomColors);
+            }
+        });
+    });
 </script>
 {% endblock %}

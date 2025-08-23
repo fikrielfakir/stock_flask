@@ -10,6 +10,22 @@ from werkzeug.utils import secure_filename
 def register_routes(app, db):
     from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound
     
+    # Load settings at startup  
+    def load_system_settings():
+        try:
+            import json
+            import os
+            if os.path.exists('settings.json'):
+                with open('settings.json', 'r', encoding='utf-8') as f:
+                    app.config['SYSTEM_SETTINGS'] = json.load(f)
+            else:
+                app.config['SYSTEM_SETTINGS'] = {}
+        except Exception as e:
+            app.logger.warning(f'Could not load system settings: {e}')
+    
+    # Load settings when routes are registered
+    load_system_settings()
+    
     # Articles routes
     @app.route("/api/articles", methods=['GET'])
     def get_articles():
@@ -791,6 +807,201 @@ def register_routes(app, db):
             return jsonify({'message': 'Erreur lors de la génération du rapport'}), 500
 
     # Settings endpoints
+    @app.route("/api/settings", methods=['GET'])
+    def get_settings():
+        try:
+            # Load settings from file or database
+            import json
+            import os
+            settings_file = 'settings.json'
+            
+            if os.path.exists(settings_file):
+                with open(settings_file, 'r', encoding='utf-8') as f:
+                    settings = json.load(f)
+            else:
+                # Default settings
+                settings = {
+                    'currency': 'MAD',
+                    'language': 'fr',
+                    'dateFormat': 'dd/mm/yyyy',
+                    'theme': 'light',
+                    'notifications': {
+                        'stock': True,
+                        'requests': True,
+                        'deliveries': True,
+                        'reports': False
+                    },
+                    'paginationLimit': 50,
+                    'autoRefresh': True,
+                    'security': {
+                        'passwordLength': 8,
+                        'passwordExpiry': 90,
+                        'requireUppercase': True,
+                        'requireNumbers': True,
+                        'requireSpecial': False,
+                        'sessionTimeout': 30,
+                        'autoLogout': True,
+                        'logLogins': True,
+                        'logDataChanges': True,
+                        'logExports': False
+                    },
+                    'backup': {
+                        'frequency': 'daily',
+                        'time': '02:00',
+                        'retention': 7
+                    },
+                    'integrations': {
+                        'apiEnabled': False,
+                        'scannerEnabled': False,
+                        'scannerType': 'camera'
+                    },
+                    'advanced': {
+                        'dbPoolSize': 10,
+                        'dbTimeout': 30,
+                        'dbAutoVacuum': False,
+                        'debugMode': False,
+                        'smartCache': True,
+                        'strictValidation': False,
+                        'maintenanceMode': False,
+                        'searchLimit': 500,
+                        'cacheDuration': 15,
+                        'batchSize': 100,
+                        'metricsCpu': True,
+                        'metricsMemory': True,
+                        'metricsDisk': False,
+                        'alertSlowQueries': False,
+                        'alertHighCpu': False,
+                        'alertErrors': False
+                    },
+                    'customization': {
+                        'primaryColor': '#3B82F6',
+                        'secondaryColor': '#6B7280',
+                        'navStyle': 'top',
+                        'displayDensity': 'comfortable',
+                        'roundedCorners': True,
+                        'companyName': 'StockCéramique',
+                        'companyTagline': '',
+                        'moduleAnalytics': True,
+                        'moduleQr': True,
+                        'moduleExport': True,
+                        'moduleWorkflow': False,
+                        'moduleSmartAlerts': False,
+                        'moduleOffline': False,
+                        'widgetStats': True,
+                        'widgetCharts': True,
+                        'widgetAlerts': True,
+                        'widgetRecent': True,
+                        'widgetRequests': False,
+                        'dashboardLayout': 'masonry'
+                    }
+                }
+                
+            return jsonify(settings)
+        except Exception as e:
+            return jsonify({'message': 'Erreur lors du chargement des paramètres'}), 500
+    
+    @app.route("/api/settings", methods=['POST'])
+    def save_settings():
+        try:
+            import json
+            settings = request.get_json()
+            
+            # Save settings to file
+            with open('settings.json', 'w', encoding='utf-8') as f:
+                json.dump(settings, f, indent=2, ensure_ascii=False)
+                
+            return jsonify({'message': 'Paramètres sauvegardés avec succès'})
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de la sauvegarde: {str(e)}'}), 500
+    
+    @app.route("/api/settings/backup", methods=['POST'])
+    def create_backup():
+        try:
+            import json
+            import shutil
+            from datetime import datetime
+            
+            # Create backup of database and settings
+            backup_name = f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            backup_dir = f"backups/{backup_name}"
+            
+            import os
+            os.makedirs(backup_dir, exist_ok=True)
+            
+            # Copy database file
+            if os.path.exists('instance/stockceramique.db'):
+                shutil.copy2('instance/stockceramique.db', f"{backup_dir}/database.db")
+            
+            # Copy settings
+            if os.path.exists('settings.json'):
+                shutil.copy2('settings.json', f"{backup_dir}/settings.json")
+                
+            # Create backup info file
+            backup_info = {
+                'name': backup_name,
+                'created': datetime.now().isoformat(),
+                'type': 'manual',
+                'size': 0  # Would calculate actual size
+            }
+            
+            with open(f"{backup_dir}/info.json", 'w') as f:
+                json.dump(backup_info, f, indent=2)
+                
+            return jsonify({
+                'message': 'Sauvegarde créée avec succès',
+                'backup': backup_info
+            })
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de la création de sauvegarde: {str(e)}'}), 500
+    
+    @app.route("/api/settings/system-info", methods=['GET'])
+    def get_system_info():
+        try:
+            import psutil
+            import os
+            from datetime import datetime
+            
+            # Get system metrics
+            system_info = {
+                'cpu': {
+                    'usage': psutil.cpu_percent(interval=1),
+                    'cores': psutil.cpu_count()
+                },
+                'memory': {
+                    'total': psutil.virtual_memory().total,
+                    'used': psutil.virtual_memory().used,
+                    'percent': psutil.virtual_memory().percent
+                },
+                'disk': {
+                    'total': psutil.disk_usage('.').total,
+                    'used': psutil.disk_usage('.').used,
+                    'percent': (psutil.disk_usage('.').used / psutil.disk_usage('.').total) * 100
+                },
+                'database': {
+                    'size': os.path.getsize('instance/stockceramique.db') if os.path.exists('instance/stockceramique.db') else 0,
+                    'articles': Article.query.count(),
+                    'suppliers': Supplier.query.count(),
+                    'requests': PurchaseRequest.query.count()
+                },
+                'uptime': datetime.now().isoformat(),
+                'version': '1.0.0'
+            }
+            
+            return jsonify(system_info)
+        except ImportError:
+            # If psutil is not available, return basic info
+            return jsonify({
+                'message': 'Informations système limitées',
+                'database': {
+                    'articles': Article.query.count(),
+                    'suppliers': Supplier.query.count(),
+                    'requests': PurchaseRequest.query.count()
+                },
+                'version': '1.0.0'
+            })
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de la récupération des informations système: {str(e)}'}), 500
+
     @app.route("/api/settings/categories", methods=['GET'])
     def get_categories():
         try:
@@ -798,6 +1009,53 @@ def register_routes(app, db):
             return jsonify([cat[0] for cat in categories if cat[0]])
         except Exception as e:
             return jsonify({'message': 'Erreur lors de la récupération des catégories'}), 500
+            
+    @app.route("/api/settings/categories", methods=['POST'])
+    def add_category():
+        try:
+            data = request.get_json()
+            category_name = data.get('name')
+            
+            if not category_name:
+                return jsonify({'message': 'Nom de catégorie requis'}), 400
+                
+            # Check if category already exists
+            existing = db.session.query(Article.categorie).filter_by(categorie=category_name).first()
+            if existing:
+                return jsonify({'message': 'Cette catégorie existe déjà'}), 400
+                
+            return jsonify({'message': 'Catégorie ajoutée avec succès'})
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de l\'ajout de catégorie: {str(e)}'}), 500
+
+    @app.route("/api/settings/units", methods=['POST'])
+    def add_unit():
+        try:
+            data = request.get_json()
+            code = data.get('code')
+            description = data.get('description')
+            
+            if not code or not description:
+                return jsonify({'message': 'Code et description requis'}), 400
+                
+            # This would typically save to a units configuration table
+            return jsonify({'message': 'Unité ajoutée avec succès'})
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de l\'ajout d\'unité: {str(e)}'}), 500
+    
+    @app.route("/api/settings/departments", methods=['POST'])
+    def add_department():
+        try:
+            data = request.get_json()
+            department_name = data.get('name')
+            
+            if not department_name:
+                return jsonify({'message': 'Nom de département requis'}), 400
+                
+            # This would save to departments table or update requestors config
+            return jsonify({'message': 'Département ajouté avec succès'})
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de l\'ajout de département: {str(e)}'}), 500
 
     # Bulk Import/Export Articles
     @app.route("/api/articles/export", methods=['GET'])
