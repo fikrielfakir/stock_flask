@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}Rapports - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6" data-testid="reports-page">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Rapports</h1>
+            <p class="text-sm text-gray-600">Système de rapport complet avec export multi-format</p>
+        </div>
+        <div class="flex space-x-3">
+            <button onclick="scheduleReport()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <i class="fas fa-clock mr-2"></i>
+                Programmer
+            </button>
+            <button onclick="customReport()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                <i class="fas fa-cog mr-2"></i>
+                Rapport Personnalisé
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Reports -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-boxes text-blue-600 text-xl"></i>
+                </div>
+                <span class="text-xs text-gray-500">Instantané</span>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">Rapport Stock</h3>
+            <p class="text-sm text-gray-600 mb-4">Inventaire complet avec valorisation</p>
+            <button onclick="generateStockReport()" class="w-full px-3 py-2 border border-blue-300 text-blue-600 rounded-md text-sm hover:bg-blue-50">
+                Générer
+            </button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-exchange-alt text-green-600 text-xl"></i>
+                </div>
+                <span class="text-xs text-gray-500">Période</span>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">Mouvements</h3>
+            <p class="text-sm text-gray-600 mb-4">Historique détaillé des transactions</p>
+            <button onclick="generateMovementReport()" class="w-full px-3 py-2 border border-green-300 text-green-600 rounded-md text-sm hover:bg-green-50">
+                Générer
+            </button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-truck text-purple-600 text-xl"></i>
+                </div>
+                <span class="text-xs text-gray-500">Performance</span>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">Fournisseurs</h3>
+            <p class="text-sm text-gray-600 mb-4">Analyse performance vendeurs</p>
+            <button onclick="generateSupplierReport()" class="w-full px-3 py-2 border border-purple-300 text-purple-600 rounded-md text-sm hover:bg-purple-50">
+                Générer
+            </button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-line text-yellow-600 text-xl"></i>
+                </div>
+                <span class="text-xs text-gray-500">Analytique</span>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">Analytics</h3>
+            <p class="text-sm text-gray-600 mb-4">Tendances et prédictions</p>
+            <button onclick="generateAnalyticsReport()" class="w-full px-3 py-2 border border-yellow-300 text-yellow-600 rounded-md text-sm hover:bg-yellow-50">
+                Générer
+            </button>
+        </div>
+    </div>
+
+    <!-- Custom Report Builder -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Générateur de Rapport Personnalisé</h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Data Sources -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Sources de Données</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="data-articles" checked>
+                            <span class="ml-2 text-sm text-gray-700">Articles</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="data-suppliers">
+                            <span class="ml-2 text-sm text-gray-700">Fournisseurs</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="data-movements">
+                            <span class="ml-2 text-sm text-gray-700">Mouvements</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="data-requests">
+                            <span class="ml-2 text-sm text-gray-700">Demandes d'achat</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Filtres</label>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Période</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" id="period-filter">
+                                <option value="all">Toute la période</option>
+                                <option value="today">Aujourd'hui</option>
+                                <option value="week">Cette semaine</option>
+                                <option value="month">Ce mois</option>
+                                <option value="quarter">Ce trimestre</option>
+                                <option value="year">Cette année</option>
+                                <option value="custom">Personnalisé</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Catégorie</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" id="category-filter">
+                                <option value="all">Toutes les catégories</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Stock Status</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" id="stock-status-filter">
+                                <option value="all">Tous les statuts</option>
+                                <option value="critical">Critique</option>
+                                <option value="low">Bas</option>
+                                <option value="normal">Normal</option>
+                                <option value="high">Élevé</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Options -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Format d'Export</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="export-format" value="pdf" class="text-blue-600 focus:ring-blue-500" checked>
+                            <span class="ml-2 text-sm text-gray-700">PDF</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="export-format" value="excel" class="text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">Excel</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="export-format" value="csv" class="text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">CSV</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="export-format" value="json" class="text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">JSON</span>
+                        </label>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button onclick="generateCustomReport()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Générer Rapport
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report History -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Historique des Rapports</h3>
+                <button onclick="clearHistory()" class="text-sm text-red-600 hover:text-red-800">
+                    Effacer l'historique
+                </button>
+            </div>
+        </div>
+        <div class="p-6" id="report-history">
+            <div class="text-center text-gray-500 py-8">
+                <i class="fas fa-file-alt text-3xl mb-2"></i>
+                <p>Aucun rapport généré</p>
+                <p class="text-sm">Les rapports générés apparaîtront ici</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backup & Export -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Sauvegarde et Export Complet</h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-2">Export Complet des Données</h4>
+                    <p class="text-sm text-gray-600 mb-4">Exportez toutes les données du système pour sauvegarde ou migration</p>
+                    <div class="flex space-x-2">
+                        <button onclick="exportFullData('json')" class="px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                            JSON
+                        </button>
+                        <button onclick="exportFullData('excel')" class="px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                            Excel
+                        </button>
+                        <button onclick="exportFullData('csv')" class="px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                            CSV
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-2">Conformité et Audit</h4>
+                    <p class="text-sm text-gray-600 mb-4">Générez des rapports pour conformité réglementaire et audit</p>
+                    <button onclick="generateAuditReport()" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
+                        Rapport d'Audit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let reportHistory = [];
+    let categories = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCategories();
+        loadReportHistory();
+    });
+
+    async function loadCategories() {
+        try {
+            categories = await apiRequest('GET', '/api/settings/categories');
+            updateCategoryFilter();
+        } catch (error) {
+            console.error('Error loading categories:', error);
+        }
+    }
+
+    function updateCategoryFilter() {
+        const filter = document.getElementById('category-filter');
+        filter.innerHTML = '<option value="all">Toutes les catégories</option>';
+        
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            filter.appendChild(option);
+        });
+    }
+
+    async function generateStockReport() {
+        try {
+            showLoading();
+            const data = await apiRequest('GET', '/api/reports/stock');
+            
+            // Create report entry
+            const report = {
+                id: Date.now(),
+                type: 'Stock',
+                timestamp: new Date().toISOString(),
+                format: 'JSON',
+                data: data
+            };
+            
+            addToHistory(report);
+            downloadReport(report, 'stock_report.json');
+            showToast('Rapport stock généré avec succès', 'success');
+        } catch (error) {
+            console.error('Error generating stock report:', error);
+            showToast('Erreur lors de la génération du rapport', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    async function generateMovementReport() {
+        showToast('Rapport mouvements en cours de développement', 'info');
+    }
+
+    async function generateSupplierReport() {
+        showToast('Rapport fournisseurs en cours de développement', 'info');
+    }
+
+    async function generateAnalyticsReport() {
+        showToast('Rapport analytics en cours de développement', 'info');
+    }
+
+    function generateCustomReport() {
+        const dataSources = getSelectedDataSources();
+        const filters = getSelectedFilters();
+        const format = document.querySelector('input[name="export-format"]:checked').value;
+        
+        if (dataSources.length === 0) {
+            showToast('Veuillez sélectionner au moins une source de données', 'error');
+            return;
+        }
+
+        const report = {
+            id: Date.now(),
+            type: 'Personnalisé',
+            timestamp: new Date().toISOString(),
+            format: format.toUpperCase(),
+            sources: dataSources,
+            filters: filters
+        };
+
+        addToHistory(report);
+        showToast(`Rapport personnalisé généré en ${format.toUpperCase()}`, 'success');
+    }
+
+    function getSelectedDataSources() {
+        const sources = [];
+        if (document.getElementById('data-articles').checked) sources.push('Articles');
+        if (document.getElementById('data-suppliers').checked) sources.push('Fournisseurs');
+        if (document.getElementById('data-movements').checked) sources.push('Mouvements');
+        if (document.getElementById('data-requests').checked) sources.push('Demandes');
+        return sources;
+    }
+
+    function getSelectedFilters() {
+        return {
+            period: document.getElementById('period-filter').value,
+            category: document.getElementById('category-filter').value,
+            stockStatus: document.getElementById('stock-status-filter').value
+        };
+    }
+
+    function addToHistory(report) {
+        reportHistory.unshift(report);
+        if (reportHistory.length > 50) {
+            reportHistory = reportHistory.slice(0, 50); // Keep only last 50 reports
+        }
+        updateHistoryDisplay();
+        saveHistoryToLocalStorage();
+    }
+
+    function updateHistoryDisplay() {
+        const container = document.getElementById('report-history');
+        
+        if (reportHistory.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <i class="fas fa-file-alt text-3xl mb-2"></i>
+                    <p>Aucun rapport généré</p>
+                    <p class="text-sm">Les rapports générés apparaîtront ici</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="space-y-3">
+                ${reportHistory.slice(0, 10).map(report => createHistoryItem(report)).join('')}
+                ${reportHistory.length > 10 ? `
+                    <div class="text-center pt-4">
+                        <button onclick="showAllHistory()" class="text-blue-600 hover:text-blue-800 text-sm">
+                            Voir tous les rapports (${reportHistory.length})
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    function createHistoryItem(report) {
+        const date = new Date(report.timestamp).toLocaleString('fr-FR');
+        const sources = report.sources ? report.sources.join(', ') : '';
+        
+        return `
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-alt text-blue-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">${report.type} - ${report.format}</p>
+                            <p class="text-sm text-gray-600">${date}</p>
+                            ${sources ? `<p class="text-xs text-gray-500">${sources}</p>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="downloadStoredReport('${report.id}')" 
+                            class="text-blue-600 hover:text-blue-800 text-sm px-3 py-1 border border-blue-300 rounded">
+                        Télécharger
+                    </button>
+                    <button onclick="deleteReport('${report.id}')" 
+                            class="text-red-600 hover:text-red-800 text-sm px-3 py-1 border border-red-300 rounded">
+                        Supprimer
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function downloadReport(report, filename) {
+        const dataStr = JSON.stringify(report.data, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = filename;
+        link.click();
+    }
+
+    function downloadStoredReport(reportId) {
+        const report = reportHistory.find(r => r.id.toString() === reportId);
+        if (report && report.data) {
+            const filename = `${report.type.toLowerCase()}_${new Date(report.timestamp).toISOString().split('T')[0]}.json`;
+            downloadReport(report, filename);
+        } else {
+            showToast('Données du rapport non disponibles', 'error');
+        }
+    }
+
+    function deleteReport(reportId) {
+        reportHistory = reportHistory.filter(r => r.id.toString() !== reportId);
+        updateHistoryDisplay();
+        saveHistoryToLocalStorage();
+        showToast('Rapport supprimé', 'success');
+    }
+
+    function clearHistory() {
+        if (confirm('Êtes-vous sûr de vouloir effacer tout l\'historique des rapports ?')) {
+            reportHistory = [];
+            updateHistoryDisplay();
+            saveHistoryToLocalStorage();
+            showToast('Historique effacé', 'success');
+        }
+    }
+
+    function saveHistoryToLocalStorage() {
+        localStorage.setItem('stockceramique_report_history', JSON.stringify(reportHistory));
+    }
+
+    function loadReportHistory() {
+        const stored = localStorage.getItem('stockceramique_report_history');
+        if (stored) {
+            reportHistory = JSON.parse(stored);
+            updateHistoryDisplay();
+        }
+    }
+
+    function exportFullData(format) {
+        showToast(`Export complet en ${format.toUpperCase()} en cours de développement`, 'info');
+    }
+
+    function generateAuditReport() {
+        showToast('Rapport d\'audit en cours de développement', 'info');
+    }
+
+    function scheduleReport() {
+        showToast('Programmation de rapports en cours de développement', 'info');
+    }
+
+    function customReport() {
+        document.querySelector('#period-filter').focus();
+    }
+
+    function showAllHistory() {
+        showToast('Affichage complet de l\'historique en cours de développement', 'info');
+    }
+</script>
+{% endblock %}

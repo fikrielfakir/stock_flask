@@ -1,0 +1,230 @@
+Application Overview
+StockCéramique is a sophisticated inventory management system designed specifically for ceramic spare parts management in industrial environments. The application provides comprehensive tracking of stock levels, supplier management, purchase request workflows, reception/outbound processing, and advanced analytics with predictive insights.
+
+System Architecture & Features
+Frontend: React 18 with TypeScript, Vite build system, Shadcn/ui components, Tailwind CSS styling
+Backend: Node.js with Express, PostgreSQL database, Drizzle ORM
+Key Capabilities: Real-time inventory tracking, automated workflows, advanced analytics, PWA support, desktop application version
+
+Screen-by-Screen Functionality
+1. Accueil (Dashboard/Home Page)
+Route: / or /enhanced-dashboard
+
+Primary Functions:
+
+Real-time Overview: Displays critical inventory metrics including total articles, low stock alerts, pending purchase requests, and total stock value
+Visual Analytics: Interactive charts showing stock evolution over 4 months, purchase request status distribution, and recent stock movements
+Quick Actions Panel: Direct access buttons for adding articles, creating purchase requests, processing receptions, and generating reports
+Stock Alerts System: Dedicated section highlighting articles below minimum thresholds with automatic notifications
+Performance Monitoring: Real-time system performance metrics and optimization suggestions
+Advanced Features:
+
+Microsoft-inspired design with Mica effect containers
+Responsive grid layout adapting to different screen sizes
+Predictive analytics integration for demand forecasting
+Recent activity timeline with movement tracking
+Currency formatting in EUR with French localization
+2. Articles (Inventory Management)
+Route: /articles
+
+Core Functions:
+
+Complete Article Management: Add, edit, delete spare parts with comprehensive details (code, designation, category, brand, reference, stock levels, pricing, supplier associations)
+Advanced Search & Filtering: Multi-criteria search by code, designation, brand, category, supplier, price ranges, and stock levels
+Smart Analytics Toggle: Interactive charts showing category distribution, stock level analysis, and value breakdowns
+QR Code Generation: Automatic barcode generation for physical inventory tracking
+Import/Export Capabilities: Bulk data operations with Excel/CSV support
+Stock Status Visualization: Color-coded indicators for critical, low, normal, and high stock levels
+Advanced Features:
+
+Fuzzy search with intelligent matching across multiple fields
+Real-time stock calculations and automatic threshold alerts
+Supplier integration with automatic data linking
+Virtual scrolling for large datasets (React Window implementation)
+PDF report generation with customizable layouts
+3. Purchase Requests (Demandes d'Achat)
+Route: /purchase-requests
+
+Workflow Management:
+
+Multi-Article Requests: Create purchase requests supporting multiple articles with individual quantities, prices, and supplier specifications
+Approval Workflow: Four-stage status management (pending, approved, refused, ordered) with role-based permissions
+Enhanced Form System: Intelligent article autocomplete with 3-character trigger, supplier suggestions, and price estimation
+Document Generation: PDF export for purchase orders with supplier details and request specifications
+Conversion to Reception: Seamless workflow from approved requests to goods reception processing
+Status Management:
+
+Real-time status updates with notification system
+Batch processing capabilities for multiple requests
+Integration with supplier delivery schedules
+Automatic stock impact calculations upon approval
+4. Purchase Follow-up (Suivi des Achats)
+Route: /purchase-follow
+
+Tracking & Monitoring:
+
+Kanban-style Interface: Organized tabs showing requests by status (pending, approved, ordered, refused)
+Advanced Filtering: Search by article, supplier, or request details with real-time filtering
+Progress Tracking: Visual progress indicators and timeline views for request processing
+Action Buttons: Context-sensitive actions based on current request status (approve, refuse, mark as ordered)
+Performance Analytics: Supplier delivery performance tracking and request processing metrics
+Collaboration Features:
+
+Request assignment and responsibility tracking
+Comment system for request notes and observations
+Deadline management with automated alerts
+Integration with reception workflow for delivery confirmation
+5. Stock Status (État du Stock)
+Route: /stock-status
+
+Comprehensive Monitoring:
+
+Multi-level Status Classification: Critical (0 stock), Low (below minimum), Medium (1-2x minimum), Good (above 2x minimum)
+Visual Dashboard: Color-coded cards with progress bars, stock percentages, and trend indicators
+Recent Movement Tracking: Display of last 5 stock movements per article with entry/exit indicators
+Advanced Filtering: Multi-criteria filtering by category, stock status, supplier, and search terms
+Sorting Options: Sort by name, stock quantity, status priority, or total value
+Analytics Integration:
+
+Stock value calculations with real-time pricing
+Movement history with graphical representations
+Supplier performance correlation with stock levels
+Predictive restocking recommendations
+6. Reception (Goods Receiving)
+Route: /reception
+
+Incoming Inventory Management:
+
+Comprehensive Reception Form: Record delivery details including supplier, article, quantities, pricing, and delivery note numbers
+Automatic Stock Updates: Real-time stock level adjustments upon reception confirmation
+Quality Control Integration: Note system for delivery condition assessment and quality verification
+Document Linking: Association with purchase requests and delivery documentation
+Supplier Performance Tracking: Delivery time analysis and reliability metrics
+Process Integration:
+
+Seamless conversion from approved purchase requests
+Automatic notification system for stakeholders
+Integration with stock movement logging
+Photo attachment capabilities for delivery documentation
+7. Outbound (Stock Output/Consumption)
+Route: /outbound
+
+Consumption Tracking:
+
+Detailed Outbound Recording: Track stock consumption with requestor information, quantities, reasons, and project associations
+Real-time Stock Deduction: Automatic inventory updates with movement logging
+Requestor Integration: Link consumption to specific employees and departments
+Usage Analytics: Consumption pattern analysis and department-wise usage tracking
+Audit Trail: Complete traceability of stock usage with timestamps and responsible parties
+Advanced Features:
+
+Batch processing for multiple article consumption
+Project-based tracking for construction or maintenance work
+Cost center allocation for accurate accounting
+Usage trend analysis and optimization recommendations
+8. Suppliers (Fournisseurs)
+Route: /suppliers
+
+Vendor Management:
+
+Complete Supplier Profiles: Name, contact information, delivery terms, payment conditions, and performance metrics
+Performance Tracking: Delivery time analysis, quality ratings, and reliability scoring
+Financial Integration: Payment terms management and cost analysis
+Communication Hub: Contact management with email and phone integration
+Delivery Optimization: Analysis of delivery schedules and route optimization
+Strategic Features:
+
+Supplier comparison tools with performance benchmarking
+Contract management with renewal alerts
+Volume discount tracking and negotiation support
+Risk assessment based on delivery performance
+9. Requestors (Demandeurs)
+Route: /requestors
+
+Personnel Management:
+
+Employee Database: Comprehensive profiles including name, department, position, and contact information
+Department Integration: Hierarchical organization with department-based permissions
+Request History: Complete tracking of individual purchasing and consumption history
+Authorization Levels: Role-based permissions for different request types and amounts
+Activity Monitoring: Usage patterns and departmental consumption analysis
+Workflow Integration:
+
+Automatic assignment based on department and role
+Approval routing based on organizational hierarchy
+Budget tracking per requestor and department
+Performance analytics for request efficiency
+10. Reports (Rapports)
+Route: /reports
+
+Comprehensive Reporting System:
+
+Multi-format Export: CSV, Excel, and PDF generation for various report types
+Stock Reports: Complete inventory status with valuation and movement history
+Movement Analysis: Detailed transaction history with filtering and categorization
+Supplier Performance: Comprehensive vendor analysis with delivery and quality metrics
+Custom Report Builder: Flexible report creation with multiple data sources
+Advanced Analytics:
+
+Backup System: Complete data export and restoration capabilities
+Historical Trending: Long-term analysis with predictive modeling
+Cost Analysis: Financial reporting with profitability analysis
+Compliance Reporting: Regulatory compliance documentation and audit trails
+11. Settings (Paramètres)
+Route: /settings
+
+System Configuration:
+
+Master Data Management: Categories, brands, departments, and position management with hierarchical organization
+System Preferences: Currency settings (MAD/EUR/USD), date formats, language preferences (French/Arabic/English)
+Security Configuration: Password complexity requirements, session management, and audit logging
+Backup Management: Automated backup scheduling with retention policies
+Integration Settings: API configuration, barcode scanning setup, and external system connections
+User Experience:
+
+Theme Management: Light/dark mode with automatic switching
+Performance Optimization: System monitoring and optimization recommendations
+Import/Export Tools: Configuration backup and restoration
+Notification Preferences: Alert customization and communication settings
+12. Analytics (Advanced Analytics)
+Route: /analytics
+
+Business Intelligence:
+
+Predictive Analytics: AI-powered demand forecasting and stock optimization
+Interactive Dashboards: Drill-down capabilities with multi-dimensional analysis
+Performance Monitoring: Real-time system performance and optimization suggestions
+Trend Analysis: Historical data analysis with future projections
+Supplier Intelligence: Vendor performance analytics with recommendations
+Advanced Features:
+
+Machine Learning Integration: Automated pattern recognition and anomaly detection
+Custom Visualization: Interactive charts with export capabilities
+Predictive Alerts: Proactive notifications based on trend analysis
+ROI Analysis: Financial impact assessment and optimization recommendations
+Key System Features
+Authentication & Security
+Session-based authentication with role-based access control
+Future support for Administrator, Manager, and Employee roles
+Secure password management and session timeout controls
+Data Management
+PostgreSQL Database: Robust relational database with ACID compliance
+Real-time Synchronization: Immediate updates across all connected clients
+Audit Trail: Complete transaction logging with user attribution
+Backup & Recovery: Automated backup systems with point-in-time recovery
+Performance Optimization
+Virtualized Scrolling: Efficient handling of large datasets
+Intelligent Caching: TanStack Query for optimized data fetching
+Progressive Loading: Lazy loading of components and data
+Real-time Monitoring: Performance metrics with optimization suggestions
+User Experience
+Responsive Design: Seamless experience across desktop, tablet, and mobile
+Keyboard Shortcuts: Power-user functionality with customizable shortcuts
+Toast Notifications: Real-time feedback system with contextual alerts
+Search Optimization: Intelligent search with fuzzy matching and autocomplete
+Integration Capabilities
+PWA Support: Offline functionality with background synchronization
+Desktop Application: Electron-based desktop version with local SQLite database
+Export/Import: Multiple format support (CSV, Excel, PDF, JSON)
+API Ready: RESTful API architecture for third-party integrations
+This comprehensive system provides complete visibility and control over inventory operations, from basic stock tracking to advanced predictive analytics, ensuring optimal inventory management and operational efficiency.

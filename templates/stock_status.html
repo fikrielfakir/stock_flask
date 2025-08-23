@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}État du Stock - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6" data-testid="stock-status-page">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">État du Stock</h1>
+            <p class="text-sm text-gray-600">Surveillance complète des niveaux de stock</p>
+        </div>
+        <div class="flex space-x-3">
+            <button onclick="refreshData()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <i class="fas fa-sync-alt mr-2"></i>
+                Actualiser
+            </button>
+            <button onclick="exportStockReport()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                <i class="fas fa-download mr-2"></i>
+                Export Rapport
+            </button>
+        </div>
+    </div>
+
+    <!-- Stock Status Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6" id="status-summary">
+        <!-- Will be populated dynamically -->
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                <input type="text" placeholder="Code, désignation..." 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                       id="search-input" onkeyup="filterArticles()">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        id="category-filter" onchange="filterArticles()">
+                    <option value="all">Toutes</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Statut Stock</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        id="status-filter" onchange="filterArticles()">
+                    <option value="all">Tous</option>
+                    <option value="critical">Critique (0 stock)</option>
+                    <option value="low">Bas (sous minimum)</option>
+                    <option value="medium">Moyen (1-2x minimum)</option>
+                    <option value="good">Bon (>2x minimum)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tri</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        id="sort-filter" onchange="sortArticles()">
+                    <option value="name">Nom</option>
+                    <option value="stock">Stock</option>
+                    <option value="priority">Priorité</option>
+                    <option value="value">Valeur</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                <button onclick="clearFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    Effacer filtres
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Status Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="stock-grid">
+        <!-- Cards will be populated here -->
+    </div>
+
+    <!-- Recent Movements -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Mouvements Récents</h3>
+        </div>
+        <div class="p-6" id="recent-movements">
+            <!-- Will be populated dynamically -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let stockData = {};
+    let filteredData = {};
+    let categories = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadData();
+    });
+
+    async function loadData() {
+        try {
+            const data = await apiRequest('GET', '/api/stock-status/analytics');
+            stockData = data;
+            filteredData = { ...data };
+            
+            await loadCategories();
+            updateStatusSummary();
+            updateStockGrid();
+            loadRecentMovements();
+        } catch (error) {
+            console.error('Error loading stock data:', error);
+        }
+    }
+
+    async function loadCategories() {
+        try {
+            categories = await apiRequest('GET', '/api/settings/categories');
+            updateCategoryFilter();
+        } catch (error) {
+            console.error('Error loading categories:', error);
+        }
+    }
+
+    function updateCategoryFilter() {
+        const filter = document.getElementById('category-filter');
+        filter.innerHTML = '<option value="all">Toutes</option>';
+        
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            filter.appendChild(option);
+        });
+    }
+
+    function updateStatusSummary() {
+        const summary = stockData.summary;
+        const container = document.getElementById('status-summary');
+        
+        container.innerHTML = `
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-red-600 mb-1">Stock Critique</p>
+                        <p class="text-3xl font-bold text-red-900">${summary.critical_count}</p>
+                        <p class="text-xs text-red-600 mt-1">Rupture de stock</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-red-200 rounded-full h-2">
+                        <div class="bg-red-600 h-2 rounded-full" style="width: ${(summary.critical_count / summary.total_count * 100)}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-yellow-600 mb-1">Stock Bas</p>
+                        <p class="text-3xl font-bold text-yellow-900">${summary.low_count}</p>
+                        <p class="text-xs text-yellow-600 mt-1">Sous le minimum</p>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-exclamation text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-yellow-200 rounded-full h-2">
+                        <div class="bg-yellow-600 h-2 rounded-full" style="width: ${(summary.low_count / summary.total_count * 100)}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-blue-600 mb-1">Stock Moyen</p>
+                        <p class="text-3xl font-bold text-blue-900">${summary.medium_count}</p>
+                        <p class="text-xs text-blue-600 mt-1">Niveau acceptable</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-info text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-blue-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: ${(summary.medium_count / summary.total_count * 100)}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-green-600 mb-1">Stock Bon</p>
+                        <p class="text-3xl font-bold text-green-900">${summary.good_count}</p>
+                        <p class="text-xs text-green-600 mt-1">Niveau optimal</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check text-green-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-green-200 rounded-full h-2">
+                        <div class="bg-green-600 h-2 rounded-full" style="width: ${(summary.good_count / summary.total_count * 100)}%"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function updateStockGrid() {
+        const container = document.getElementById('stock-grid');
+        const allArticles = [
+            ...filteredData.critical,
+            ...filteredData.low,
+            ...filteredData.medium,
+            ...filteredData.good
+        ];
+
+        if (allArticles.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12 text-gray-500">
+                    <i class="fas fa-search text-4xl mb-4"></i>
+                    <p class="text-lg font-medium">Aucun article trouvé</p>
+                    <p class="text-sm">Essayez de modifier vos filtres</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = allArticles.map(article => createStockCard(article)).join('');
+    }
+
+    function createStockCard(article) {
+        const status = getStockStatus(article);
+        const percentage = getStockPercentage(article);
+        const value = article.prixUnitaire ? (article.prixUnitaire * article.stockActuel).toFixed(2) : 0;
+
+        return `
+            <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-900 mb-1">${article.designation}</h3>
+                        <p class="text-sm text-gray-600">${article.codeArticle}</p>
+                        <p class="text-xs text-gray-500">${article.categorie}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs rounded-full ${status.bgColor} ${status.textColor}">
+                        ${status.label}
+                    </span>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-600">Stock actuel</span>
+                        <span class="font-semibold ${status.textColor}">${article.stockActuel} ${article.unite}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="${status.barColor} h-2 rounded-full transition-all duration-300" 
+                             style="width: ${Math.min(percentage, 100)}%"></div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1 text-xs text-gray-500">
+                        <span>Seuil: ${article.seuilMinimum || 10}</span>
+                        <span>${percentage}%</span>
+                    </div>
+                </div>
+
+                ${value > 0 ? `
+                    <div class="mb-4 p-3 bg-gray-50 rounded-md">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Valeur stock</span>
+                            <span class="font-semibold text-gray-900">${value} EUR</span>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="flex justify-between items-center">
+                    <div class="flex space-x-2">
+                        <button onclick="openStockMovement('${article.id}')" 
+                                class="text-blue-600 hover:text-blue-800 text-sm">
+                            <i class="fas fa-history mr-1"></i>
+                            Historique
+                        </button>
+                    </div>
+                    <div class="flex space-x-1">
+                        <button onclick="quickRestock('${article.id}')" 
+                                class="p-2 text-green-600 hover:bg-green-50 rounded"
+                                title="Réapprovisionnement rapide">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button onclick="viewDetails('${article.id}')" 
+                                class="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                                title="Voir détails">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function getStockStatus(article) {
+        const seuil = article.seuilMinimum || 10;
+        
+        if (article.stockActuel === 0) {
+            return {
+                label: 'Critique',
+                bgColor: 'bg-red-100',
+                textColor: 'text-red-800',
+                barColor: 'bg-red-600'
+            };
+        } else if (article.stockActuel <= seuil) {
+            return {
+                label: 'Bas',
+                bgColor: 'bg-yellow-100',
+                textColor: 'text-yellow-800',
+                barColor: 'bg-yellow-600'
+            };
+        } else if (article.stockActuel <= seuil * 2) {
+            return {
+                label: 'Moyen',
+                bgColor: 'bg-blue-100',
+                textColor: 'text-blue-800',
+                barColor: 'bg-blue-600'
+            };
+        } else {
+            return {
+                label: 'Bon',
+                bgColor: 'bg-green-100',
+                textColor: 'text-green-800',
+                barColor: 'bg-green-600'
+            };
+        }
+    }
+
+    function getStockPercentage(article) {
+        const seuil = article.seuilMinimum || 10;
+        const optimal = seuil * 3; // Consider 3x minimum as 100%
+        return Math.round((article.stockActuel / optimal) * 100);
+    }
+
+    function filterArticles() {
+        const search = document.getElementById('search-input').value.toLowerCase();
+        const categoryFilter = document.getElementById('category-filter').value;
+        const statusFilter = document.getElementById('status-filter').value;
+
+        // Reset filtered data
+        filteredData = {
+            critical: [],
+            low: [],
+            medium: [],
+            good: []
+        };
+
+        // Apply filters to each category
+        Object.keys(stockData).forEach(category => {
+            if (category === 'summary') return;
+            
+            filteredData[category] = (stockData[category] || []).filter(article => {
+                const matchesSearch = !search || 
+                    article.designation.toLowerCase().includes(search) ||
+                    article.codeArticle.toLowerCase().includes(search) ||
+                    article.categorie.toLowerCase().includes(search);
+
+                const matchesCategory = categoryFilter === 'all' || article.categorie === categoryFilter;
+                const matchesStatus = statusFilter === 'all' || statusFilter === category;
+
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+        });
+
+        updateStockGrid();
+    }
+
+    function sortArticles() {
+        const sortBy = document.getElementById('sort-filter').value;
+        
+        Object.keys(filteredData).forEach(category => {
+            if (category === 'summary') return;
+            
+            filteredData[category].sort((a, b) => {
+                switch (sortBy) {
+                    case 'name':
+                        return a.designation.localeCompare(b.designation);
+                    case 'stock':
+                        return b.stockActuel - a.stockActuel;
+                    case 'priority':
+                        // Priority: critical > low > medium > good
+                        const priorities = { critical: 4, low: 3, medium: 2, good: 1 };
+                        return priorities[category] - priorities[category];
+                    case 'value':
+                        const valueA = a.prixUnitaire ? a.prixUnitaire * a.stockActuel : 0;
+                        const valueB = b.prixUnitaire ? b.prixUnitaire * b.stockActuel : 0;
+                        return valueB - valueA;
+                    default:
+                        return 0;
+                }
+            });
+        });
+
+        updateStockGrid();
+    }
+
+    function clearFilters() {
+        document.getElementById('search-input').value = '';
+        document.getElementById('category-filter').value = 'all';
+        document.getElementById('status-filter').value = 'all';
+        document.getElementById('sort-filter').value = 'name';
+        filteredData = { ...stockData };
+        updateStockGrid();
+    }
+
+    function refreshData() {
+        loadData();
+        showToast('Données actualisées', 'success');
+    }
+
+    async function loadRecentMovements() {
+        try {
+            // This would load recent stock movements
+            const container = document.getElementById('recent-movements');
+            container.innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <i class="fas fa-history text-3xl mb-2"></i>
+                    <p>Aucun mouvement récent</p>
+                    <p class="text-sm">Les mouvements de stock apparaîtront ici</p>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error loading movements:', error);
+        }
+    }
+
+    function openStockMovement(articleId) {
+        showToast('Fonctionnalité historique en cours de développement', 'info');
+    }
+
+    function quickRestock(articleId) {
+        showToast('Réapprovisionnement rapide en cours de développement', 'info');
+    }
+
+    function viewDetails(articleId) {
+        window.location.href = `/articles?highlight=${articleId}`;
+    }
+
+    function exportStockReport() {
+        showToast('Export du rapport en cours de développement', 'info');
+    }
+</script>
+{% endblock %}

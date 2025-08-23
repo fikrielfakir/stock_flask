@@ -78,6 +78,22 @@ def create_app():
     @app.route('/analytics')
     def analytics():
         return render_template('analytics.html')
+    
+    @app.route('/purchase-follow')
+    def purchase_follow():
+        return render_template('purchase_follow.html')
+    
+    @app.route('/stock-status')
+    def stock_status():
+        return render_template('stock_status.html')
+    
+    @app.route('/reports')
+    def reports():
+        return render_template('reports.html')
+    
+    @app.route('/settings')
+    def settings():
+        return render_template('settings.html')
 
     return app
 

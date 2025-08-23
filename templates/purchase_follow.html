@@ -1,0 +1,364 @@
+{% extends "base.html" %}
+
+{% block title %}Suivi des Achats - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6" data-testid="purchase-follow-page">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Suivi des Achats</h1>
+            <p class="text-sm text-gray-600">Workflow Kanban pour le suivi des demandes d'achat</p>
+        </div>
+        <div class="flex space-x-3">
+            <button onclick="refreshData()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <i class="fas fa-sync-alt mr-2"></i>
+                Actualiser
+            </button>
+            <a href="/purchase-requests" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                <i class="fas fa-plus mr-2"></i>
+                Nouvelle Demande
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                <input type="text" placeholder="Numéro, article, fournisseur..." 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                       id="search-input" onkeyup="filterRequests()">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Demandeur</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        id="requestor-filter" onchange="filterRequests()">
+                    <option value="all">Tous les demandeurs</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Période</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        id="period-filter" onchange="filterRequests()">
+                    <option value="all">Toutes les périodes</option>
+                    <option value="today">Aujourd'hui</option>
+                    <option value="week">Cette semaine</option>
+                    <option value="month">Ce mois</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                <button onclick="clearFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    Effacer filtres
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Pending Column -->
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="p-4 border-b border-gray-200 bg-yellow-50">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">En Attente</h3>
+                    <span id="pending-count" class="bg-yellow-600 text-white text-xs px-2 py-1 rounded-full">0</span>
+                </div>
+            </div>
+            <div id="pending-column" class="p-4 min-h-96 space-y-3">
+                <!-- Cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Approved Column -->
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="p-4 border-b border-gray-200 bg-green-50">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Approuvé</h3>
+                    <span id="approved-count" class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">0</span>
+                </div>
+            </div>
+            <div id="approved-column" class="p-4 min-h-96 space-y-3">
+                <!-- Cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Ordered Column -->
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="p-4 border-b border-gray-200 bg-blue-50">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Commandé</h3>
+                    <span id="ordered-count" class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">0</span>
+                </div>
+            </div>
+            <div id="ordered-column" class="p-4 min-h-96 space-y-3">
+                <!-- Cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Refused Column -->
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="p-4 border-b border-gray-200 bg-red-50">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Refusé</h3>
+                    <span id="refused-count" class="bg-red-600 text-white text-xs px-2 py-1 rounded-full">0</span>
+                </div>
+            </div>
+            <div id="refused-column" class="p-4 min-h-96 space-y-3">
+                <!-- Cards will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Request Detail Modal -->
+<div id="detail-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-2/3 max-w-4xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900" id="detail-title">Détails de la Demande</h3>
+                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="detail-content">
+                <!-- Content will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allRequests = {};
+    let filteredRequests = {};
+    let requestors = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadData();
+    });
+
+    async function loadData() {
+        try {
+            await Promise.all([
+                loadRequests(),
+                loadRequestors()
+            ]);
+            updateKanbanBoard();
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+    async function loadRequests() {
+        try {
+            const data = await apiRequest('GET', '/api/purchase-follow/status');
+            allRequests = data;
+            filteredRequests = { ...data };
+        } catch (error) {
+            console.error('Error loading requests:', error);
+        }
+    }
+
+    async function loadRequestors() {
+        try {
+            requestors = await apiRequest('GET', '/api/requestors');
+            updateRequestorFilter();
+        } catch (error) {
+            console.error('Error loading requestors:', error);
+        }
+    }
+
+    function updateRequestorFilter() {
+        const filter = document.getElementById('requestor-filter');
+        filter.innerHTML = '<option value="all">Tous les demandeurs</option>';
+        
+        requestors.forEach(requestor => {
+            const option = document.createElement('option');
+            option.value = requestor.id;
+            option.textContent = `${requestor.prenom} ${requestor.nom}`;
+            filter.appendChild(option);
+        });
+    }
+
+    function updateKanbanBoard() {
+        updateColumn('pending', filteredRequests.pending || [], 'yellow');
+        updateColumn('approved', filteredRequests.approved || [], 'green');
+        updateColumn('ordered', filteredRequests.ordered || [], 'blue');
+        updateColumn('refused', filteredRequests.refused || [], 'red');
+
+        // Update counts
+        document.getElementById('pending-count').textContent = (filteredRequests.pending || []).length;
+        document.getElementById('approved-count').textContent = (filteredRequests.approved || []).length;
+        document.getElementById('ordered-count').textContent = (filteredRequests.ordered || []).length;
+        document.getElementById('refused-count').textContent = (filteredRequests.refused || []).length;
+    }
+
+    function updateColumn(columnId, requests, color) {
+        const column = document.getElementById(`${columnId}-column`);
+        
+        if (requests.length === 0) {
+            column.innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <i class="fas fa-inbox text-3xl mb-2 opacity-50"></i>
+                    <p>Aucune demande</p>
+                </div>
+            `;
+            return;
+        }
+
+        column.innerHTML = requests.map(request => createRequestCard(request, color)).join('');
+    }
+
+    function createRequestCard(request, color) {
+        const requestorName = getRequestorName(request.requestorId);
+        const dateFormatted = new Date(request.dateDemande).toLocaleDateString('fr-FR');
+        
+        return `
+            <div class="border border-gray-200 rounded-lg p-4 bg-white hover:shadow-md transition-shadow cursor-pointer"
+                 onclick="showRequestDetail('${request.id}')">
+                <div class="flex items-start justify-between mb-2">
+                    <span class="text-xs font-medium text-gray-500">#${request.id.substring(0, 8)}</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-${color}-100 text-${color}-800">
+                        ${getStatusText(request.statut)}
+                    </span>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="font-medium text-gray-900">${requestorName}</p>
+                    <p class="text-sm text-gray-600">${request.totalArticles} article(s)</p>
+                    <p class="text-xs text-gray-500">${dateFormatted}</p>
+                </div>
+                
+                ${request.observations ? `
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-600 italic">"${request.observations}"</p>
+                    </div>
+                ` : ''}
+                
+                <div class="flex justify-between items-center">
+                    <div class="flex space-x-1">
+                        ${getActionButtons(request)}
+                    </div>
+                    <button onclick="event.stopPropagation(); showRequestDetail('${request.id}')" 
+                            class="text-blue-600 hover:text-blue-800 text-xs">
+                        Voir détails
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function getRequestorName(requestorId) {
+        const requestor = requestors.find(r => r.id === requestorId);
+        return requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu';
+    }
+
+    function getStatusText(status) {
+        const statusMap = {
+            'en_attente': 'En Attente',
+            'approuve': 'Approuvé',
+            'commande': 'Commandé',
+            'refuse': 'Refusé'
+        };
+        return statusMap[status] || status;
+    }
+
+    function getActionButtons(request) {
+        let buttons = [];
+        
+        if (request.statut === 'en_attente') {
+            buttons.push(`
+                <button onclick="event.stopPropagation(); updateStatus('${request.id}', 'approuve')" 
+                        class="text-green-600 hover:text-green-800 text-xs p-1" title="Approuver">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button onclick="event.stopPropagation(); updateStatus('${request.id}', 'refuse')" 
+                        class="text-red-600 hover:text-red-800 text-xs p-1" title="Refuser">
+                    <i class="fas fa-times"></i>
+                </button>
+            `);
+        } else if (request.statut === 'approuve') {
+            buttons.push(`
+                <button onclick="event.stopPropagation(); updateStatus('${request.id}', 'commande')" 
+                        class="text-blue-600 hover:text-blue-800 text-xs p-1" title="Marquer comme commandé">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+            `);
+        }
+        
+        return buttons.join('');
+    }
+
+    async function updateStatus(requestId, newStatus) {
+        try {
+            await apiRequest('PUT', `/api/purchase-requests/${requestId}`, {
+                statut: newStatus
+            });
+            showToast('Statut mis à jour avec succès', 'success');
+            loadData();
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    }
+
+    function showRequestDetail(requestId) {
+        // This would show detailed information about the request
+        // For now, just show a placeholder
+        document.getElementById('detail-content').innerHTML = `
+            <div class="p-4">
+                <p class="text-gray-600">Détails pour la demande ${requestId}</p>
+                <p class="text-sm text-gray-500 mt-2">Fonctionnalité en cours de développement...</p>
+            </div>
+        `;
+        document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+        document.getElementById('detail-modal').classList.add('hidden');
+    }
+
+    function filterRequests() {
+        const search = document.getElementById('search-input').value.toLowerCase();
+        const requestorFilter = document.getElementById('requestor-filter').value;
+        const periodFilter = document.getElementById('period-filter').value;
+
+        // Apply filters to each status category
+        Object.keys(allRequests).forEach(status => {
+            filteredRequests[status] = (allRequests[status] || []).filter(request => {
+                // Search filter
+                const matchesSearch = !search || 
+                    request.id.toLowerCase().includes(search) ||
+                    getRequestorName(request.requestorId).toLowerCase().includes(search) ||
+                    (request.observations && request.observations.toLowerCase().includes(search));
+
+                // Requestor filter
+                const matchesRequestor = requestorFilter === 'all' || request.requestorId === requestorFilter;
+
+                // Period filter - simplified for demo
+                const matchesPeriod = periodFilter === 'all'; // TODO: Implement date filtering
+
+                return matchesSearch && matchesRequestor && matchesPeriod;
+            });
+        });
+
+        updateKanbanBoard();
+    }
+
+    function clearFilters() {
+        document.getElementById('search-input').value = '';
+        document.getElementById('requestor-filter').value = 'all';
+        document.getElementById('period-filter').value = 'all';
+        filteredRequests = { ...allRequests };
+        updateKanbanBoard();
+    }
+
+    function refreshData() {
+        loadData();
+        showToast('Données actualisées', 'success');
+    }
+</script>
+{% endblock %}

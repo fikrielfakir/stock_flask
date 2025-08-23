@@ -573,3 +573,87 @@ def register_routes(app, db):
             })
         except Exception as e:
             return jsonify({'message': 'Erreur lors de la récupération des statistiques'}), 500
+
+    # Stock status analytics
+    @app.route("/api/stock-status/analytics", methods=['GET'])
+    def get_stock_status_analytics():
+        try:
+            articles = Article.query.all()
+            
+            # Categorize by stock levels
+            critical = []  # 0 stock
+            low = []       # below minimum
+            medium = []    # 1-2x minimum
+            good = []      # above 2x minimum
+            
+            for article in articles:
+                seuil = article.seuil_minimum or 10
+                if article.stock_actuel == 0:
+                    critical.append(article.to_dict())
+                elif article.stock_actuel <= seuil:
+                    low.append(article.to_dict())
+                elif article.stock_actuel <= seuil * 2:
+                    medium.append(article.to_dict())
+                else:
+                    good.append(article.to_dict())
+            
+            return jsonify({
+                'critical': critical,
+                'low': low,
+                'medium': medium,
+                'good': good,
+                'summary': {
+                    'critical_count': len(critical),
+                    'low_count': len(low),
+                    'medium_count': len(medium),
+                    'good_count': len(good),
+                    'total_count': len(articles)
+                }
+            })
+        except Exception as e:
+            return jsonify({'message': 'Erreur lors de la récupération du statut stock'}), 500
+
+    # Purchase follow-up analytics
+    @app.route("/api/purchase-follow/status", methods=['GET'])
+    def get_purchase_follow_status():
+        try:
+            pending = PurchaseRequest.query.filter_by(statut='en_attente').all()
+            approved = PurchaseRequest.query.filter_by(statut='approuve').all()
+            ordered = PurchaseRequest.query.filter_by(statut='commande').all()
+            refused = PurchaseRequest.query.filter_by(statut='refuse').all()
+            
+            return jsonify({
+                'pending': [req.to_dict() for req in pending],
+                'approved': [req.to_dict() for req in approved],
+                'ordered': [req.to_dict() for req in ordered],
+                'refused': [req.to_dict() for req in refused]
+            })
+        except Exception as e:
+            return jsonify({'message': 'Erreur lors de la récupération du suivi'}), 500
+
+    # Reports endpoints
+    @app.route("/api/reports/stock", methods=['GET'])
+    def generate_stock_report():
+        try:
+            articles = Article.query.all()
+            report_data = {
+                'timestamp': datetime.utcnow().isoformat(),
+                'total_articles': len(articles),
+                'articles': [article.to_dict() for article in articles],
+                'summary': {
+                    'total_value': sum(article.prix_unitaire * article.stock_actuel for article in articles if article.prix_unitaire),
+                    'low_stock_count': len([a for a in articles if a.stock_actuel <= (a.seuil_minimum or 10)])
+                }
+            }
+            return jsonify(report_data)
+        except Exception as e:
+            return jsonify({'message': 'Erreur lors de la génération du rapport'}), 500
+
+    # Settings endpoints
+    @app.route("/api/settings/categories", methods=['GET'])
+    def get_categories():
+        try:
+            categories = db.session.query(Article.categorie).distinct().all()
+            return jsonify([cat[0] for cat in categories if cat[0]])
+        except Exception as e:
+            return jsonify({'message': 'Erreur lors de la récupération des catégories'}), 500

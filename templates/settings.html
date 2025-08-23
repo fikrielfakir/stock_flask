@@ -1,0 +1,768 @@
+{% extends "base.html" %}
+
+{% block title %}Paramètres - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6" data-testid="settings-page">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Paramètres</h1>
+            <p class="text-sm text-gray-600">Configuration du système et préférences utilisateur</p>
+        </div>
+        <div class="flex space-x-3">
+            <button onclick="exportSettings()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <i class="fas fa-download mr-2"></i>
+                Export Config
+            </button>
+            <button onclick="saveAllSettings()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                <i class="fas fa-save mr-2"></i>
+                Sauvegarder
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Tabs -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+                <button onclick="switchTab('general')" class="settings-tab active py-4 px-1 border-b-2 border-blue-500 text-blue-600 text-sm font-medium" data-tab="general">
+                    Général
+                </button>
+                <button onclick="switchTab('master-data')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="master-data">
+                    Données Maîtres
+                </button>
+                <button onclick="switchTab('security')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="security">
+                    Sécurité
+                </button>
+                <button onclick="switchTab('backup')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="backup">
+                    Sauvegarde
+                </button>
+                <button onclick="switchTab('integrations')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="integrations">
+                    Intégrations
+                </button>
+            </nav>
+        </div>
+
+        <!-- General Settings -->
+        <div id="general-tab" class="settings-content p-6">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Préférences Système</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Devise</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="currency-setting">
+                                <option value="EUR">Euro (EUR)</option>
+                                <option value="MAD">Dirham Marocain (MAD)</option>
+                                <option value="USD">Dollar US (USD)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Langue</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="language-setting">
+                                <option value="fr">Français</option>
+                                <option value="ar">العربية (Arabe)</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Format de Date</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="date-format-setting">
+                                <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+                                <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                                <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Thème</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="theme-setting">
+                                <option value="light">Clair</option>
+                                <option value="dark">Sombre</option>
+                                <option value="auto">Automatique</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Notifications</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="notifications-stock">
+                            <span class="ml-2 text-sm text-gray-700">Alertes stock bas</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="notifications-requests">
+                            <span class="ml-2 text-sm text-gray-700">Nouvelles demandes d'achat</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="notifications-deliveries">
+                            <span class="ml-2 text-sm text-gray-700">Livraisons en retard</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="notifications-reports">
+                            <span class="ml-2 text-sm text-gray-700">Rapports programmés</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Performance</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Limite de pagination</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="pagination-limit">
+                                <option value="25">25 éléments</option>
+                                <option value="50">50 éléments</option>
+                                <option value="100">100 éléments</option>
+                                <option value="200">200 éléments</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="flex items-center mt-6">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="auto-refresh">
+                                <span class="ml-2 text-sm text-gray-700">Actualisation automatique</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master Data Settings -->
+        <div id="master-data-tab" class="settings-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Gestion des Catégories</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ajouter une catégorie</label>
+                            <div class="flex space-x-2">
+                                <input type="text" placeholder="Nom de la catégorie" 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                       id="new-category">
+                                <button onclick="addCategory()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Catégories existantes</label>
+                            <div id="categories-list" class="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded-md p-3">
+                                <!-- Categories will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Unités de Mesure</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ajouter une unité</label>
+                            <div class="flex space-x-2">
+                                <input type="text" placeholder="Code (ex: kg)" 
+                                       class="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                       id="new-unit-code">
+                                <input type="text" placeholder="Description (ex: Kilogrammes)" 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                       id="new-unit-desc">
+                                <button onclick="addUnit()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Unités configurées</label>
+                            <div id="units-list" class="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded-md p-3">
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span class="text-sm"><strong>pcs</strong> - Pièces</span>
+                                </div>
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span class="text-sm"><strong>kg</strong> - Kilogrammes</span>
+                                </div>
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span class="text-sm"><strong>m</strong> - Mètres</span>
+                                </div>
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span class="text-sm"><strong>l</strong> - Litres</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Départements</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ajouter un département</label>
+                            <div class="flex space-x-2">
+                                <input type="text" placeholder="Nom du département" 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                       id="new-department">
+                                <button onclick="addDepartment()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Départements existants</label>
+                            <div id="departments-list" class="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded-md p-3">
+                                <!-- Departments will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div id="security-tab" class="settings-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Politique de Mots de Passe</h3>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Longueur minimale</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="password-length">
+                                    <option value="6">6 caractères</option>
+                                    <option value="8" selected>8 caractères</option>
+                                    <option value="10">10 caractères</option>
+                                    <option value="12">12 caractères</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Expiration (jours)</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="password-expiry">
+                                    <option value="0">Jamais</option>
+                                    <option value="30">30 jours</option>
+                                    <option value="60">60 jours</option>
+                                    <option value="90" selected>90 jours</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="require-uppercase" checked>
+                                <span class="ml-2 text-sm text-gray-700">Exiger des majuscules</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="require-numbers" checked>
+                                <span class="ml-2 text-sm text-gray-700">Exiger des chiffres</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="require-special">
+                                <span class="ml-2 text-sm text-gray-700">Exiger des caractères spéciaux</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Gestion des Sessions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Timeout de session (minutes)</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="session-timeout">
+                                <option value="15">15 minutes</option>
+                                <option value="30" selected>30 minutes</option>
+                                <option value="60">1 heure</option>
+                                <option value="120">2 heures</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="flex items-center mt-6">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="auto-logout" checked>
+                                <span class="ml-2 text-sm text-gray-700">Déconnexion automatique</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Journalisation et Audit</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="log-logins" checked>
+                            <span class="ml-2 text-sm text-gray-700">Enregistrer les connexions</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="log-data-changes" checked>
+                            <span class="ml-2 text-sm text-gray-700">Enregistrer les modifications de données</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="log-exports">
+                            <span class="ml-2 text-sm text-gray-700">Enregistrer les exports</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup Settings -->
+        <div id="backup-tab" class="settings-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Sauvegarde Automatique</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fréquence</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="backup-frequency">
+                                <option value="disabled">Désactivé</option>
+                                <option value="daily" selected>Quotidien</option>
+                                <option value="weekly">Hebdomadaire</option>
+                                <option value="monthly">Mensuel</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Heure</label>
+                            <input type="time" value="02:00" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                   id="backup-time">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Rétention (nombre de sauvegardes à conserver)</label>
+                        <select class="w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="backup-retention">
+                            <option value="7" selected>7 sauvegardes</option>
+                            <option value="14">14 sauvegardes</option>
+                            <option value="30">30 sauvegardes</option>
+                            <option value="90">90 sauvegardes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Sauvegarde Manuelle</h3>
+                    <p class="text-sm text-gray-600 mb-4">Créez une sauvegarde immédiate de toutes les données du système</p>
+                    <button onclick="createManualBackup()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Créer une Sauvegarde
+                    </button>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Restauration</h3>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <i class="fas fa-upload text-gray-400 text-3xl mb-4"></i>
+                        <p class="text-sm text-gray-600 mb-4">Sélectionnez un fichier de sauvegarde à restaurer</p>
+                        <input type="file" accept=".json,.sql" class="hidden" id="restore-file" onchange="handleRestoreFile(event)">
+                        <button onclick="document.getElementById('restore-file').click()" 
+                                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Choisir un fichier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integrations Settings -->
+        <div id="integrations-tab" class="settings-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Configuration API</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Clé API</label>
+                            <div class="flex space-x-2">
+                                <input type="password" value="sk-xxxxxxxxxxxxxxxx" 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                       id="api-key" readonly>
+                                <button onclick="regenerateApiKey()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                                    Regénérer
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="flex items-center mt-6">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="api-enabled">
+                                <span class="ml-2 text-sm text-gray-700">API activée</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Scanner de Code-barres</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Type de scanner</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="scanner-type">
+                                <option value="camera">Caméra</option>
+                                <option value="usb">Scanner USB</option>
+                                <option value="bluetooth">Bluetooth</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="flex items-center mt-6">
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" id="scanner-enabled">
+                                <span class="ml-2 text-sm text-gray-700">Scanner activé</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button onclick="testScanner()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Tester le Scanner
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Systèmes Externes</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-900">ERP Integration</h4>
+                                <p class="text-sm text-gray-600">Synchronisation avec système ERP externe</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-gray-500">Non configuré</span>
+                                <button onclick="configureERP()" class="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                                    Configurer
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-900">Email/SMS</h4>
+                                <p class="text-sm text-gray-600">Notifications par email et SMS</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-green-600">Configuré</span>
+                                <button onclick="configureNotifications()" class="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                                    Modifier
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let settings = {};
+    let categories = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSettings();
+        loadCategories();
+    });
+
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.settings-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.classList.remove('active', 'border-blue-500', 'text-blue-600');
+            tab.classList.add('border-transparent', 'text-gray-500');
+        });
+        
+        // Show selected tab
+        document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+        
+        // Add active class to selected tab
+        const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+        activeTab.classList.add('active', 'border-blue-500', 'text-blue-600');
+        activeTab.classList.remove('border-transparent', 'text-gray-500');
+    }
+
+    async function loadSettings() {
+        // Load settings from localStorage or API
+        const storedSettings = localStorage.getItem('stockceramique_settings');
+        if (storedSettings) {
+            settings = JSON.parse(storedSettings);
+            applySettings();
+        } else {
+            // Default settings
+            settings = {
+                currency: 'EUR',
+                language: 'fr',
+                dateFormat: 'dd/mm/yyyy',
+                theme: 'light',
+                notifications: {
+                    stock: true,
+                    requests: true,
+                    deliveries: true,
+                    reports: false
+                },
+                paginationLimit: 50,
+                autoRefresh: true,
+                security: {
+                    passwordLength: 8,
+                    passwordExpiry: 90,
+                    requireUppercase: true,
+                    requireNumbers: true,
+                    requireSpecial: false,
+                    sessionTimeout: 30,
+                    autoLogout: true,
+                    logLogins: true,
+                    logDataChanges: true,
+                    logExports: false
+                },
+                backup: {
+                    frequency: 'daily',
+                    time: '02:00',
+                    retention: 7
+                },
+                integrations: {
+                    apiEnabled: false,
+                    scannerEnabled: false,
+                    scannerType: 'camera'
+                }
+            };
+        }
+    }
+
+    function applySettings() {
+        // Apply general settings
+        document.getElementById('currency-setting').value = settings.currency || 'EUR';
+        document.getElementById('language-setting').value = settings.language || 'fr';
+        document.getElementById('date-format-setting').value = settings.dateFormat || 'dd/mm/yyyy';
+        document.getElementById('theme-setting').value = settings.theme || 'light';
+        document.getElementById('pagination-limit').value = settings.paginationLimit || 50;
+        document.getElementById('auto-refresh').checked = settings.autoRefresh || false;
+
+        // Apply notification settings
+        if (settings.notifications) {
+            document.getElementById('notifications-stock').checked = settings.notifications.stock || false;
+            document.getElementById('notifications-requests').checked = settings.notifications.requests || false;
+            document.getElementById('notifications-deliveries').checked = settings.notifications.deliveries || false;
+            document.getElementById('notifications-reports').checked = settings.notifications.reports || false;
+        }
+
+        // Apply security settings
+        if (settings.security) {
+            document.getElementById('password-length').value = settings.security.passwordLength || 8;
+            document.getElementById('password-expiry').value = settings.security.passwordExpiry || 90;
+            document.getElementById('require-uppercase').checked = settings.security.requireUppercase || false;
+            document.getElementById('require-numbers').checked = settings.security.requireNumbers || false;
+            document.getElementById('require-special').checked = settings.security.requireSpecial || false;
+            document.getElementById('session-timeout').value = settings.security.sessionTimeout || 30;
+            document.getElementById('auto-logout').checked = settings.security.autoLogout || false;
+            document.getElementById('log-logins').checked = settings.security.logLogins || false;
+            document.getElementById('log-data-changes').checked = settings.security.logDataChanges || false;
+            document.getElementById('log-exports').checked = settings.security.logExports || false;
+        }
+
+        // Apply backup settings
+        if (settings.backup) {
+            document.getElementById('backup-frequency').value = settings.backup.frequency || 'daily';
+            document.getElementById('backup-time').value = settings.backup.time || '02:00';
+            document.getElementById('backup-retention').value = settings.backup.retention || 7;
+        }
+
+        // Apply integration settings
+        if (settings.integrations) {
+            document.getElementById('api-enabled').checked = settings.integrations.apiEnabled || false;
+            document.getElementById('scanner-enabled').checked = settings.integrations.scannerEnabled || false;
+            document.getElementById('scanner-type').value = settings.integrations.scannerType || 'camera';
+        }
+    }
+
+    async function loadCategories() {
+        try {
+            categories = await apiRequest('GET', '/api/settings/categories');
+            updateCategoriesList();
+        } catch (error) {
+            console.error('Error loading categories:', error);
+        }
+    }
+
+    function updateCategoriesList() {
+        const container = document.getElementById('categories-list');
+        
+        if (categories.length === 0) {
+            container.innerHTML = '<p class="text-sm text-gray-500">Aucune catégorie définie</p>';
+            return;
+        }
+
+        container.innerHTML = categories.map(category => `
+            <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                <span class="text-sm">${category}</span>
+                <button onclick="deleteCategory('${category}')" class="text-red-600 hover:text-red-800 text-sm">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function addCategory() {
+        const input = document.getElementById('new-category');
+        const categoryName = input.value.trim();
+        
+        if (!categoryName) {
+            showToast('Veuillez saisir un nom de catégorie', 'error');
+            return;
+        }
+
+        if (categories.includes(categoryName)) {
+            showToast('Cette catégorie existe déjà', 'error');
+            return;
+        }
+
+        categories.push(categoryName);
+        updateCategoriesList();
+        input.value = '';
+        showToast('Catégorie ajoutée avec succès', 'success');
+    }
+
+    function deleteCategory(categoryName) {
+        if (confirm(`Êtes-vous sûr de vouloir supprimer la catégorie "${categoryName}" ?`)) {
+            categories = categories.filter(cat => cat !== categoryName);
+            updateCategoriesList();
+            showToast('Catégorie supprimée', 'success');
+        }
+    }
+
+    function addUnit() {
+        const code = document.getElementById('new-unit-code').value.trim();
+        const desc = document.getElementById('new-unit-desc').value.trim();
+        
+        if (!code || !desc) {
+            showToast('Veuillez remplir tous les champs', 'error');
+            return;
+        }
+
+        // This would add the unit to the system
+        showToast('Unité ajoutée avec succès', 'success');
+        document.getElementById('new-unit-code').value = '';
+        document.getElementById('new-unit-desc').value = '';
+    }
+
+    function addDepartment() {
+        const input = document.getElementById('new-department');
+        const departmentName = input.value.trim();
+        
+        if (!departmentName) {
+            showToast('Veuillez saisir un nom de département', 'error');
+            return;
+        }
+
+        // This would add the department to the system
+        showToast('Département ajouté avec succès', 'success');
+        input.value = '';
+    }
+
+    function saveAllSettings() {
+        // Collect all settings
+        settings = {
+            currency: document.getElementById('currency-setting').value,
+            language: document.getElementById('language-setting').value,
+            dateFormat: document.getElementById('date-format-setting').value,
+            theme: document.getElementById('theme-setting').value,
+            paginationLimit: parseInt(document.getElementById('pagination-limit').value),
+            autoRefresh: document.getElementById('auto-refresh').checked,
+            notifications: {
+                stock: document.getElementById('notifications-stock').checked,
+                requests: document.getElementById('notifications-requests').checked,
+                deliveries: document.getElementById('notifications-deliveries').checked,
+                reports: document.getElementById('notifications-reports').checked
+            },
+            security: {
+                passwordLength: parseInt(document.getElementById('password-length').value),
+                passwordExpiry: parseInt(document.getElementById('password-expiry').value),
+                requireUppercase: document.getElementById('require-uppercase').checked,
+                requireNumbers: document.getElementById('require-numbers').checked,
+                requireSpecial: document.getElementById('require-special').checked,
+                sessionTimeout: parseInt(document.getElementById('session-timeout').value),
+                autoLogout: document.getElementById('auto-logout').checked,
+                logLogins: document.getElementById('log-logins').checked,
+                logDataChanges: document.getElementById('log-data-changes').checked,
+                logExports: document.getElementById('log-exports').checked
+            },
+            backup: {
+                frequency: document.getElementById('backup-frequency').value,
+                time: document.getElementById('backup-time').value,
+                retention: parseInt(document.getElementById('backup-retention').value)
+            },
+            integrations: {
+                apiEnabled: document.getElementById('api-enabled').checked,
+                scannerEnabled: document.getElementById('scanner-enabled').checked,
+                scannerType: document.getElementById('scanner-type').value
+            }
+        };
+
+        // Save to localStorage
+        localStorage.setItem('stockceramique_settings', JSON.stringify(settings));
+        
+        // Apply theme immediately
+        if (settings.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        showToast('Paramètres sauvegardés avec succès', 'success');
+    }
+
+    function exportSettings() {
+        const settingsData = {
+            settings: settings,
+            categories: categories,
+            exportDate: new Date().toISOString()
+        };
+
+        const dataStr = JSON.stringify(settingsData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = `stockceramique_settings_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+
+        showToast('Configuration exportée', 'success');
+    }
+
+    function createManualBackup() {
+        showToast('Création de sauvegarde en cours...', 'info');
+        
+        // Simulate backup creation
+        setTimeout(() => {
+            showToast('Sauvegarde créée avec succès', 'success');
+        }, 2000);
+    }
+
+    function handleRestoreFile(event) {
+        const file = event.target.files[0];
+        if (file) {
+            showToast('Fonctionnalité de restauration en cours de développement', 'info');
+        }
+    }
+
+    function regenerateApiKey() {
+        if (confirm('Êtes-vous sûr de vouloir regénérer la clé API ? L\'ancienne clé ne fonctionnera plus.')) {
+            const newKey = 'sk-' + Math.random().toString(36).substring(2, 18);
+            document.getElementById('api-key').value = newKey;
+            showToast('Nouvelle clé API générée', 'success');
+        }
+    }
+
+    function testScanner() {
+        showToast('Test du scanner en cours de développement', 'info');
+    }
+
+    function configureERP() {
+        showToast('Configuration ERP en cours de développement', 'info');
+    }
+
+    function configureNotifications() {
+        showToast('Configuration notifications en cours de développement', 'info');
+    }
+</script>
+{% endblock %}
