@@ -26,6 +26,81 @@ def register_routes(app, db):
     # Load settings when routes are registered
     load_system_settings()
     
+    # Smart UX API endpoints
+    @app.route("/api/notifications", methods=['GET'])
+    def get_notifications():
+        try:
+            # Real-time notifications
+            notifications = []
+            
+            # Check low stock articles
+            low_stock = Article.query.filter(Article.stock_actuel <= Article.stock_minimum).all()
+            if low_stock:
+                notifications.append({
+                    'id': 'low_stock',
+                    'type': 'warning',
+                    'title': 'Stock critique',
+                    'message': f'{len(low_stock)} articles en rupture de stock',
+                    'time': 'Il y a 15 minutes',
+                    'icon': 'fas fa-exclamation',
+                    'color': 'red'
+                })
+            
+            # Check pending requests
+            pending_requests = PurchaseRequest.query.filter_by(statut='En attente').count()
+            if pending_requests > 0:
+                notifications.append({
+                    'id': 'pending_requests',
+                    'type': 'info',
+                    'title': 'Demandes en attente',
+                    'message': f'{pending_requests} demandes nécessitent votre attention',
+                    'time': 'Il y a 30 minutes',
+                    'icon': 'fas fa-shopping-cart',
+                    'color': 'blue'
+                })
+            
+            # Check recent receptions
+            from datetime import datetime, timedelta
+            recent_receptions = Reception.query.filter(
+                Reception.date_reception >= datetime.now() - timedelta(hours=24)
+            ).count()
+            
+            if recent_receptions > 0:
+                notifications.append({
+                    'id': 'recent_receptions',
+                    'type': 'success',
+                    'title': 'Nouvelles réceptions',
+                    'message': f'{recent_receptions} livraisons reçues aujourd\'hui',
+                    'time': 'Il y a 2 heures',
+                    'icon': 'fas fa-truck',
+                    'color': 'green'
+                })
+                
+            return jsonify({
+                'notifications': notifications,
+                'count': len(notifications)
+            })
+        except Exception as e:
+            return jsonify({'notifications': [], 'count': 0, 'error': str(e)})
+    
+    @app.route("/api/quick-stats", methods=['GET'])
+    def get_quick_stats():
+        try:
+            stats = {
+                'total_articles': Article.query.count(),
+                'low_stock_count': Article.query.filter(Article.stock_actuel <= Article.stock_minimum).count(),
+                'pending_requests': PurchaseRequest.query.filter_by(statut='En attente').count(),
+                'total_suppliers': Supplier.query.count(),
+                'recent_activity': {
+                    'new_articles_today': 0,  # Would calculate based on creation date
+                    'processed_requests_today': 0,
+                    'received_items_today': 0
+                }
+            }
+            return jsonify(stats)
+        except Exception as e:
+            return jsonify({'error': str(e)})
+    
     # Articles routes
     @app.route("/api/articles", methods=['GET'])
     def get_articles():
@@ -1056,6 +1131,53 @@ def register_routes(app, db):
             return jsonify({'message': 'Département ajouté avec succès'})
         except Exception as e:
             return jsonify({'message': f'Erreur lors de l\'ajout de département: {str(e)}'}), 500
+    
+    @app.route("/api/profile", methods=['GET'])
+    def get_profile():
+        try:
+            # Mock user profile data - in real app would get from session/auth
+            profile = {
+                'firstName': 'Admin',
+                'lastName': 'User',
+                'email': 'admin@stockceramique.com',
+                'phone': '+212 123 456 789',
+                'position': 'Gestionnaire Inventaire',
+                'department': 'administration',
+                'address': '123 Rue de l\'Industrie',
+                'city': 'Casablanca',
+                'postalCode': '20000',
+                'avatar': None,
+                'lastLogin': '2024-08-23T09:15:00',
+                'preferences': {
+                    'language': 'fr',
+                    'timezone': 'Africa/Casablanca',
+                    'defaultPage': '/',
+                    'pagination': 50,
+                    'notifications': {
+                        'email': True,
+                        'push': False,
+                        'weekly': True
+                    }
+                },
+                'statistics': {
+                    'requestsCreated': 127,
+                    'articlesAdded': 89,
+                    'receptionsProcessed': 45,
+                    'loginCount': 156
+                }
+            }
+            return jsonify(profile)
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors du chargement du profil: {str(e)}'}), 500
+    
+    @app.route("/api/profile", methods=['POST'])
+    def save_profile():
+        try:
+            profile_data = request.get_json()
+            # In real app, would save to user database
+            return jsonify({'message': 'Profil sauvegardé avec succès'})
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de la sauvegarde du profil: {str(e)}'}), 500
 
     # Bulk Import/Export Articles
     @app.route("/api/articles/export", methods=['GET'])

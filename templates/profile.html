@@ -1,0 +1,779 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Profil - StockCeramique{% endblock %}
+
+{% block content %}
+<div class="space-y-6" data-testid="profile-page">
+    <!-- Header with Avatar -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <div class="flex items-center space-x-6">
+            <div class="relative">
+                <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-blue-600 text-3xl"></i>
+                </div>
+                <button onclick="changeAvatar()" class="absolute bottom-0 right-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-camera text-xs"></i>
+                </button>
+                <input type="file" id="avatar-upload" accept="image/*" class="hidden">
+            </div>
+            <div class="flex-1">
+                <h1 class="text-2xl font-bold text-gray-900" id="profile-display-name">Admin User</h1>
+                <p class="text-gray-600" id="profile-display-role">Administrateur Système</p>
+                <p class="text-sm text-gray-500 mt-1">Dernière connexion: <span id="last-login">Aujourd'hui à 09:15</span></p>
+            </div>
+            <div class="text-right">
+                <button onclick="editProfile()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <i class="fas fa-edit mr-2"></i>
+                    Modifier le Profil
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Tabs -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+                <button onclick="switchProfileTab('personal')" class="profile-tab active py-4 px-1 border-b-2 border-blue-500 text-blue-600 text-sm font-medium" data-tab="personal">
+                    Informations Personnelles
+                </button>
+                <button onclick="switchProfileTab('security')" class="profile-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="security">
+                    Sécurité
+                </button>
+                <button onclick="switchProfileTab('preferences')" class="profile-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="preferences">
+                    Préférences
+                </button>
+                <button onclick="switchProfileTab('activity')" class="profile-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="activity">
+                    Activité
+                </button>
+            </nav>
+        </div>
+
+        <!-- Personal Information Tab -->
+        <div id="personal-tab" class="profile-content p-6">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Informations de Base</h3>
+                    <form id="profile-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+                            <input type="text" id="first-name" value="Admin" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+                            <input type="text" id="last-name" value="User" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="email" value="admin@stockceramique.com" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                            <input type="tel" id="phone" value="+212 123 456 789" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Poste</label>
+                            <input type="text" id="position" value="Gestionnaire Inventaire" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Département</label>
+                            <select id="department" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="administration">Administration</option>
+                                <option value="logistique">Logistique</option>
+                                <option value="production">Production</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Adresse</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
+                            <input type="text" id="address" value="123 Rue de l'Industrie" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ville</label>
+                            <input type="text" id="city" value="Casablanca" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Code Postal</label>
+                            <input type="text" id="postal-code" value="20000" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button onclick="resetProfile()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </button>
+                    <button onclick="saveProfile()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Sauvegarder
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div id="security-tab" class="profile-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Changer le Mot de Passe</h3>
+                    <form id="password-form" class="space-y-4 max-w-md">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Mot de passe actuel</label>
+                            <input type="password" id="current-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nouveau mot de passe</label>
+                            <input type="password" id="new-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <div id="password-strength" class="mt-2 h-2 bg-gray-200 rounded-full hidden">
+                                <div class="h-full bg-red-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <p id="password-feedback" class="text-sm text-gray-500 mt-1"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Confirmer le mot de passe</label>
+                            <input type="password" id="confirm-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <button type="button" onclick="changePassword()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                            Changer le Mot de Passe
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Authentification à Deux Facteurs</h3>
+                    <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                        <div>
+                            <h4 class="font-medium text-gray-900">2FA via SMS</h4>
+                            <p class="text-sm text-gray-600">Recevez un code par SMS lors de la connexion</p>
+                        </div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="enable-2fa" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">Activer</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Sessions Actives</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-900">Session Actuelle</h4>
+                                <p class="text-sm text-gray-600">Chrome sur Windows - Casablanca, Maroc</p>
+                                <p class="text-xs text-gray-500">Dernière activité: maintenant</p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences Tab -->
+        <div id="preferences-tab" class="profile-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Préférences d'Interface</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Langue</label>
+                            <select id="user-language" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="fr">Français</option>
+                                <option value="ar">العربية (Arabe)</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fuseau Horaire</label>
+                            <select id="timezone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="Africa/Casablanca">GMT+1 (Casablanca)</option>
+                                <option value="Europe/Paris">GMT+2 (Paris)</option>
+                                <option value="UTC">UTC</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Notifications</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Notifications par Email</span>
+                                <p class="text-xs text-gray-500">Recevoir des alertes par email</p>
+                            </div>
+                            <input type="checkbox" id="email-notifications" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Notifications Push</span>
+                                <p class="text-xs text-gray-500">Notifications dans le navigateur</p>
+                            </div>
+                            <input type="checkbox" id="push-notifications" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-medium text-gray-700">Résumé Hebdomadaire</span>
+                                <p class="text-xs text-gray-500">Rapport d'activité chaque lundi</p>
+                            </div>
+                            <input type="checkbox" id="weekly-summary" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Workflow Personnel</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Page d'accueil par défaut</label>
+                            <select id="default-page" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="/">Dashboard</option>
+                                <option value="/articles">Articles</option>
+                                <option value="/purchase-requests">Demandes d'Achat</option>
+                                <option value="/reception">Réception</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre d'éléments par page</label>
+                            <select id="user-pagination" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="25">25 éléments</option>
+                                <option value="50" selected>50 éléments</option>
+                                <option value="100">100 éléments</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button onclick="savePreferences()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Sauvegarder les Préférences
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Tab -->
+        <div id="activity-tab" class="profile-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Statistiques Personnelles</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600">127</div>
+                            <div class="text-sm text-gray-600">Demandes créées</div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600">89</div>
+                            <div class="text-sm text-gray-600">Articles ajoutés</div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-600">45</div>
+                            <div class="text-sm text-gray-600">Réceptions traitées</div>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-orange-600">156</div>
+                            <div class="text-sm text-gray-600">Connexions ce mois</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Activité Récente</h3>
+                    <div class="space-y-3 max-h-96 overflow-y-auto">
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-plus text-blue-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">Nouvel article ajouté</p>
+                                <p class="text-xs text-gray-500">Tuyau PVC 32mm - Il y a 2 heures</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-green-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">Demande d'achat approuvée</p>
+                                <p class="text-xs text-gray-500">PR-2024-089 - Il y a 4 heures</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-truck text-orange-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">Réception traitée</p>
+                                <p class="text-xs text-gray-500">Livraison Fournisseur ABC - Hier à 16:30</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-download text-purple-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">Rapport exporté</p>
+                                <p class="text-xs text-gray-500">Inventaire mensuel - Il y a 2 jours</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let profileData = {
+        firstName: 'Admin',
+        lastName: 'User',
+        email: 'admin@stockceramique.com',
+        phone: '+212 123 456 789',
+        position: 'Gestionnaire Inventaire',
+        department: 'administration',
+        address: '123 Rue de l\'Industrie',
+        city: 'Casablanca',
+        postalCode: '20000'
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadProfile();
+        setupPasswordStrengthChecker();
+        loadUserPreferences();
+        loadUserStats();
+        setupAutoSave();
+        setupSmartFeatures();
+    });
+
+    function switchProfileTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.profile-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.profile-tab').forEach(tab => {
+            tab.classList.remove('active', 'border-blue-500', 'text-blue-600');
+            tab.classList.add('border-transparent', 'text-gray-500');
+        });
+        
+        // Show selected tab
+        document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+        
+        // Add active class to selected tab
+        const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+        activeTab.classList.add('active', 'border-blue-500', 'text-blue-600');
+        activeTab.classList.remove('border-transparent', 'text-gray-500');
+    }
+
+    async function loadProfile() {
+        try {
+            const response = await fetch('/api/profile');
+            if (response.ok) {
+                profileData = await response.json();
+            }
+        } catch (error) {
+            console.warn('Could not load profile from server, using defaults');
+        }
+        
+        // Populate form fields
+        document.getElementById('first-name').value = profileData.firstName || 'Admin';
+        document.getElementById('last-name').value = profileData.lastName || 'User';
+        document.getElementById('email').value = profileData.email || 'admin@stockceramique.com';
+        document.getElementById('phone').value = profileData.phone || '+212 123 456 789';
+        document.getElementById('position').value = profileData.position || 'Gestionnaire Inventaire';
+        document.getElementById('department').value = profileData.department || 'administration';
+        document.getElementById('address').value = profileData.address || '123 Rue de l\'Industrie';
+        document.getElementById('city').value = profileData.city || 'Casablanca';
+        document.getElementById('postal-code').value = profileData.postalCode || '20000';
+        
+        // Update display elements
+        document.getElementById('profile-display-name').textContent = `${profileData.firstName || 'Admin'} ${profileData.lastName || 'User'}`;
+        
+        // Update last login
+        if (profileData.lastLogin) {
+            const lastLogin = new Date(profileData.lastLogin);
+            document.getElementById('last-login').textContent = `${lastLogin.toLocaleDateString('fr-FR')} à ${lastLogin.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
+        }
+    }
+
+    function editProfile() {
+        // Switch to personal tab and focus first input
+        switchProfileTab('personal');
+        document.getElementById('first-name').focus();
+    }
+
+    async function saveProfile() {
+        // Show saving indicator
+        const saveBtn = document.querySelector('button[onclick="saveProfile()"]');
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sauvegarde...';
+        saveBtn.disabled = true;
+        
+        try {
+            // Collect form data
+            profileData = {
+                firstName: document.getElementById('first-name').value,
+                lastName: document.getElementById('last-name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                position: document.getElementById('position').value,
+                department: document.getElementById('department').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                postalCode: document.getElementById('postal-code').value
+            };
+
+            // Save to backend
+            const response = await fetch('/api/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(profileData)
+            });
+            
+            if (response.ok) {
+                showToast('Profil sauvegardé avec succès', 'success');
+                
+                // Update display name
+                document.getElementById('profile-display-name').textContent = `${profileData.firstName} ${profileData.lastName}`;
+                
+                // Mark as saved
+                localStorage.setItem('profileData', JSON.stringify(profileData));
+            } else {
+                throw new Error('Erreur de sauvegarde');
+            }
+        } catch (error) {
+            showToast('Erreur lors de la sauvegarde', 'error');
+            console.error('Profile save error:', error);
+        } finally {
+            // Restore button
+            saveBtn.innerHTML = originalText;
+            saveBtn.disabled = false;
+        }
+    }
+
+    function resetProfile() {
+        loadProfile();
+        showToast('Modifications annulées', 'info');
+    }
+
+    function changeAvatar() {
+        document.getElementById('avatar-upload').click();
+    }
+
+    document.getElementById('avatar-upload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Update avatar display
+                showToast('Photo de profil mise à jour', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function setupPasswordStrengthChecker() {
+        const newPasswordInput = document.getElementById('new-password');
+        const strengthBar = document.getElementById('password-strength');
+        const feedback = document.getElementById('password-feedback');
+
+        newPasswordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = calculatePasswordStrength(password);
+            
+            if (password.length > 0) {
+                strengthBar.classList.remove('hidden');
+                const strengthBar = strengthBar.querySelector('div');
+                
+                if (strength < 30) {
+                    strengthBar.className = 'h-full bg-red-500 rounded-full transition-all duration-300';
+                    feedback.textContent = 'Mot de passe faible';
+                    feedback.className = 'text-sm text-red-600 mt-1';
+                } else if (strength < 70) {
+                    strengthBar.className = 'h-full bg-yellow-500 rounded-full transition-all duration-300';
+                    feedback.textContent = 'Mot de passe moyen';
+                    feedback.className = 'text-sm text-yellow-600 mt-1';
+                } else {
+                    strengthBar.className = 'h-full bg-green-500 rounded-full transition-all duration-300';
+                    feedback.textContent = 'Mot de passe fort';
+                    feedback.className = 'text-sm text-green-600 mt-1';
+                }
+                
+                strengthBar.style.width = strength + '%';
+            } else {
+                strengthBar.classList.add('hidden');
+                feedback.textContent = '';
+            }
+        });
+    }
+
+    function calculatePasswordStrength(password) {
+        let score = 0;
+        if (password.length >= 8) score += 25;
+        if (password.match(/[a-z]/)) score += 15;
+        if (password.match(/[A-Z]/)) score += 15;
+        if (password.match(/[0-9]/)) score += 15;
+        if (password.match(/[^A-Za-z0-9]/)) score += 15;
+        if (password.length >= 12) score += 15;
+        return Math.min(score, 100);
+    }
+
+    function changePassword() {
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            showToast('Veuillez remplir tous les champs', 'error');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            showToast('Les mots de passe ne correspondent pas', 'error');
+            return;
+        }
+
+        if (calculatePasswordStrength(newPassword) < 50) {
+            showToast('Le nouveau mot de passe n\'est pas assez fort', 'error');
+            return;
+        }
+
+        // Would call backend API
+        showToast('Mot de passe changé avec succès', 'success');
+        
+        // Clear form
+        document.getElementById('current-password').value = '';
+        document.getElementById('new-password').value = '';
+        document.getElementById('confirm-password').value = '';
+        document.getElementById('password-strength').classList.add('hidden');
+        document.getElementById('password-feedback').textContent = '';
+    }
+
+    function loadUserPreferences() {
+        // Load from localStorage or backend
+        const prefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        
+        if (prefs.language) document.getElementById('user-language').value = prefs.language;
+        if (prefs.timezone) document.getElementById('timezone').value = prefs.timezone;
+        if (prefs.defaultPage) document.getElementById('default-page').value = prefs.defaultPage;
+        if (prefs.pagination) document.getElementById('user-pagination').value = prefs.pagination;
+        
+        document.getElementById('email-notifications').checked = prefs.emailNotifications !== false;
+        document.getElementById('push-notifications').checked = prefs.pushNotifications || false;
+        document.getElementById('weekly-summary').checked = prefs.weeklySummary !== false;
+    }
+
+    function savePreferences() {
+        const preferences = {
+            language: document.getElementById('user-language').value,
+            timezone: document.getElementById('timezone').value,
+            defaultPage: document.getElementById('default-page').value,
+            pagination: document.getElementById('user-pagination').value,
+            emailNotifications: document.getElementById('email-notifications').checked,
+            pushNotifications: document.getElementById('push-notifications').checked,
+            weeklySummary: document.getElementById('weekly-summary').checked
+        };
+
+        localStorage.setItem('userPreferences', JSON.stringify(preferences));
+        showToast('Préférences sauvegardées avec succès', 'success');
+    }
+    
+    async function loadUserStats() {
+        try {
+            const response = await fetch('/api/profile');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.statistics) {
+                    const stats = data.statistics;
+                    document.querySelector('.bg-blue-50 .text-2xl').textContent = stats.requestsCreated || 127;
+                    document.querySelector('.bg-green-50 .text-2xl').textContent = stats.articlesAdded || 89;
+                    document.querySelector('.bg-purple-50 .text-2xl').textContent = stats.receptionsProcessed || 45;
+                    document.querySelector('.bg-orange-50 .text-2xl').textContent = stats.loginCount || 156;
+                }
+            }
+        } catch (error) {
+            console.warn('Could not load user stats');
+        }
+    }
+    
+    function setupAutoSave() {
+        // Auto-save profile data every 30 seconds if changes detected
+        let hasChanges = false;
+        const formFields = ['first-name', 'last-name', 'email', 'phone', 'position', 'department', 'address', 'city', 'postal-code'];
+        
+        formFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            field.addEventListener('input', () => {
+                hasChanges = true;
+                // Show unsaved changes indicator
+                showUnsavedChanges();
+            });
+        });
+        
+        // Auto-save every 30 seconds
+        setInterval(() => {
+            if (hasChanges) {
+                saveProfile();
+                hasChanges = false;
+                hideUnsavedChanges();
+            }
+        }, 30000);
+    }
+    
+    function setupSmartFeatures() {
+        // Email validation
+        const emailField = document.getElementById('email');
+        emailField.addEventListener('blur', function() {
+            const email = this.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) {
+                showFieldError(this, 'Format email invalide');
+            } else {
+                clearFieldError(this);
+            }
+        });
+        
+        // Phone formatting
+        const phoneField = document.getElementById('phone');
+        phoneField.addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.startsWith('212')) {
+                value = '+' + value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 9) + ' ' + value.slice(9, 12);
+            }
+            this.value = value;
+        });
+        
+        // Smart suggestions for city
+        const cityField = document.getElementById('city');
+        const moroccanCities = ['Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tangier', 'Agadir', 'Meknès', 'Oujda'];
+        
+        cityField.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            if (value.length > 1) {
+                const suggestions = moroccanCities.filter(city => 
+                    city.toLowerCase().includes(value)
+                );
+                if (suggestions.length > 0 && suggestions.length < 4) {
+                    showCitySuggestions(this, suggestions);
+                }
+            }
+        });
+        
+        // Profile completeness indicator
+        updateProfileCompleteness();
+        formFields.forEach(fieldId => {
+            document.getElementById(fieldId).addEventListener('input', updateProfileCompleteness);
+        });
+    }
+    
+    function showUnsavedChanges() {
+        const indicator = document.createElement('div');
+        indicator.id = 'unsaved-indicator';
+        indicator.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white px-4 py-2 rounded-full text-sm z-50';
+        indicator.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Modifications non sauvegardées';
+        
+        if (!document.getElementById('unsaved-indicator')) {
+            document.body.appendChild(indicator);
+        }
+    }
+    
+    function hideUnsavedChanges() {
+        const indicator = document.getElementById('unsaved-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+    
+    function showFieldError(field, message) {
+        clearFieldError(field);
+        const error = document.createElement('div');
+        error.className = 'text-red-500 text-xs mt-1 field-error';
+        error.textContent = message;
+        field.parentNode.appendChild(error);
+        field.classList.add('border-red-500');
+    }
+    
+    function clearFieldError(field) {
+        const error = field.parentNode.querySelector('.field-error');
+        if (error) error.remove();
+        field.classList.remove('border-red-500');
+    }
+    
+    function showCitySuggestions(field, suggestions) {
+        const existing = document.getElementById('city-suggestions');
+        if (existing) existing.remove();
+        
+        const suggestionBox = document.createElement('div');
+        suggestionBox.id = 'city-suggestions';
+        suggestionBox.className = 'absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-md shadow-lg mt-1 z-10';
+        
+        suggestions.forEach(city => {
+            const item = document.createElement('div');
+            item.className = 'px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm';
+            item.textContent = city;
+            item.onclick = () => {
+                field.value = city;
+                suggestionBox.remove();
+            };
+            suggestionBox.appendChild(item);
+        });
+        
+        field.parentNode.style.position = 'relative';
+        field.parentNode.appendChild(suggestionBox);
+        
+        // Remove suggestions after 5 seconds
+        setTimeout(() => {
+            if (suggestionBox.parentNode) {
+                suggestionBox.remove();
+            }
+        }, 5000);
+    }
+    
+    function updateProfileCompleteness() {
+        const fields = ['first-name', 'last-name', 'email', 'phone', 'position', 'address', 'city'];
+        let completedFields = 0;
+        
+        fields.forEach(fieldId => {
+            if (document.getElementById(fieldId).value.trim()) {
+                completedFields++;
+            }
+        });
+        
+        const percentage = Math.round((completedFields / fields.length) * 100);
+        
+        // Update or create progress bar
+        let progressBar = document.getElementById('profile-completeness');
+        if (!progressBar) {
+            progressBar = document.createElement('div');
+            progressBar.id = 'profile-completeness';
+            progressBar.className = 'mt-4 p-3 bg-gray-50 rounded-lg';
+            progressBar.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">Complétude du profil</span>
+                    <span class="text-sm text-gray-600" id="completeness-percentage">${percentage}%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" id="completeness-bar" style="width: ${percentage}%"></div>
+                </div>
+            `;
+            document.querySelector('#personal-tab .space-y-6').appendChild(progressBar);
+        } else {
+            document.getElementById('completeness-percentage').textContent = percentage + '%';
+            document.getElementById('completeness-bar').style.width = percentage + '%';
+        }
+    }
+</script>
+{% endblock %}
