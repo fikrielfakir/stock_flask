@@ -15,7 +15,7 @@
 
 ## Migration Progress:
 [x] 1. Install the required packages
-[x] 2. Create the PostgreSQL database
+[x] 2. Create the PostgreSQL database  
 [x] 3. Fix application structure and imports
 [x] 4. Restart the workflow to see if the project is working
 [x] 5. Verify the project is working using the feedback tool
