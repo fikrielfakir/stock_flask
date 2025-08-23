@@ -649,7 +649,8 @@
             }
             
             closeRequestForm();
-            loadPurchaseRequests();
+            // Auto-refresh data without page reload
+            await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
             console.error('Error saving request:', error);
@@ -663,7 +664,8 @@
         try {
             await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'approuve' });
             showToast('Statut mis à jour - La demande a été approuvée', 'success');
-            loadPurchaseRequests();
+            // Auto-refresh data without page reload
+            await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
             console.error('Error approving request:', error);
@@ -677,7 +679,8 @@
         try {
             await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'refuse' });
             showToast('Statut mis à jour - La demande a été refusée', 'success');
-            loadPurchaseRequests();
+            // Auto-refresh data without page reload
+            await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
             console.error('Error rejecting request:', error);
@@ -870,7 +873,8 @@
         try {
             await apiRequest('DELETE', `/api/purchase-requests/${requestId}`);
             showToast('Demande supprimée avec succès', 'success');
-            loadPurchaseRequests();
+            // Auto-refresh data without page reload
+            await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
             console.error('Error deleting request:', error);
@@ -878,9 +882,111 @@
         }
     }
 
-    function viewRequest(requestId) {
-        // This would open a view-only modal with request details
-        showToast('Fonctionnalité de visualisation en cours de développement', 'info');
+    async function viewRequest(requestId) {
+        const request = purchaseRequests.find(r => r.id === requestId);
+        if (!request) return;
+
+        try {
+            const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
+            const requestor = requestors.find(r => r.id === request.requestorId);
+            
+            let detailsHTML = `
+                <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="request-details-modal">
+                    <div class="relative top-10 mx-auto p-5 border max-w-4xl shadow-lg rounded-md bg-white">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-medium text-gray-900">Détails de la Demande</h3>
+                            <button onclick="closeRequestDetails()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div>
+                                        <div class="text-sm text-gray-600">N° Demande</div>
+                                        <div class="font-medium">#${request.numeroDemande || request.id.substring(0, 8)}</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-600">Demandeur</div>
+                                        <div class="font-medium">${requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-600">Statut</div>
+                                        <div class="font-medium">
+                                            <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(request.statut)}">
+                                                ${getStatusText(request.statut)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-gray-600">Date</div>
+                                        <div class="font-medium">${new Date(request.dateCreation).toLocaleDateString('fr-FR')}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-medium mb-4">Articles Demandés</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Article</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prix Unit.</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sous-total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            ${items.map(item => {
+                                                const article = articles.find(a => a.id === item.articleId);
+                                                const subtotal = item.quantiteDemandee * (item.prixUnitaireEstime || 0);
+                                                return `
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-sm">${article ? article.designation : 'Article inconnu'}</td>
+                                                        <td class="px-4 py-3 text-sm">${item.quantiteDemandee}</td>
+                                                        <td class="px-4 py-3 text-sm">${formatCurrency(item.prixUnitaireEstime || 0)}</td>
+                                                        <td class="px-4 py-3 text-sm font-medium">${formatCurrency(subtotal)}</td>
+                                                    </tr>
+                                                `;
+                                            }).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            ${request.observations ? `
+                                <div>
+                                    <h4 class="text-lg font-medium mb-2">Observations</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <p class="text-sm text-gray-700">${request.observations}</p>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="flex justify-end mt-6 pt-4 border-t border-gray-200">
+                            <button onclick="closeRequestDetails()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                Fermer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', detailsHTML);
+        } catch (error) {
+            console.error('Error loading request details:', error);
+            showToast('Erreur lors du chargement des détails', 'error');
+        }
+    }
+
+    function closeRequestDetails() {
+        const modal = document.getElementById('request-details-modal');
+        if (modal) {
+            modal.remove();
+        }
     }
 
     function editRequest(requestId) {
