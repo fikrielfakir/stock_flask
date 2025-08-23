@@ -543,3 +543,33 @@ def register_routes(app, db):
             })
         except Exception as e:
             return jsonify({'message': 'Erreur lors de la récupération des analytics'}), 500
+
+    # Dashboard stats endpoint  
+    @app.route("/api/dashboard/stats", methods=['GET'])
+    def get_dashboard_stats():
+        try:
+            total_articles = Article.query.count()
+            total_suppliers = Supplier.query.count()
+            total_requestors = Requestor.query.count()
+            total_requests = PurchaseRequest.query.count()
+            total_receptions = Reception.query.count()
+            total_outbounds = Outbound.query.count()
+            low_stock_count = Article.query.filter(Article.stock_actuel <= Article.seuil_minimum).count()
+            
+            # Get recent activity
+            recent_receptions = Reception.query.order_by(desc(Reception.date_reception)).limit(5).all()
+            recent_outbounds = Outbound.query.order_by(desc(Outbound.date_sortie)).limit(5).all()
+            
+            return jsonify({
+                'totalArticles': total_articles,
+                'totalSuppliers': total_suppliers,
+                'totalRequestors': total_requestors,
+                'totalRequests': total_requests,
+                'totalReceptions': total_receptions,
+                'totalOutbounds': total_outbounds,
+                'lowStockCount': low_stock_count,
+                'recentReceptions': [reception.to_dict() for reception in recent_receptions],
+                'recentOutbounds': [outbound.to_dict() for outbound in recent_outbounds]
+            })
+        except Exception as e:
+            return jsonify({'message': 'Erreur lors de la récupération des statistiques'}), 500
