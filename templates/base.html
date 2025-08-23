@@ -150,7 +150,11 @@
                     newScripts.forEach(script => {
                         if (script.textContent && !script.src) {
                             try {
-                                eval(script.textContent);
+                                // Create new script element and execute it properly
+                                const newScript = document.createElement('script');
+                                newScript.textContent = script.textContent;
+                                document.head.appendChild(newScript);
+                                document.head.removeChild(newScript);
                             } catch (e) {
                                 console.error('Script execution error:', e);
                             }
