@@ -297,10 +297,19 @@
 
     async function loadArticles() {
         try {
-            articles = await apiRequest('GET', '/api/articles');
+            // Get all articles for autocomplete (no pagination limit)
+            const response = await apiRequest('GET', '/api/articles?per_page=10000');
+            // Handle paginated response from articles API
+            if (response.articles) {
+                articles = response.articles;
+            } else {
+                articles = response;
+            }
+            console.log(`Loaded ${articles.length} articles for autocomplete`);
             updateArticleSelect();
         } catch (error) {
             console.error('Error loading articles:', error);
+            articles = [];
         }
     }
 
@@ -658,11 +667,21 @@
             return;
         }
 
-        const filteredArticles = articles.filter(article =>
-            article.designation.toLowerCase().includes(query.toLowerCase()) ||
-            (article.reference && article.reference.toLowerCase().includes(query.toLowerCase())) ||
-            (article.codeArticle && article.codeArticle.toLowerCase().includes(query.toLowerCase()))
-        );
+        console.log(`Searching for: "${query}" in ${articles.length} articles`);
+
+        const filteredArticles = articles.filter(article => {
+            if (!article) return false;
+            
+            const designation = article.designation || '';
+            const reference = article.reference || '';
+            const codeArticle = article.codeArticle || '';
+            
+            return designation.toLowerCase().includes(query.toLowerCase()) ||
+                   reference.toLowerCase().includes(query.toLowerCase()) ||
+                   codeArticle.toLowerCase().includes(query.toLowerCase());
+        });
+
+        console.log(`Found ${filteredArticles.length} matching articles`);
 
         if (filteredArticles.length === 0) {
             resultsDiv.classList.add('hidden');
