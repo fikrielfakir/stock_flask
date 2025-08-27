@@ -717,7 +717,7 @@ def register_routes(app, db):
             data = request.get_json()
             outbound = Outbound(
                 date_sortie=datetime.fromisoformat(data['dateSortie'].replace('Z', '+00:00')) if 'dateSortie' in data else datetime.utcnow(),
-                requestor_id=data['requestorId'],
+                requestor_id=data.get('requestorId'),
                 article_id=data['articleId'],
                 quantite_sortie=data['quantiteSortie'],
                 motif_sortie=data['motifSortie'],

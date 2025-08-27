@@ -189,7 +189,7 @@ class Outbound(db.Model):
     
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
     date_sortie = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    requestor_id = db.Column(db.String(36), nullable=False)
+    requestor_id = db.Column(db.String(36), nullable=True)
     article_id = db.Column(db.String(36), nullable=False)
     quantite_sortie = db.Column(db.Integer, nullable=False)
     motif_sortie = db.Column(db.Text, nullable=False)
