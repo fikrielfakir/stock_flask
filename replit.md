@@ -6,7 +6,16 @@ StockCéramique is a comprehensive inventory management system for ceramic spare
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (August 23, 2025)
+## Recent Changes (August 27, 2025)
+**Project Migration & Data Import Completed**: Successfully migrated the StockCéramique application from Replit Agent to standard Replit environment. Key accomplishments:
+- Complete Flask application now running smoothly in Replit environment
+- All Python dependencies (Flask, SQLAlchemy, etc.) properly installed
+- Database initialized with full schema and relationships
+- Imported 2,421 real inventory articles with proper categorization and pricing
+- Application verified working with all 12 modules accessible
+- Migration completed with zero data loss and full functionality preserved
+
+## Previous Changes (August 23, 2025)
 **Complete Flask Migration**: Successfully rebuilt the application as a pure server-side Flask application, removing all React, Node.js, and Electron dependencies. Key transformations include:
 - Complete Flask-based architecture with server-side rendering
 - PostgreSQL database integration with SQLAlchemy ORM
