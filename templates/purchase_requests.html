@@ -1200,19 +1200,60 @@ endblock %} {% block content %}
         showToast("Données actualisées", "success");
     }
 
-    async function deleteRequest(requestId) {
-        if (!confirm("Êtes-vous sûr de vouloir supprimer cette demande ?"))
-            return;
+    let pendingDeleteId = null;
+    let pendingRejectId = null;
 
+    function deleteRequest(requestId) {
+        pendingDeleteId = requestId;
+        document.getElementById('delete-confirmation-modal').classList.remove('hidden');
+    }
+
+    function closeDeleteConfirmation() {
+        pendingDeleteId = null;
+        document.getElementById('delete-confirmation-modal').classList.add('hidden');
+    }
+
+    async function confirmDeleteRequest() {
+        if (!pendingDeleteId) return;
+        
         try {
-            await apiRequest("DELETE", `/api/purchase-requests/${requestId}`);
+            await apiRequest("DELETE", `/api/purchase-requests/${pendingDeleteId}`);
             showToast("Demande supprimée avec succès", "success");
+            closeDeleteConfirmation();
             // Auto-refresh data without page reload
             await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
             console.error("Error deleting request:", error);
             showToast("Erreur lors de la suppression", "error");
+            closeDeleteConfirmation();
+        }
+    }
+
+    function rejectRequest(requestId) {
+        pendingRejectId = requestId;
+        document.getElementById('reject-confirmation-modal').classList.remove('hidden');
+    }
+
+    function closeRejectConfirmation() {
+        pendingRejectId = null;
+        document.getElementById('reject-confirmation-modal').classList.add('hidden');
+    }
+
+    async function confirmRejectRequest() {
+        if (!pendingRejectId) return;
+        
+        try {
+            await apiRequest("PUT", `/api/purchase-requests/${pendingRejectId}/status`, { statut: "Refusée" });
+            showToast("Demande refusée avec succès", "success");
+            closeRejectConfirmation();
+            // Auto-refresh data without page reload
+            await loadPurchaseRequests();
+            updateRequestsTable();
+        } catch (error) {
+            console.error("Error rejecting request:", error);
+            showToast("Erreur lors du refus", "error");
+            closeRejectConfirmation();
         }
     }
 
@@ -1396,6 +1437,86 @@ endblock %} {% block content %}
         document.getElementById('total-articles').textContent = totalArticles;
     }
 </script>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-60 hidden">
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 hover:scale-100">
+            <!-- Modern Header -->
+            <div class="rounded-t-3xl px-8 py-6" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+                <div class="flex items-center justify-center">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-white tracking-tight">Confirmation de Suppression</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-8 space-y-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-trash text-3xl text-red-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Êtes-vous sûr de vouloir supprimer cette demande ?</h4>
+                    <p class="text-gray-600">Cette action est irréversible et supprimera définitivement la demande d'achat.</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
+                    <button type="button" onclick="closeDeleteConfirmation()" class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                        <i class="fas fa-times"></i>
+                        <span>Annuler</span>
+                    </button>
+                    <button type="button" onclick="confirmDeleteRequest()" class="px-6 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
+                        <i class="fas fa-trash"></i>
+                        <span>Supprimer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reject Confirmation Modal -->
+<div id="reject-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-60 hidden">
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 hover:scale-100">
+            <!-- Modern Header -->
+            <div class="rounded-t-3xl px-8 py-6" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+                <div class="flex items-center justify-center">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                        <i class="fas fa-times-circle text-white text-xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-white tracking-tight">Confirmation de Refus</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-8 space-y-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-ban text-3xl text-red-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Êtes-vous sûr de vouloir refuser cette demande ?</h4>
+                    <p class="text-gray-600">Cette action changera le statut de la demande à "Refusée" et ne pourra pas être annulée.</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
+                    <button type="button" onclick="closeRejectConfirmation()" class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                        <i class="fas fa-times"></i>
+                        <span>Annuler</span>
+                    </button>
+                    <button type="button" onclick="confirmRejectRequest()" class="px-6 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
+                        <i class="fas fa-ban"></i>
+                        <span>Refuser</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Approval Confirmation Modal -->
 <div id="approval-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-60">
