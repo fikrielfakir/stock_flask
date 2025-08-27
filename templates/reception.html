@@ -400,7 +400,8 @@
             const requestor = requestors.find(r => r.id === request.requestorId);
             const option = document.createElement('option');
             option.value = request.id;
-            option.textContent = `#${request.id.substring(0, 8)} - ${requestor ? requestor.nom : 'Inconnu'} (${new Date(request.dateCreation).toLocaleDateString('fr-FR')})`;
+            const requestDate = request.dateDemande ? new Date(request.dateDemande).toLocaleDateString('fr-FR') : 'Date inconnue';
+            option.textContent = `#${request.id.substring(0, 8)} - ${requestor ? requestor.nom : 'Inconnu'} (${requestDate})`;
             select.appendChild(option);
         });
     }
@@ -410,6 +411,7 @@
         
         try {
             const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
+            console.log('Purchase request items loaded:', items);
             
             // Clear existing articles
             receptionArticles = [];
@@ -420,11 +422,11 @@
                 articleCounter++;
                 const receptionArticle = {
                     id: 'pr_' + articleCounter,
-                    articleId: item.article_id,
-                    quantiteCommandee: item.quantite,
-                    quantiteRecue: item.quantite, // Default to full quantity
-                    prixUnitaire: item.prix_unitaire || 0,
-                    fournisseurId: item.supplier_id || '',
+                    articleId: item.articleId,
+                    quantiteCommandee: item.quantiteDemandee,
+                    quantiteRecue: item.quantiteDemandee, // Default to full quantity
+                    prixUnitaire: item.prixUnitaireEstime || 0,
+                    fournisseurId: item.supplierId || '',
                     purchaseRequestItemId: item.id
                 };
                 receptionArticles.push(receptionArticle);
