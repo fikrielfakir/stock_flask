@@ -188,6 +188,7 @@ class Outbound(db.Model):
     __tablename__ = 'outbounds'
     
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
+    numero_sortie = db.Column(db.String(50), nullable=False)  # Transaction number for grouping
     date_sortie = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     requestor_id = db.Column(db.String(36), nullable=True)
     article_id = db.Column(db.String(36), nullable=False)
@@ -199,6 +200,7 @@ class Outbound(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'numeroSortie': self.numero_sortie,
             'dateSortie': self.date_sortie.isoformat() if self.date_sortie else None,
             'requestorId': self.requestor_id,
             'articleId': self.article_id,
