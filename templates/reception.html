@@ -114,13 +114,24 @@
                 
                 <!-- Articles à Réceptionner -->
                 <div class="mb-6">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
                         <h4 class="text-lg font-medium text-gray-900">Articles à Réceptionner</h4>
-                        <button type="button" onclick="addArticleToReception()" 
-                                class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
-                            <i class="fas fa-plus"></i>
-                            <span>Ajouter Article</span>
-                        </button>
+                        <div class="flex flex-wrap gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Demandes d'Achat Approuvées</label>
+                                <select id="approved-requests-select" onchange="loadPurchaseRequestItems(this.value)"
+                                        class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                    <option value="">Sélectionner une demande approuvée</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="button" onclick="addArticleToReception()" 
+                                        class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Ajouter Article</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="overflow-x-auto">
@@ -181,7 +192,18 @@
         loadReceptions();
         loadArticles();
         loadSuppliers();
+        loadRequestors();
     });
+
+    let requestors = [];
+
+    async function loadRequestors() {
+        try {
+            requestors = await apiRequest('GET', '/api/requestors');
+        } catch (error) {
+            console.error('Error loading requestors:', error);
+        }
+    }
 
     async function loadReceptions() {
         try {
@@ -337,6 +359,7 @@
     // Manual reception article management
     let receptionArticles = [];
     let articleCounter = 0;
+    let approvedPurchaseRequests = [];
 
     function openReceptionForm() {
         const modal = document.getElementById('reception-modal');
@@ -350,9 +373,80 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dateReception').value = today;
         
+        // Load approved purchase requests
+        loadApprovedPurchaseRequests();
+        
         updateReceptionArticlesTable();
         updateReceptionSummary();
         modal.classList.remove('hidden');
+    }
+
+    async function loadApprovedPurchaseRequests() {
+        try {
+            const purchaseRequests = await apiRequest('GET', '/api/purchase-requests');
+            // Filter only approved requests
+            approvedPurchaseRequests = purchaseRequests.filter(req => req.statut === 'Approuvé');
+            updateApprovedRequestsSelect();
+        } catch (error) {
+            console.error('Error loading approved purchase requests:', error);
+        }
+    }
+
+    function updateApprovedRequestsSelect() {
+        const select = document.getElementById('approved-requests-select');
+        select.innerHTML = '<option value="">Sélectionner une demande approuvée</option>';
+        
+        approvedPurchaseRequests.forEach(request => {
+            const requestor = requestors.find(r => r.id === request.requestorId);
+            const option = document.createElement('option');
+            option.value = request.id;
+            option.textContent = `#${request.id.substring(0, 8)} - ${requestor ? requestor.nom : 'Inconnu'} (${new Date(request.dateCreation).toLocaleDateString('fr-FR')})`;
+            select.appendChild(option);
+        });
+    }
+
+    async function loadPurchaseRequestItems(requestId) {
+        if (!requestId) return;
+        
+        try {
+            const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
+            
+            // Clear existing articles
+            receptionArticles = [];
+            articleCounter = 0;
+            
+            // Add items from purchase request
+            items.forEach(item => {
+                articleCounter++;
+                const receptionArticle = {
+                    id: 'pr_' + articleCounter,
+                    articleId: item.article_id,
+                    quantiteCommandee: item.quantite,
+                    quantiteRecue: item.quantite, // Default to full quantity
+                    prixUnitaire: item.prix_unitaire || 0,
+                    fournisseurId: item.supplier_id || '',
+                    purchaseRequestItemId: item.id
+                };
+                receptionArticles.push(receptionArticle);
+            });
+            
+            updateReceptionArticlesTable();
+            updateReceptionSummary();
+            
+            // Auto-fill some details if available
+            const selectedRequest = approvedPurchaseRequests.find(req => req.id === requestId);
+            if (selectedRequest) {
+                const observations = document.getElementById('observations');
+                if (!observations.value) {
+                    observations.value = `Réception pour demande d'achat #${requestId.substring(0, 8)}`;
+                }
+            }
+            
+            showToast(`${items.length} article(s) ajouté(s) de la demande d'achat`, 'success');
+        } catch (error) {
+            console.error('Error loading purchase request items:', error);
+            showToast('Erreur lors du chargement des articles de la demande', 'error');
+        }
     }
 
     function addArticleToReception() {
