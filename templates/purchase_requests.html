@@ -510,6 +510,60 @@
         modal.classList.remove('hidden');
     }
 
+    async function loadRequestForEdit(requestId) {
+        try {
+            const request = purchaseRequests.find(r => r.id === requestId);
+            if (!request) {
+                showToast('Demande non trouvée', 'error');
+                return;
+            }
+
+            // Load request items
+            const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
+            
+            // Fill form fields
+            document.getElementById('request-id').value = requestId;
+            document.getElementById('requestor-id').value = request.requestorId;
+            document.getElementById('observations').value = request.observations || '';
+            
+            // Clear existing article lines
+            clearArticleLines();
+            
+            // Add article lines for each item
+            items.forEach((item, index) => {
+                addArticleLine();
+                const lineNumber = articleLineCounter;
+                
+                // Fill article data
+                const articleInput = document.querySelector(`input[data-line="${lineNumber}"].article-autocomplete`);
+                const articleIdInput = document.querySelector(`input[data-line="${lineNumber}"].article-id`);
+                const quantityInput = document.querySelector(`input[data-line="${lineNumber}"].quantity-input`);
+                const priceInput = document.querySelector(`input[data-line="${lineNumber}"].price-input`);
+                const supplierSelect = document.querySelector(`select[data-line="${lineNumber}"].supplier-select`);
+                
+                if (item.article) {
+                    articleInput.value = item.article.designation;
+                    articleIdInput.value = item.articleId;
+                }
+                quantityInput.value = item.quantiteDemandee;
+                priceInput.value = item.prixUnitaireEstime || 0;
+                if (item.supplierId) {
+                    supplierSelect.value = item.supplierId;
+                }
+                
+                // Calculate subtotal
+                calculateSubtotal(lineNumber);
+            });
+            
+            // Update total
+            calculateTotal();
+            
+        } catch (error) {
+            console.error('Error loading request for edit:', error);
+            showToast('Erreur lors du chargement de la demande', 'error');
+        }
+    }
+
     function closeRequestForm() {
         document.getElementById('request-modal').classList.add('hidden');
         document.getElementById('request-form').reset();
