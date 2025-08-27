@@ -89,39 +89,39 @@
         <!-- Navigation Menu -->
         <div class="mt-6">
             <nav class="flex space-x-1 overflow-x-auto modern-scrollbar pb-2">
-                <a href="/" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'dashboard' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'dashboard' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'dashboard' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="/articles" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'articles' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/articles" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'articles' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'articles' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-boxes"></i>
                     <span>Articles</span>
                 </a>
-                <a href="/suppliers" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'suppliers' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/suppliers" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'suppliers' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'suppliers' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-truck"></i>
                     <span>Fournisseurs</span>
                 </a>
-                <a href="/requestors" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'requestors' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/requestors" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'requestors' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'requestors' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-users"></i>
                     <span>Demandeurs</span>
                 </a>
-                <a href="/purchase-requests" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'purchase_requests' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/purchase-requests" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'purchase_requests' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'purchase_requests' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-shopping-cart"></i>
                     <span>Demandes</span>
                 </a>
-                <a href="/reception" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'reception' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/reception" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'reception' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'reception' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-warehouse"></i>
                     <span>Réception</span>
                 </a>
-                <a href="/outbound" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'outbound' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/outbound" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'outbound' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'outbound' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-arrow-up"></i>
                     <span>Sortie</span>
                 </a>
-                <a href="/analytics" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'analytics' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/analytics" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'analytics' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'analytics' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-chart-bar"></i>
                     <span>Analytics</span>
                 </a>
-                <a href="/notifications" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'notifications' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                <a href="/notifications" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'notifications' %}text-white shadow-md{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}" {% if request.endpoint == 'notifications' %}style="background: var(--primary-color);"{% endif %}>
                     <i class="fas fa-bell"></i>
                     <span>Notifications</span>
                 </a>
