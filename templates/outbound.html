@@ -1,17 +1,18 @@
-{% extends "base.html" %}
-
-{% block title %}Sortie de Stock - StockCeramique{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Sortie de Stock - StockCeramique{%
+endblock %} {% block content %}
 <div class="space-y-6">
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold text-gray-900">Sortie de Stock</h1>
-            <p class="text-sm text-gray-600">Enregistrer les sorties et consommations de stock</p>
+            <h1 class="text-2xl font-semibold text-gray-900">
+                Sortie de Stock
+            </h1>
+            <p class="text-sm text-gray-600">
+                Enregistrer les sorties et consommations de stock
+            </p>
         </div>
         <div class="flex space-x-3">
-            <button 
+            <button
                 onclick="openOutboundForm()"
                 class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
@@ -24,33 +25,41 @@
     <!-- Outbound Table -->
     <div class="bg-white shadow rounded-lg border border-gray-200">
         <div class="p-6 border-b border-gray-200">
-            <h3 class="text-xl font-semibold text-gray-900">Historique des Sorties</h3>
+            <h3 class="text-xl font-semibold text-gray-900">
+                Historique des Sorties
+            </h3>
         </div>
-        
+
         <div class="p-6 border-b border-gray-200">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                    <input 
-                        type="text" 
-                        placeholder="Article, demandeur..." 
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                        >Rechercher</label
+                    >
+                    <input
+                        type="text"
+                        placeholder="Article, demandeur..."
                         class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         id="search-input"
                         onkeyup="filterOutbounds()"
-                    >
+                    />
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                    <input 
-                        type="date" 
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                        >Date</label
+                    >
+                    <input
+                        type="date"
                         class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         id="date-filter"
                         onchange="filterOutbounds()"
-                    >
+                    />
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
-                    <button 
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                        >Actions</label
+                    >
+                    <button
                         class="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                         onclick="clearFilters()"
                     >
@@ -75,65 +84,117 @@
 </div>
 
 <!-- Modern Outbound Form Modal -->
-<div id="outbound-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 animate-fade-in">
+<div
+    id="outbound-modal"
+    class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 animate-fade-in"
+>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 scale-95 hover:scale-100">
+        <div
+            class="relative bg-white rounded-3xl shadow-2xl w-full max-w-6xl transform transition-all duration-300 scale-95 hover:scale-100"
+        >
             <!-- Header with Gradient -->
-            <div class="bg-gradient-to-r from-red-600 to-red-800 rounded-t-3xl px-8 py-6">
+            <div
+                class="bg-gradient-to-r from-red-600 to-red-800 rounded-t-3xl px-8 py-6"
+            >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+                        >
                             <i class="fas fa-arrow-up text-white text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white">Nouvelle Sortie de Stock</h3>
-                            <p class="text-red-100 text-sm">Enregistrer une sortie de marchandise</p>
+                            <h3 class="text-xl font-bold text-white">
+                                Nouvelle Sortie de Stock
+                            </h3>
+                            <p class="text-red-100 text-sm">
+                                Enregistrer une sortie de marchandise
+                            </p>
                         </div>
                     </div>
-                    <button onclick="closeOutboundForm()" 
-                            class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center">
+                    <button
+                        onclick="closeOutboundForm()"
+                        class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center"
+                    >
                         <i class="fas fa-times text-lg"></i>
                     </button>
                 </div>
             </div>
-            
+
             <div class="p-8">
-                <form id="outbound-form" onsubmit="saveOutbound(event)" class="space-y-6">
+                <form
+                    id="outbound-form"
+                    onsubmit="saveOutbound(event)"
+                    class="space-y-6"
+                >
                     <!-- Header Information -->
                     <div class="space-y-6">
                         <div class="border-l-4 border-blue-500 pl-4">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Informations de sortie</h4>
+                            <h4
+                                class="text-lg font-semibold text-gray-900 mb-4"
+                            >
+                                Informations de sortie
+                            </h4>
                         </div>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Demandeur</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Demandeur</label
+                                >
                                 <div class="relative">
-                                    <select id="demandeurId" name="demandeurId"
-                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none">
-                                        <option value="">Sélectionner un demandeur</option>
+                                    <select
+                                        id="demandeurId"
+                                        name="demandeurId"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none"
+                                    >
+                                        <option value="">
+                                            Sélectionner un demandeur
+                                        </option>
                                     </select>
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-user text-gray-400"></i>
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-user text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Motif de sortie *</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Motif de sortie *</label
+                                >
                                 <div class="relative">
-                                    <select id="motifSortie" name="motifSortie" required
-                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none">
-                                        <option value="">Sélectionner un motif</option>
-                                        <option value="Consommation">Consommation</option>
-                                        <option value="Transfert">Transfert</option>
+                                    <select
+                                        id="motifSortie"
+                                        name="motifSortie"
+                                        required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none"
+                                    >
+                                        <option value="">
+                                            Sélectionner un motif
+                                        </option>
+                                        <option value="Consommation">
+                                            Consommation
+                                        </option>
+                                        <option value="Transfert">
+                                            Transfert
+                                        </option>
                                         <option value="Retour">Retour</option>
                                         <option value="Perte">Perte</option>
                                         <option value="Vol">Vol</option>
                                         <option value="Autre">Autre</option>
                                     </select>
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-clipboard-list text-gray-400"></i>
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-clipboard-list text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
@@ -144,92 +205,192 @@
                     <div class="space-y-6">
                         <div class="border-l-4 border-red-500 pl-4">
                             <div class="flex items-center justify-between">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4">Articles à sortir</h4>
-                                <button type="button" onclick="addArticleRow()" 
-                                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center space-x-2">
+                                <h4
+                                    class="text-lg font-semibold text-gray-900 mb-4"
+                                >
+                                    Articles à sortir
+                                </h4>
+                                <button
+                                    type="button"
+                                    onclick="addArticleRow()"
+                                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center space-x-2"
+                                >
                                     <i class="fas fa-plus"></i>
                                     <span>Ajouter Article</span>
                                 </button>
                             </div>
                         </div>
-                        
-                        <div class="overflow-x-auto bg-gray-50 rounded-xl border border-gray-200">
+
+                        <div
+                            class="bg-gray-50 rounded-xl border border-gray-200"
+                        >
                             <table class="w-full">
-                                <thead class="bg-gray-100 border-b border-gray-200">
+                                <thead
+                                    class="bg-gray-100 border-b border-gray-200"
+                                >
                                     <tr>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-700">N°</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-700">Article à sortir</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-700">Quantité à sortir *</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-700">PU (MAD)</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-700">Fournisseur</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-700">Total</th>
-                                        <th class="text-left p-4 text-sm font-medium text-gray-700">Action</th>
+                                        <th
+                                            class="text-left p-4 text-sm font-medium text-gray-700"
+                                        >
+                                            N°
+                                        </th>
+                                        <th
+                                            class="text-left p-4 text-sm font-medium text-gray-700"
+                                        >
+                                            Article à sortir
+                                        </th>
+                                        <th
+                                            class="text-left p-4 text-sm font-medium text-gray-700"
+                                        >
+                                            Quantité à sortir *
+                                        </th>
+                                        <th
+                                            class="text-left p-4 text-sm font-medium text-gray-700"
+                                        >
+                                            PU (MAD)
+                                        </th>
+                                        <th
+                                            class="text-left p-4 text-sm font-medium text-gray-700"
+                                        >
+                                            Fournisseur
+                                        </th>
+                                        <th
+                                            class="text-left p-4 text-sm font-medium text-gray-700"
+                                        >
+                                            Total
+                                        </th>
+                                        <th
+                                            class="text-left p-4 text-sm font-medium text-gray-700"
+                                        >
+                                            Action
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody id="articles-tbody">
                                     <!-- Articles will be added here dynamically -->
                                 </tbody>
                             </table>
-                            
-                            <div id="no-articles-message" class="p-8 text-center text-gray-500">
-                                <i class="fas fa-plus-circle text-4xl mb-4 text-gray-400"></i>
-                                <p class="text-lg font-medium">Aucun article ajouté</p>
-                                <p class="text-sm">Cliquez sur "Ajouter Article" pour commencer</p>
+
+                            <div
+                                id="no-articles-message"
+                                class="p-8 text-center text-gray-500"
+                            >
+                                <i
+                                    class="fas fa-plus-circle text-4xl mb-4 text-gray-400"
+                                ></i>
+                                <p class="text-lg font-medium">
+                                    Aucun article ajouté
+                                </p>
+                                <p class="text-sm">
+                                    Cliquez sur "Ajouter Article" pour commencer
+                                </p>
                             </div>
                         </div>
-                        
+
                         <!-- Summary -->
-                        <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
+                        <div
+                            class="bg-blue-50 rounded-xl p-6 border border-blue-200"
+                        >
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <div class="text-center">
-                                    <div class="text-2xl font-bold text-blue-800" id="total-articles">0</div>
-                                    <div class="text-sm text-blue-600">Articles</div>
+                                    <div
+                                        class="text-2xl font-bold text-blue-800"
+                                        id="total-articles"
+                                    >
+                                        0
+                                    </div>
+                                    <div class="text-sm text-blue-600">
+                                        Articles
+                                    </div>
                                 </div>
                                 <div class="text-center">
-                                    <div class="text-2xl font-bold text-green-800" id="total-quantity">0</div>
-                                    <div class="text-sm text-green-600">Quantité totale</div>
+                                    <div
+                                        class="text-2xl font-bold text-green-800"
+                                        id="total-quantity"
+                                    >
+                                        0
+                                    </div>
+                                    <div class="text-sm text-green-600">
+                                        Quantité totale
+                                    </div>
                                 </div>
                                 <div class="text-center">
-                                    <div class="text-2xl font-bold text-purple-800" id="total-value">0.00 MAD</div>
-                                    <div class="text-sm text-purple-600">Valeur estimée</div>
+                                    <div
+                                        class="text-2xl font-bold text-purple-800"
+                                        id="total-value"
+                                    >
+                                        0.00 MAD
+                                    </div>
+                                    <div class="text-sm text-purple-600">
+                                        Valeur estimée
+                                    </div>
                                 </div>
                                 <div class="text-center">
-                                    <div class="text-2xl font-bold text-red-800" id="stock-impact">0</div>
-                                    <div class="text-sm text-red-600">Impact stock</div>
+                                    <div
+                                        class="text-2xl font-bold text-red-800"
+                                        id="stock-impact"
+                                    >
+                                        0
+                                    </div>
+                                    <div class="text-sm text-red-600">
+                                        Impact stock
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    
+
                     <!-- Observations Section -->
                     <div class="space-y-6">
                         <div class="border-l-4 border-green-500 pl-4">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Observations</h4>
+                            <h4
+                                class="text-lg font-semibold text-gray-900 mb-4"
+                            >
+                                Observations
+                            </h4>
                         </div>
-                        
+
                         <div class="group">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Commentaires</label>
+                            <label
+                                class="block text-sm font-semibold text-gray-700 mb-2"
+                                >Commentaires</label
+                            >
                             <div class="relative">
-                                <textarea id="observations" name="observations" rows="4"
-                                          class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 resize-none"
-                                          placeholder="Remarques ou détails sur cette sortie de stock..."></textarea>
-                                <div class="absolute top-3 right-0 pr-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-comment-alt text-gray-400"></i>
+                                <textarea
+                                    id="observations"
+                                    name="observations"
+                                    rows="4"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 resize-none"
+                                    placeholder="Remarques ou détails sur cette sortie de stock..."
+                                ></textarea>
+                                <div
+                                    class="absolute top-3 right-0 pr-3 flex items-center pointer-events-none"
+                                >
+                                    <i
+                                        class="fas fa-comment-alt text-gray-400"
+                                    ></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
-                        <button type="button" onclick="closeOutboundForm()"
-                                class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                    <div
+                        class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100"
+                    >
+                        <button
+                            type="button"
+                            onclick="closeOutboundForm()"
+                            class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2"
+                        >
                             <i class="fas fa-times"></i>
                             <span>Annuler</span>
                         </button>
-                        <button type="submit" id="save-btn"
-                                class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2">
+                        <button
+                            type="submit"
+                            id="save-btn"
+                            class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2"
+                        >
                             <i class="fas fa-save"></i>
                             <span>Enregistrer Sortie</span>
                         </button>
@@ -239,9 +400,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script>
     let outbounds = [];
     let groupedOutbounds = [];
@@ -250,32 +409,28 @@
     let requestors = [];
     let outboundArticles = []; // For the form
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function () {
         loadData();
     });
 
     async function loadData() {
-        await Promise.all([
-            loadOutbounds(),
-            loadArticles(),
-            loadRequestors()
-        ]);
+        await Promise.all([loadOutbounds(), loadArticles(), loadRequestors()]);
         groupOutboundsByTransaction();
         updateOutboundsTable();
     }
 
     async function loadOutbounds() {
         try {
-            outbounds = await apiRequest('GET', '/api/outbounds');
+            outbounds = await apiRequest("GET", "/api/outbounds");
         } catch (error) {
-            console.error('Error loading outbounds:', error);
+            console.error("Error loading outbounds:", error);
         }
     }
 
     function groupOutboundsByTransaction() {
         const grouped = {};
-        
-        outbounds.forEach(outbound => {
+
+        outbounds.forEach((outbound) => {
             const numeroSortie = outbound.numeroSortie || outbound.id;
             if (!grouped[numeroSortie]) {
                 grouped[numeroSortie] = {
@@ -284,13 +439,13 @@
                     requestorId: outbound.requestorId,
                     motifSortie: outbound.motifSortie,
                     observations: outbound.observations,
-                    articles: []
+                    articles: [],
                 };
             }
-            
+
             grouped[numeroSortie].articles.push(outbound);
         });
-        
+
         groupedOutbounds = Object.values(grouped);
         filteredOutbounds = [...groupedOutbounds];
     }
@@ -298,7 +453,10 @@
     async function loadArticles() {
         try {
             // Get all articles for autocomplete (no pagination limit)
-            const response = await apiRequest('GET', '/api/articles?per_page=10000');
+            const response = await apiRequest(
+                "GET",
+                "/api/articles?per_page=10000",
+            );
             // Handle paginated response from articles API
             if (response.articles) {
                 articles = response.articles;
@@ -308,22 +466,22 @@
             console.log(`Loaded ${articles.length} articles for autocomplete`);
             updateArticleSelect();
         } catch (error) {
-            console.error('Error loading articles:', error);
+            console.error("Error loading articles:", error);
             articles = [];
         }
     }
 
     async function loadRequestors() {
         try {
-            requestors = await apiRequest('GET', '/api/requestors');
+            requestors = await apiRequest("GET", "/api/requestors");
             updateRequestorSelect();
         } catch (error) {
-            console.error('Error loading requestors:', error);
+            console.error("Error loading requestors:", error);
         }
     }
 
     function updateOutboundsTable() {
-        const container = document.getElementById('outbounds-table-container');
+        const container = document.getElementById("outbounds-table-container");
 
         if (filteredOutbounds.length === 0) {
             container.innerHTML = `
@@ -354,44 +512,61 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${filteredOutbounds.map(outbound => createOutboundGroupRow(outbound)).join('')}
+                        ${filteredOutbounds.map((outbound) => createOutboundGroupRow(outbound)).join("")}
                     </tbody>
                 </table>
             </div>
         `;
-        
+
         container.innerHTML = tableHTML;
     }
 
     function createOutboundGroupRow(outboundGroup) {
-        const requestor = requestors.find(r => r.id === outboundGroup.requestorId);
+        const requestor = requestors.find(
+            (r) => r.id === outboundGroup.requestorId,
+        );
         const articlesCount = outboundGroup.articles.length;
-        const totalQuantity = outboundGroup.articles.reduce((sum, a) => sum + (a.quantiteSortie || 0), 0);
-        
+        const totalQuantity = outboundGroup.articles.reduce(
+            (sum, a) => sum + (a.quantiteSortie || 0),
+            0,
+        );
+
         // Create articles summary
-        const articlesSummary = outboundGroup.articles.slice(0, 2).map(item => {
-            const article = articles.find(a => a.id === item.articleId);
-            return article ? `${article.designation} (${item.quantiteSortie})` : 'Article supprimé';
-        }).join(', ');
-        
-        const moreArticles = articlesCount > 2 ? ` et ${articlesCount - 2} autre(s)` : '';
-        
+        const articlesSummary = outboundGroup.articles
+            .slice(0, 2)
+            .map((item) => {
+                const article = articles.find((a) => a.id === item.articleId);
+                return article
+                    ? `${article.designation} (${item.quantiteSortie})`
+                    : "Article supprimé";
+            })
+            .join(", ");
+
+        const moreArticles =
+            articlesCount > 2 ? ` et ${articlesCount - 2} autre(s)` : "";
+
         return `
             <tr class="border-b border-gray-100 hover:bg-gray-50">
                 <td class="p-4 text-sm font-medium text-blue-600">#${outboundGroup.numeroSortie}</td>
-                <td class="p-4 text-sm text-gray-700">${requestor ? `${requestor.prenom} ${requestor.nom}` : 'Non spécifié'}</td>
+                <td class="p-4 text-sm text-gray-700">${requestor ? `${requestor.prenom} ${requestor.nom}` : "Non spécifié"}</td>
                 <td class="p-4 text-sm text-gray-900">
                     <div class="flex items-center space-x-2">
                         <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">${articlesCount} article(s)</span>
                         <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">${totalQuantity} unités</span>
                     </div>
-                    <div class="text-xs text-gray-500 mt-1" title="${outboundGroup.articles.map(item => {
-                        const article = articles.find(a => a.id === item.articleId);
-                        return article ? `${article.designation}: ${item.quantiteSortie}` : 'Article supprimé';
-                    }).join('\n')}">${articlesSummary}${moreArticles}</div>
+                    <div class="text-xs text-gray-500 mt-1" title="${outboundGroup.articles
+                        .map((item) => {
+                            const article = articles.find(
+                                (a) => a.id === item.articleId,
+                            );
+                            return article
+                                ? `${article.designation}: ${item.quantiteSortie}`
+                                : "Article supprimé";
+                        })
+                        .join("\n")}">${articlesSummary}${moreArticles}</div>
                 </td>
                 <td class="p-4 text-sm text-gray-500">${outboundGroup.motifSortie}</td>
-                <td class="p-4 text-sm text-gray-700">${new Date(outboundGroup.dateSortie).toLocaleDateString('fr-FR')}</td>
+                <td class="p-4 text-sm text-gray-700">${new Date(outboundGroup.dateSortie).toLocaleDateString("fr-FR")}</td>
                 <td class="p-4">
                     <div class="flex space-x-1">
                         <button onclick="viewOutboundGroup('${outboundGroup.numeroSortie}')" 
@@ -417,62 +592,80 @@
     // Autocomplete functionality for article search
     function handleOutboundArticleAutocomplete(input) {
         const query = input.value;
-        const resultsDiv = document.getElementById('outbound-autocomplete-results');
-        
+        const resultsDiv = document.getElementById(
+            "outbound-autocomplete-results",
+        );
+
         if (query.length < 3) {
-            resultsDiv.classList.add('hidden');
-            document.getElementById('articleId').value = '';
+            resultsDiv.classList.add("hidden");
+            document.getElementById("articleId").value = "";
             hideStockInfo();
             return;
         }
 
-        const filteredArticles = articles.filter(article =>
-            article.designation.toLowerCase().includes(query.toLowerCase()) ||
-            (article.reference && article.reference.toLowerCase().includes(query.toLowerCase())) ||
-            (article.codeArticle && article.codeArticle.toLowerCase().includes(query.toLowerCase()))
+        const filteredArticles = articles.filter(
+            (article) =>
+                article.designation
+                    .toLowerCase()
+                    .includes(query.toLowerCase()) ||
+                (article.reference &&
+                    article.reference
+                        .toLowerCase()
+                        .includes(query.toLowerCase())) ||
+                (article.codeArticle &&
+                    article.codeArticle
+                        .toLowerCase()
+                        .includes(query.toLowerCase())),
         );
 
         if (filteredArticles.length === 0) {
-            resultsDiv.classList.add('hidden');
+            resultsDiv.classList.add("hidden");
             return;
         }
 
-        resultsDiv.innerHTML = filteredArticles.map(article => `
+        resultsDiv.innerHTML = filteredArticles
+            .map(
+                (article) => `
             <div class="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors duration-150"
                  onclick="selectOutboundArticle('${article.id}', '${article.designation}', ${article.stockActuel || 0})">
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="font-semibold text-gray-900">${article.designation}</div>
-                        <div class="text-sm text-gray-500">${article.reference || 'Ref. non définie'} • Stock: ${article.stockActuel || 0}</div>
+                        <div class="text-sm text-gray-500">${article.reference || "Ref. non définie"} • Stock: ${article.stockActuel || 0}</div>
                     </div>
                     <div class="text-xs text-blue-600 font-medium">Sélectionner</div>
                 </div>
             </div>
-        `).join('');
+        `,
+            )
+            .join("");
 
-        resultsDiv.classList.remove('hidden');
+        resultsDiv.classList.remove("hidden");
     }
 
     function selectOutboundArticle(articleId, designation, stock) {
-        document.getElementById('article-search').value = designation;
-        document.getElementById('articleId').value = articleId;
-        document.getElementById('outbound-autocomplete-results').classList.add('hidden');
-        
+        document.getElementById("article-search").value = designation;
+        document.getElementById("articleId").value = articleId;
+        document
+            .getElementById("outbound-autocomplete-results")
+            .classList.add("hidden");
+
         // Update stock info
         updateStockInfo();
     }
 
     function hideStockInfo() {
-        const stockInfo = document.getElementById('stock-info');
-        stockInfo.classList.add('hidden');
+        const stockInfo = document.getElementById("stock-info");
+        stockInfo.classList.add("hidden");
     }
 
     function updateRequestorSelect() {
-        const select = document.getElementById('demandeurId');
-        select.innerHTML = '<option value="">Sélectionner un demandeur</option>';
-        
-        requestors.forEach(requestor => {
-            const option = document.createElement('option');
+        const select = document.getElementById("demandeurId");
+        select.innerHTML =
+            '<option value="">Sélectionner un demandeur</option>';
+
+        requestors.forEach((requestor) => {
+            const option = document.createElement("option");
             option.value = requestor.id;
             option.textContent = `${requestor.prenom} ${requestor.nom}`;
             select.appendChild(option);
@@ -480,74 +673,85 @@
     }
 
     function updateStockInfo() {
-        const hiddenInput = document.getElementById('articleId');
-        const stockInfo = document.getElementById('stock-info');
-        const currentStock = document.getElementById('current-stock');
-        
+        const hiddenInput = document.getElementById("articleId");
+        const stockInfo = document.getElementById("stock-info");
+        const currentStock = document.getElementById("current-stock");
+
         if (hiddenInput.value) {
-            const article = articles.find(a => a.id === hiddenInput.value);
+            const article = articles.find((a) => a.id === hiddenInput.value);
             if (article) {
-                currentStock.textContent = `${article.stockActuel} ${article.unite || 'unité(s)'}`;
-                stockInfo.classList.remove('hidden');
+                currentStock.textContent = `${article.stockActuel} ${article.unite || "unité(s)"}`;
+                stockInfo.classList.remove("hidden");
                 validateQuantity();
             }
         } else {
-            stockInfo.classList.add('hidden');
+            stockInfo.classList.add("hidden");
         }
     }
 
     function validateQuantity() {
-        const articleSelect = document.getElementById('articleId');
-        const quantityInput = document.getElementById('quantiteSortie');
-        const warning = document.getElementById('quantity-warning');
-        const saveBtn = document.getElementById('save-btn');
-        const stockAfterInfo = document.getElementById('stock-after-info');
-        const stockAfter = document.getElementById('stock-after');
-        
+        const articleSelect = document.getElementById("articleId");
+        const quantityInput = document.getElementById("quantiteSortie");
+        const warning = document.getElementById("quantity-warning");
+        const saveBtn = document.getElementById("save-btn");
+        const stockAfterInfo = document.getElementById("stock-after-info");
+        const stockAfter = document.getElementById("stock-after");
+
         if (articleSelect.value && quantityInput.value) {
-            const article = articles.find(a => a.id === articleSelect.value);
+            const article = articles.find((a) => a.id === articleSelect.value);
             const requestedQuantity = parseInt(quantityInput.value);
-            
+
             if (article && requestedQuantity > article.stockActuel) {
-                warning.classList.remove('hidden');
+                warning.classList.remove("hidden");
                 saveBtn.disabled = true;
-                saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                stockAfterInfo.style.display = 'none';
+                saveBtn.classList.add("opacity-50", "cursor-not-allowed");
+                stockAfterInfo.style.display = "none";
             } else {
-                warning.classList.add('hidden');
+                warning.classList.add("hidden");
                 saveBtn.disabled = false;
-                saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                
+                saveBtn.classList.remove("opacity-50", "cursor-not-allowed");
+
                 // Show stock after outbound
                 if (article && requestedQuantity > 0) {
-                    const remainingStock = article.stockActuel - requestedQuantity;
-                    stockAfter.textContent = `${remainingStock} ${article.unite || 'unité(s)'}`;
-                    stockAfterInfo.style.display = 'flex';
+                    const remainingStock =
+                        article.stockActuel - requestedQuantity;
+                    stockAfter.textContent = `${remainingStock} ${article.unite || "unité(s)"}`;
+                    stockAfterInfo.style.display = "flex";
                 } else {
-                    stockAfterInfo.style.display = 'none';
+                    stockAfterInfo.style.display = "none";
                 }
             }
         } else {
-            stockAfterInfo.style.display = 'none';
+            stockAfterInfo.style.display = "none";
         }
     }
 
     function filterOutbounds() {
-        const search = document.getElementById('search-input').value.toLowerCase();
-        const dateFilter = document.getElementById('date-filter').value;
+        const search = document
+            .getElementById("search-input")
+            .value.toLowerCase();
+        const dateFilter = document.getElementById("date-filter").value;
 
-        filteredOutbounds = outbounds.filter(outbound => {
-            const article = articles.find(a => a.id === outbound.articleId);
-            const requestor = requestors.find(r => r.id === outbound.demandeurId);
-            
-            const matchesSearch = !search || 
-                (article && article.designation.toLowerCase().includes(search)) ||
-                (article && article.codeArticle.toLowerCase().includes(search)) ||
-                (requestor && `${requestor.prenom} ${requestor.nom}`.toLowerCase().includes(search)) ||
+        filteredOutbounds = outbounds.filter((outbound) => {
+            const article = articles.find((a) => a.id === outbound.articleId);
+            const requestor = requestors.find(
+                (r) => r.id === outbound.demandeurId,
+            );
+
+            const matchesSearch =
+                !search ||
+                (article &&
+                    article.designation.toLowerCase().includes(search)) ||
+                (article &&
+                    article.codeArticle.toLowerCase().includes(search)) ||
+                (requestor &&
+                    `${requestor.prenom} ${requestor.nom}`
+                        .toLowerCase()
+                        .includes(search)) ||
                 outbound.motif.toLowerCase().includes(search);
 
-            const matchesDate = !dateFilter || 
-                outbound.dateSortie.startsWith(dateFilter);
+            const matchesDate =
+                !dateFilter || outbound.dateSortie.startsWith(dateFilter);
 
             return matchesSearch && matchesDate;
         });
@@ -556,29 +760,29 @@
     }
 
     function clearFilters() {
-        document.getElementById('search-input').value = '';
-        document.getElementById('date-filter').value = '';
+        document.getElementById("search-input").value = "";
+        document.getElementById("date-filter").value = "";
         filterOutbounds();
     }
 
     function openOutboundForm() {
-        const modal = document.getElementById('outbound-modal');
-        const form = document.getElementById('outbound-form');
-        
+        const modal = document.getElementById("outbound-modal");
+        const form = document.getElementById("outbound-form");
+
         form.reset();
         outboundArticles = [];
         articleRowCounter = 0;
-        
+
         // Reset the articles table
-        document.getElementById('articles-tbody').innerHTML = '';
-        document.getElementById('no-articles-message').style.display = 'block';
+        document.getElementById("articles-tbody").innerHTML = "";
+        document.getElementById("no-articles-message").style.display = "block";
         updateFormTotals();
-        
-        modal.classList.remove('hidden');
+
+        modal.classList.remove("hidden");
     }
 
     function closeOutboundForm() {
-        document.getElementById('outbound-modal').classList.add('hidden');
+        document.getElementById("outbound-modal").classList.add("hidden");
     }
 
     // Multi-article form functions
@@ -586,17 +790,17 @@
 
     function addArticleRow() {
         articleRowCounter++;
-        const tbody = document.getElementById('articles-tbody');
-        const noArticlesMsg = document.getElementById('no-articles-message');
-        
+        const tbody = document.getElementById("articles-tbody");
+        const noArticlesMsg = document.getElementById("no-articles-message");
+
         if (noArticlesMsg) {
-            noArticlesMsg.style.display = 'none';
+            noArticlesMsg.style.display = "none";
         }
-        
-        const row = document.createElement('tr');
+
+        const row = document.createElement("tr");
         row.id = `article-row-${articleRowCounter}`;
-        row.className = 'border-b border-gray-100 hover:bg-gray-50';
-        
+        row.className = "border-b border-gray-100 hover:bg-gray-50";
+
         row.innerHTML = `
             <td class="p-4 text-sm font-medium text-gray-700">${articleRowCounter}</td>
             <td class="p-4">
@@ -633,12 +837,12 @@
                 </button>
             </td>
         `;
-        
+
         tbody.appendChild(row);
         updateFormTotals();
-        
+
         // Focus on the new article search input
-        row.querySelector('.article-search').focus();
+        row.querySelector(".article-search").focus();
     }
 
     function removeArticleRow(rowId) {
@@ -646,11 +850,12 @@
         if (row) {
             row.remove();
             updateFormTotals();
-            
+
             // Show no articles message if no rows left
-            const tbody = document.getElementById('articles-tbody');
+            const tbody = document.getElementById("articles-tbody");
             if (tbody.children.length === 0) {
-                document.getElementById('no-articles-message').style.display = 'block';
+                document.getElementById("no-articles-message").style.display =
+                    "block";
             }
         }
     }
@@ -658,178 +863,202 @@
     function handleArticleSearch(input, rowId) {
         const query = input.value;
         const resultsDiv = input.nextElementSibling.nextElementSibling; // Skip hidden input
-        
+
         if (query.length < 3) {
-            resultsDiv.classList.add('hidden');
+            resultsDiv.classList.add("hidden");
             // Clear the hidden article ID
-            input.nextElementSibling.value = '';
+            input.nextElementSibling.value = "";
             updateRowTotal(rowId);
             return;
         }
 
         console.log(`Searching for: "${query}" in ${articles.length} articles`);
 
-        const filteredArticles = articles.filter(article => {
+        const filteredArticles = articles.filter((article) => {
             if (!article) return false;
-            
-            const designation = article.designation || '';
-            const reference = article.reference || '';
-            const codeArticle = article.codeArticle || '';
-            
-            return designation.toLowerCase().includes(query.toLowerCase()) ||
-                   reference.toLowerCase().includes(query.toLowerCase()) ||
-                   codeArticle.toLowerCase().includes(query.toLowerCase());
+
+            const designation = article.designation || "";
+            const reference = article.reference || "";
+            const codeArticle = article.codeArticle || "";
+
+            return (
+                designation.toLowerCase().includes(query.toLowerCase()) ||
+                reference.toLowerCase().includes(query.toLowerCase()) ||
+                codeArticle.toLowerCase().includes(query.toLowerCase())
+            );
         });
 
         console.log(`Found ${filteredArticles.length} matching articles`);
 
         if (filteredArticles.length === 0) {
-            resultsDiv.classList.add('hidden');
+            resultsDiv.classList.add("hidden");
             return;
         }
 
-        const resultsHTML = filteredArticles.map(article => `
+        const resultsHTML = filteredArticles
+            .map(
+                (article) => `
             <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
                  onclick="selectArticle('${article.id}', '${article.designation}', ${rowId})">
                 <div class="font-medium text-gray-900">${article.designation}</div>
                 <div class="text-sm text-gray-500">
-                    Code: ${article.codeArticle || 'N/A'} • 
+                    Code: ${article.codeArticle || "N/A"} • 
                     Stock: ${article.stockActuel || 0} • 
                     Prix: ${formatCurrency(article.prixUnitaire || 0)}
                 </div>
             </div>
-        `).join('');
-        
+        `,
+            )
+            .join("");
+
         resultsDiv.innerHTML = resultsHTML;
-        resultsDiv.classList.remove('hidden');
+        resultsDiv.classList.remove("hidden");
     }
 
     function selectArticle(articleId, articleName, rowId) {
         const row = document.getElementById(`article-row-${rowId}`);
-        const searchInput = row.querySelector('.article-search');
-        const hiddenInput = row.querySelector('.article-id');
-        const resultsDiv = row.querySelector('.autocomplete-results');
-        
+        const searchInput = row.querySelector(".article-search");
+        const hiddenInput = row.querySelector(".article-id");
+        const resultsDiv = row.querySelector(".autocomplete-results");
+
         searchInput.value = articleName;
         hiddenInput.value = articleId;
-        resultsDiv.classList.add('hidden');
-        
+        resultsDiv.classList.add("hidden");
+
         // Update price and supplier display
-        const article = articles.find(a => a.id === articleId);
+        const article = articles.find((a) => a.id === articleId);
         if (article) {
-            row.querySelector('.price-display').textContent = formatCurrency(article.prixUnitaire || 0);
-            row.querySelector('.supplier-display').textContent = article.supplierName || '-';
+            row.querySelector(".price-display").textContent = formatCurrency(
+                article.prixUnitaire || 0,
+            );
+            row.querySelector(".supplier-display").textContent =
+                article.supplierName || "-";
         }
-        
+
         updateRowTotal(rowId);
     }
 
     function updateRowTotal(rowId) {
         const row = document.getElementById(`article-row-${rowId}`);
-        const articleId = row.querySelector('.article-id').value;
-        const quantity = parseFloat(row.querySelector('.quantity-input').value) || 0;
-        
+        const articleId = row.querySelector(".article-id").value;
+        const quantity =
+            parseFloat(row.querySelector(".quantity-input").value) || 0;
+
         if (articleId && quantity > 0) {
-            const article = articles.find(a => a.id === articleId);
-            const price = article ? (article.prixUnitaire || 0) : 0;
+            const article = articles.find((a) => a.id === articleId);
+            const price = article ? article.prixUnitaire || 0 : 0;
             const total = quantity * price;
-            
-            row.querySelector('.total-display').textContent = formatCurrency(total);
+
+            row.querySelector(".total-display").textContent =
+                formatCurrency(total);
         } else {
-            row.querySelector('.total-display').textContent = '0.00 MAD';
+            row.querySelector(".total-display").textContent = "0.00 MAD";
         }
-        
+
         updateFormTotals();
     }
 
     function updateFormTotals() {
-        const rows = document.querySelectorAll('#articles-tbody tr');
+        const rows = document.querySelectorAll("#articles-tbody tr");
         let totalArticles = rows.length;
         let totalQuantity = 0;
         let totalValue = 0;
-        
-        rows.forEach(row => {
-            const quantity = parseFloat(row.querySelector('.quantity-input').value) || 0;
-            const totalText = row.querySelector('.total-display').textContent;
-            const value = parseFloat(totalText.replace(/[^\d.-]/g, '')) || 0;
-            
+
+        rows.forEach((row) => {
+            const quantity =
+                parseFloat(row.querySelector(".quantity-input").value) || 0;
+            const totalText = row.querySelector(".total-display").textContent;
+            const value = parseFloat(totalText.replace(/[^\d.-]/g, "")) || 0;
+
             totalQuantity += quantity;
             totalValue += value;
         });
-        
-        document.getElementById('total-articles').textContent = totalArticles;
-        document.getElementById('total-quantity').textContent = totalQuantity;
-        document.getElementById('total-value').textContent = formatCurrency(totalValue);
-        document.getElementById('stock-impact').textContent = totalQuantity;
+
+        document.getElementById("total-articles").textContent = totalArticles;
+        document.getElementById("total-quantity").textContent = totalQuantity;
+        document.getElementById("total-value").textContent =
+            formatCurrency(totalValue);
+        document.getElementById("stock-impact").textContent = totalQuantity;
     }
 
     async function saveOutbound(event) {
         event.preventDefault();
-        
+
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
-        
+
         // Collect articles from the table
-        const rows = document.querySelectorAll('#articles-tbody tr');
+        const rows = document.querySelectorAll("#articles-tbody tr");
         const articles = [];
-        
+
         for (let row of rows) {
-            const articleId = row.querySelector('.article-id').value;
-            const quantity = parseFloat(row.querySelector('.quantity-input').value);
-            
+            const articleId = row.querySelector(".article-id").value;
+            const quantity = parseFloat(
+                row.querySelector(".quantity-input").value,
+            );
+
             if (articleId && quantity > 0) {
                 articles.push({
                     articleId: articleId,
-                    quantiteSortie: quantity
+                    quantiteSortie: quantity,
                 });
             }
         }
-        
+
         if (articles.length === 0) {
-            showToast('Veuillez ajouter au moins un article', 'error');
+            showToast("Veuillez ajouter au moins un article", "error");
             return;
         }
-        
+
         if (!data.motifSortie) {
-            showToast('Veuillez sélectionner un motif de sortie', 'error');
+            showToast("Veuillez sélectionner un motif de sortie", "error");
             return;
         }
-        
+
         const outboundData = {
             articles: articles,
             requestorId: data.demandeurId,
             motifSortie: data.motifSortie,
-            observations: data.observations || ''
+            observations: data.observations || "",
         };
 
         try {
-            const saveBtn = document.getElementById('save-btn');
+            const saveBtn = document.getElementById("save-btn");
             saveBtn.disabled = true;
-            saveBtn.textContent = 'Enregistrement...';
-            
-            await apiRequest('POST', '/api/outbounds', outboundData);
-            showToast('Sortie enregistrée avec succès', 'success');
+            saveBtn.textContent = "Enregistrement...";
+
+            await apiRequest("POST", "/api/outbounds", outboundData);
+            showToast("Sortie enregistrée avec succès", "success");
             closeOutboundForm();
             loadData(); // Reload all data
         } catch (error) {
-            console.error('Error saving outbound:', error);
-            showToast('Erreur lors de l\'enregistrement', 'error');
+            console.error("Error saving outbound:", error);
+            showToast("Erreur lors de l'enregistrement", "error");
         } finally {
-            const saveBtn = document.getElementById('save-btn');
+            const saveBtn = document.getElementById("save-btn");
             saveBtn.disabled = false;
-            saveBtn.innerHTML = '<i class="fas fa-save"></i><span>Enregistrer Sortie</span>';
+            saveBtn.innerHTML =
+                '<i class="fas fa-save"></i><span>Enregistrer Sortie</span>';
         }
     }
 
     function viewOutboundGroup(numeroSortie) {
-        const outboundGroup = groupedOutbounds.find(g => g.numeroSortie === numeroSortie);
+        const outboundGroup = groupedOutbounds.find(
+            (g) => g.numeroSortie === numeroSortie,
+        );
         if (outboundGroup) {
-            const requestor = requestors.find(r => r.id === outboundGroup.requestorId);
-            const articlesDetail = outboundGroup.articles.map(item => {
-                const article = articles.find(a => a.id === item.articleId);
-                return `• ${article ? article.designation : 'Article supprimé'}: ${item.quantiteSortie} unités`;
-            }).join('\n');
-            
+            const requestor = requestors.find(
+                (r) => r.id === outboundGroup.requestorId,
+            );
+            const articlesDetail = outboundGroup.articles
+                .map((item) => {
+                    const article = articles.find(
+                        (a) => a.id === item.articleId,
+                    );
+                    return `• ${article ? article.designation : "Article supprimé"}: ${item.quantiteSortie} unités`;
+                })
+                .join("\n");
+
             const modalContent = `
                 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div class="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
@@ -843,11 +1072,11 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="text-sm font-medium text-gray-700">Date de sortie</label>
-                                    <p class="text-gray-900">${new Date(outboundGroup.dateSortie).toLocaleDateString('fr-FR')}</p>
+                                    <p class="text-gray-900">${new Date(outboundGroup.dateSortie).toLocaleDateString("fr-FR")}</p>
                                 </div>
                                 <div>
                                     <label class="text-sm font-medium text-gray-700">Demandeur</label>
-                                    <p class="text-gray-900">${requestor ? `${requestor.prenom} ${requestor.nom}` : 'Non spécifié'}</p>
+                                    <p class="text-gray-900">${requestor ? `${requestor.prenom} ${requestor.nom}` : "Non spécifié"}</p>
                                 </div>
                             </div>
                             <div>
@@ -857,13 +1086,16 @@
                             <div>
                                 <label class="text-sm font-medium text-gray-700">Articles (${outboundGroup.articles.length})</label>
                                 <div class="mt-2 space-y-2">
-                                    ${outboundGroup.articles.map(item => {
-                                        const article = articles.find(a => a.id === item.articleId);
-                                        return `
+                                    ${outboundGroup.articles
+                                        .map((item) => {
+                                            const article = articles.find(
+                                                (a) => a.id === item.articleId,
+                                            );
+                                            return `
                                             <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                                                 <div>
-                                                    <p class="font-medium text-gray-900">${article ? article.designation : 'Article supprimé'}</p>
-                                                    <p class="text-sm text-gray-500">${article ? article.reference || 'Pas de référence' : ''}</p>
+                                                    <p class="font-medium text-gray-900">${article ? article.designation : "Article supprimé"}</p>
+                                                    <p class="text-sm text-gray-500">${article ? article.reference || "Pas de référence" : ""}</p>
                                                 </div>
                                                 <div class="text-right">
                                                     <p class="font-medium text-gray-900">${item.quantiteSortie} unités</p>
@@ -871,62 +1103,72 @@
                                                 </div>
                                             </div>
                                         `;
-                                    }).join('')}
+                                        })
+                                        .join("")}
                                 </div>
                             </div>
-                            ${outboundGroup.observations ? `
+                            ${
+                                outboundGroup.observations
+                                    ? `
                                 <div>
                                     <label class="text-sm font-medium text-gray-700">Observations</label>
                                     <p class="text-gray-900">${outboundGroup.observations}</p>
                                 </div>
-                            ` : ''}
+                            `
+                                    : ""
+                            }
                         </div>
                     </div>
                 </div>
             `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalContent);
+
+            document.body.insertAdjacentHTML("beforeend", modalContent);
         }
     }
-    
+
     function closeViewModal() {
-        const modal = document.querySelector('.fixed.inset-0.bg-black');
+        const modal = document.querySelector(".fixed.inset-0.bg-black");
         if (modal) {
             modal.remove();
         }
     }
 
     async function deleteOutbound(id) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette sortie ?')) {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer cette sortie ?")) {
             return;
         }
 
         try {
-            await apiRequest('DELETE', `/api/outbounds/${id}`);
-            showToast('Sortie supprimée avec succès', 'success');
+            await apiRequest("DELETE", `/api/outbounds/${id}`);
+            showToast("Sortie supprimée avec succès", "success");
             loadOutbounds();
             // Reload articles to update stock info
             loadArticles();
         } catch (error) {
-            console.error('Error deleting outbound:', error);
+            console.error("Error deleting outbound:", error);
         }
     }
 
     // Currency formatting function
     function formatCurrency(amount) {
-        return new Intl.NumberFormat('fr-MA', {
-            style: 'currency',
-            currency: 'MAD',
-            minimumFractionDigits: 2
+        return new Intl.NumberFormat("fr-MA", {
+            style: "currency",
+            currency: "MAD",
+            minimumFractionDigits: 2,
         }).format(amount || 0);
     }
 
     // Hide autocomplete when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('#article-search') && !event.target.closest('#outbound-autocomplete-results')) {
-            const resultsElement = document.getElementById('outbound-autocomplete-results');
+    document.addEventListener("click", function (event) {
+        if (
+            !event.target.closest("#article-search") &&
+            !event.target.closest("#outbound-autocomplete-results")
+        ) {
+            const resultsElement = document.getElementById(
+                "outbound-autocomplete-results",
+            );
             if (resultsElement) {
-                resultsElement.classList.add('hidden');
+                resultsElement.classList.add("hidden");
             }
         }
     });
