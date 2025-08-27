@@ -80,7 +80,7 @@ RESTful API with consistent endpoint patterns for CRUD operations, dashboard sta
 - **Multi-Format Reporting**: PDF, Excel, CSV, and JSON export capabilities with custom report builder.
 - **Comprehensive Settings**: Master data management, security policies, backup systems, and integrations.
 - **Dynamic Forms**: AJAX-powered forms with real-time validation and autocomplete features.
-- **French Localization**: Complete French interface with EUR currency formatting.
+- **French Localization**: Complete French interface with MAD currency formatting.
 - **Responsive Design**: Mobile-first approach with Tailwind CSS grid systems.
 - **Performance Optimized**: Efficient database queries, lazy loading, and optimized asset delivery.
 - **Security Features**: Session management, audit logging, and secure data handling.

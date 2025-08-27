@@ -180,7 +180,7 @@
                                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">N°</th>
                                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Article</th>
                                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Quantité</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Prix Unit. (€)</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Prix Unit. (MAD)</th>
                                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Fournisseur</th>
                                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sous-total</th>
                                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Action</th>
@@ -208,7 +208,7 @@
                                 <div class="text-right space-y-2">
                                     <div class="flex justify-between items-center">
                                         <span class="text-lg font-semibold text-gray-700">Total Estimé:</span>
-                                        <span id="total-estime" class="text-2xl font-bold text-indigo-600">0.00 €</span>
+                                        <span id="total-estime" class="text-2xl font-bold text-indigo-600">0.00 MAD</span>
                                     </div>
                                     <div class="text-sm text-gray-500">
                                         <span id="articles-count">0 article(s)</span>
@@ -1052,6 +1052,13 @@
 
     function editRequest(requestId) {
         openRequestForm(requestId);
+    }
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: 'MAD'
+        }).format(value);
     }
 
     // Close autocomplete when clicking outside
