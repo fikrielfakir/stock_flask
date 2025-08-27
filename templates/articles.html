@@ -4,79 +4,41 @@
 
 {% block content %}
 <div class="space-y-6" data-testid="articles-page">
-    <!-- Header -->
-    <div class="glass-card rounded-2xl p-6 mb-6 fade-in">
-        <div class="flex flex-col md:flex-row md:items-center justify-between">
-            <div>
-                <h1 class="text-responsive-xl font-bold text-gray-900 mb-2">Gestion des Articles</h1>
-                <p class="text-gray-600" id="articles-count">
-                    Chargement...
-                </p>
-            </div>
-            <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
-            <button 
-                onclick="toggleAnalytics()"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                id="analytics-toggle"
-            >
-                <i class="fas fa-chart-bar mr-2"></i>
-                Analytics
-            </button>
-            <button 
-                onclick="openImportExport()"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                <i class="fas fa-upload mr-2"></i>
-                Import/Export
-            </button>
-            <button 
-                onclick="openArticleForm()"
-                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                <i class="fas fa-plus mr-2"></i>
-                Nouvel Article
-            </button>
-        </div>
-    </div>
-
-    <!-- Analytics Section -->
-    <div id="analytics-section" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Articles par Catégorie</h3>
-            <canvas id="category-chart" height="200"></canvas>
-        </div>
-        
-        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Niveaux de Stock</h3>
-            <canvas id="stock-level-chart" height="200"></canvas>
-        </div>
-    </div>
-
-    <!-- Articles Table Card -->
-    <div class="glass-card rounded-2xl shadow-lg">
-        <div class="p-6 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-                <h3 class="text-xl font-semibold text-gray-900">Liste des Articles</h3>
-                <div class="flex space-x-3">
+    <!-- Modern Header with Integrated Actions -->
+    <div class="glass-card rounded-2xl shadow-xl mb-8 overflow-hidden">
+        <div class="bg-gradient-to-r from-indigo-600 via-blue-600 to-blue-700 px-8 py-6">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                <div class="flex items-center space-x-4 mb-4 lg:mb-0">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-boxes text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl lg:text-3xl font-bold text-white">Gestion des Articles</h1>
+                        <p class="text-blue-100 text-sm mt-1" id="articles-count">
+                            Chargement des articles...
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-3">
                     <button 
-                        onclick="exportData()"
-                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 mr-2"
+                        onclick="toggleAnalytics()"
+                        class="inline-flex items-center px-4 py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-sm font-semibold text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+                        id="analytics-toggle"
                     >
-                        <i class="fas fa-download mr-2"></i>
-                        Export PDF
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        Analytics
                     </button>
                     <button 
                         onclick="openImportExport()"
-                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                        data-testid="button-import-export"
+                        class="inline-flex items-center px-4 py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-sm font-semibold text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
                     >
                         <i class="fas fa-upload mr-2"></i>
                         Import/Export
                     </button>
                     <button 
                         onclick="openArticleForm()"
-                        class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                        data-testid="button-add-article"
+                        class="inline-flex items-center px-6 py-2.5 bg-white text-indigo-600 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50"
                     >
                         <i class="fas fa-plus mr-2"></i>
                         Nouvel Article
@@ -85,68 +47,166 @@
             </div>
         </div>
 
-        <!-- Search and Filters -->
-        <div class="p-6 border-b border-gray-200">
+        <!-- Search and Filters Integrated in Header -->
+        <div class="px-8 py-6 bg-white">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                    <input 
-                        type="text" 
-                        placeholder="Code, désignation..." 
-                        class="input-modern w-full touch-target focus-ring"
-                        id="search-input"
-                        data-testid="input-search"
-                        onkeyup="filterArticles()"
-                    >
+                <div class="group">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Rechercher</label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            placeholder="Code, désignation, marque..." 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 pl-10"
+                            id="search-input"
+                            data-testid="input-search"
+                            onkeyup="filterArticles()"
+                        >
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
-                    <select 
-                        class="input-modern w-full touch-target focus-ring"
-                        id="category-filter"
-                        data-testid="select-category"
-                        onchange="filterArticles()"
-                    >
-                        <option value="all">Toutes les catégories</option>
-                    </select>
+                <div class="group">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Catégorie</label>
+                    <div class="relative">
+                        <select 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none"
+                            id="category-filter"
+                            data-testid="select-category"
+                            onchange="filterArticles()"
+                        >
+                            <option value="all">Toutes les catégories</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
-                    <select 
-                        class="input-modern w-full touch-target focus-ring"
-                        id="stock-filter"
-                        data-testid="select-stock"
-                        onchange="filterArticles()"
-                    >
-                        <option value="all">Tous</option>
-                        <option value="low">Stock bas</option>
-                        <option value="normal">Stock normal</option>
-                    </select>
+                <div class="group">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Niveau de Stock</label>
+                    <div class="relative">
+                        <select 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none"
+                            id="stock-filter"
+                            data-testid="select-stock"
+                            onchange="filterArticles()"
+                        >
+                            <option value="all">Tous les niveaux</option>
+                            <option value="low">Stock bas</option>
+                            <option value="normal">Stock normal</option>
+                            <option value="high">Stock élevé</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                <div class="group">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Actions</label>
                     <button 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 hover:border-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         onclick="clearFilters()"
                         data-testid="button-clear-filters"
                     >
+                        <i class="fas fa-filter-circle-xmark mr-2"></i>
                         Effacer filtres
                     </button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Articles Table -->
-        <div class="p-0">
+    <!-- Enhanced Analytics Section -->
+    <div id="analytics-section" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+        <div class="glass-card rounded-2xl shadow-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Articles par Catégorie</h3>
+                </div>
+            </div>
+            <div class="p-6 bg-white">
+                <canvas id="category-chart" height="200"></canvas>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-2xl shadow-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Niveaux de Stock</h3>
+                </div>
+            </div>
+            <div class="p-6 bg-white">
+                <canvas id="stock-level-chart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Streamlined Articles Table Card -->
+    <div class="glass-card rounded-2xl shadow-xl overflow-hidden">
+        <div class="px-8 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-table text-indigo-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">Liste des Articles</h3>
+                        <p class="text-sm text-gray-600">Catalogue complet des pièces détachées</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <button 
+                        onclick="exportData('pdf')"
+                        class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-semibold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                        <i class="fas fa-file-pdf mr-2"></i>
+                        Export PDF
+                    </button>
+                    <button 
+                        onclick="exportData('excel')"
+                        class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                        <i class="fas fa-file-excel mr-2"></i>
+                        Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Articles Table -->
+        <div class="overflow-hidden">
             <div id="articles-table-container">
-                <!-- Loading state -->
-                <div class="p-6">
-                    <div class="animate-pulse space-y-4">
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                <!-- Enhanced Loading state -->
+                <div class="p-8">
+                    <div class="animate-pulse space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="h-12 w-12 bg-gray-200 rounded-xl"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                                <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="h-12 w-12 bg-gray-200 rounded-xl"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                                <div class="h-3 bg-gray-200 rounded w-1/3"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="h-12 w-12 bg-gray-200 rounded-xl"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                                <div class="h-3 bg-gray-200 rounded w-2/5"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -505,15 +565,25 @@
 
         if (filteredArticles.length === 0) {
             container.innerHTML = `
-                <div class="p-8 text-center text-gray-500" data-testid="empty-state">
-                    <i class="fas fa-boxes text-4xl mb-4"></i>
-                    <p class="text-lg font-medium">Aucun article trouvé</p>
-                    <p class="text-sm">Commencez par ajouter votre premier article</p>
-                    <button onclick="openArticleForm()" 
-                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                            data-testid="button-add-first-article">
-                        Ajouter un article
-                    </button>
+                <div class="p-12 text-center" data-testid="empty-state">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-boxes text-3xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Aucun article trouvé</h3>
+                    <p class="text-gray-600 mb-6">Aucun article ne correspond aux critères de recherche actuels</p>
+                    <div class="flex justify-center space-x-3">
+                        <button onclick="clearFilters()" 
+                                class="px-6 py-3 border-2 border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200">
+                            <i class="fas fa-filter-circle-xmark mr-2"></i>
+                            Effacer les filtres
+                        </button>
+                        <button onclick="openArticleForm()" 
+                                class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-xl text-sm font-bold shadow-lg transition-all duration-200"
+                                data-testid="button-add-first-article">
+                            <i class="fas fa-plus mr-2"></i>
+                            Ajouter un article
+                        </button>
+                    </div>
                 </div>
             `;
             return;
@@ -521,19 +591,19 @@
 
         const tableHTML = `
             <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50">
+                <table class="w-full border-collapse">
+                    <thead class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b-2 border-indigo-100">
                         <tr>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Code Article</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Désignation</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Catégorie</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Stock</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Prix Unitaire</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Fournisseur</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Code Article</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Désignation</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Catégorie</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Stock</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Prix Unitaire</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Fournisseur</th>
+                            <th class="text-center px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="bg-white divide-y divide-gray-100">
                         ${filteredArticles.map(article => createArticleRow(article)).join('')}
                     </tbody>
                 </table>
@@ -548,39 +618,69 @@
         const supplierName = getSupplierName(article.fournisseurId);
         
         return `
-            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="p-4 text-sm font-medium text-gray-900">${article.codeArticle}</td>
-                <td class="p-4 text-sm text-gray-700">${article.designation}</td>
-                <td class="p-4 text-sm text-gray-500">${article.categorie}</td>
-                <td class="p-4 text-sm">
-                    <div class="flex items-center space-x-2">
-                        <i class="${stockStatus.icon} ${stockStatus.color}"></i>
-                        <span class="font-medium ${stockStatus.color}">
-                            ${article.stockActuel} ${article.unite}
-                        </span>
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">${article.codeArticle}</span>
+                        </div>
                     </div>
                 </td>
-                <td class="p-4 text-sm text-gray-500">${article.prixUnitaire ? `${article.prixUnitaire} MAD` : '-'}</td>
-                <td class="p-4 text-sm text-gray-500">${supplierName}</td>
-                <td class="p-4">
-                    <div class="flex space-x-1">
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">${article.designation}</p>
+                        <p class="text-xs text-gray-500 mt-1">${article.marque || 'Marque non définie'}</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        ${article.categorie}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full ${stockStatus.color === 'text-red-600' ? 'bg-red-500' : 'bg-green-500'}"></div>
+                        <span class="text-sm font-bold ${stockStatus.color}">
+                            ${article.stockActuel}
+                        </span>
+                        <span class="text-xs text-gray-500">${article.unite}</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: ${article.seuilMinimum || 10}
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        ${article.prixUnitaire ? `${parseFloat(article.prixUnitaire).toFixed(2)} MAD` : '-'}
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        ${supplierName}
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
                         <button onclick="generateQR('${article.id}')" 
                                 title="Générer QR Code"
-                                class="p-2 text-green-600 hover:bg-green-50 rounded"
+                                class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md"
                                 data-testid="button-qr-${article.id}">
-                            <i class="fas fa-qrcode"></i>
+                            <i class="fas fa-qrcode text-sm"></i>
                         </button>
                         <button onclick="editArticle('${article.id}')" 
                                 title="Modifier"
-                                class="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                                class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md"
                                 data-testid="button-edit-${article.id}">
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-edit text-sm"></i>
                         </button>
                         <button onclick="deleteArticle('${article.id}')" 
                                 title="Supprimer"
-                                class="p-2 text-red-600 hover:bg-red-50 rounded"
+                                class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md"
                                 data-testid="button-delete-${article.id}">
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-trash text-sm"></i>
                         </button>
                     </div>
                 </td>

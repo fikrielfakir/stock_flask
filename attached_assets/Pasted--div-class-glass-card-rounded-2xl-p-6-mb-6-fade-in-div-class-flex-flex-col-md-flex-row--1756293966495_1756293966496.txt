@@ -1,0 +1,574 @@
+<div class="glass-card rounded-2xl p-6 mb-6 fade-in">
+        <div class="flex flex-col md:flex-row md:items-center justify-between">
+            <div>
+                <h1 class="text-responsive-xl font-bold text-gray-900 mb-2">Gestion des Articles</h1>
+                <p class="text-gray-600" id="articles-count">16 article(s) sur 16 total</p>
+            </div>
+            <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
+            <button onclick="toggleAnalytics()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id="analytics-toggle">
+                <i class="fas fa-chart-bar mr-2"></i>
+                Analytics
+            </button>
+            <button onclick="openImportExport()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="fas fa-upload mr-2"></i>
+                Import/Export
+            </button>
+            <button onclick="openArticleForm()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="fas fa-plus mr-2"></i>
+                Nouvel Article
+            </button>
+        </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div id="analytics-section" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Articles par Catégorie</h3>
+            <canvas id="category-chart" height="200"></canvas>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Niveaux de Stock</h3>
+            <canvas id="stock-level-chart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Articles Table Card -->
+    <div class="glass-card rounded-2xl shadow-lg">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-gray-900">Liste des Articles</h3>
+                <div class="flex space-x-3">
+                    <button onclick="exportData()" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 mr-2">
+                        <i class="fas fa-download mr-2"></i>
+                        Export PDF
+                    </button>
+                    <button onclick="openImportExport()" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" data-testid="button-import-export">
+                        <i class="fas fa-upload mr-2"></i>
+                        Import/Export
+                    </button>
+                    <button onclick="openArticleForm()" class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700" data-testid="button-add-article">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nouvel Article
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="p-6 border-b border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                    <input type="text" placeholder="Code, désignation..." class="input-modern w-full touch-target focus-ring" id="search-input" data-testid="input-search" onkeyup="filterArticles()">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
+                    <select class="input-modern w-full touch-target focus-ring" id="category-filter" data-testid="select-category" onchange="filterArticles()"><option value="all">Toutes les catégories</option><option value="Électronique">Électronique</option></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+                    <select class="input-modern w-full touch-target focus-ring" id="stock-filter" data-testid="select-stock" onchange="filterArticles()">
+                        <option value="all">Tous</option>
+                        <option value="low">Stock bas</option>
+                        <option value="normal">Stock normal</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
+                    <button class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" onclick="clearFilters()" data-testid="button-clear-filters">
+                        Effacer filtres
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Articles Table -->
+        <div class="p-0">
+            <div id="articles-table-container">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Code Article</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Désignation</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Catégorie</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Stock</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Prix Unitaire</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Fournisseur</th>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART001</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 01</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('21e0191c-0f45-4d27-a64e-940d75872004')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-21e0191c-0f45-4d27-a64e-940d75872004">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('21e0191c-0f45-4d27-a64e-940d75872004')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-21e0191c-0f45-4d27-a64e-940d75872004">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('21e0191c-0f45-4d27-a64e-940d75872004')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-21e0191c-0f45-4d27-a64e-940d75872004">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART002</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 02</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('1cf8c192-365e-4dfb-aa05-dd503b289eb6')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-1cf8c192-365e-4dfb-aa05-dd503b289eb6">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('1cf8c192-365e-4dfb-aa05-dd503b289eb6')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-1cf8c192-365e-4dfb-aa05-dd503b289eb6">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('1cf8c192-365e-4dfb-aa05-dd503b289eb6')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-1cf8c192-365e-4dfb-aa05-dd503b289eb6">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART003</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 03</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART004</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 04</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('dea0b8e0-a9b7-4816-932a-fbc19f33ac22')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-dea0b8e0-a9b7-4816-932a-fbc19f33ac22">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('dea0b8e0-a9b7-4816-932a-fbc19f33ac22')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-dea0b8e0-a9b7-4816-932a-fbc19f33ac22">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('dea0b8e0-a9b7-4816-932a-fbc19f33ac22')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-dea0b8e0-a9b7-4816-932a-fbc19f33ac22">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART005</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 05</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('d8188afb-e7bf-48f6-b146-55e08b4ce063')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-d8188afb-e7bf-48f6-b146-55e08b4ce063">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('d8188afb-e7bf-48f6-b146-55e08b4ce063')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-d8188afb-e7bf-48f6-b146-55e08b4ce063">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('d8188afb-e7bf-48f6-b146-55e08b4ce063')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-d8188afb-e7bf-48f6-b146-55e08b4ce063">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART006</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 06</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('e5524afa-6f9f-46ec-8481-e9e1c6a4e171')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-e5524afa-6f9f-46ec-8481-e9e1c6a4e171">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('e5524afa-6f9f-46ec-8481-e9e1c6a4e171')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-e5524afa-6f9f-46ec-8481-e9e1c6a4e171">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('e5524afa-6f9f-46ec-8481-e9e1c6a4e171')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-e5524afa-6f9f-46ec-8481-e9e1c6a4e171">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART007</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 07</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('8899952d-044f-425f-97af-0cc88365e20b')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-8899952d-044f-425f-97af-0cc88365e20b">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('8899952d-044f-425f-97af-0cc88365e20b')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-8899952d-044f-425f-97af-0cc88365e20b">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('8899952d-044f-425f-97af-0cc88365e20b')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-8899952d-044f-425f-97af-0cc88365e20b">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART008</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 08</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('5bc6b7a6-6754-48d1-9e48-fe22cd473d3a')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-5bc6b7a6-6754-48d1-9e48-fe22cd473d3a">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('5bc6b7a6-6754-48d1-9e48-fe22cd473d3a')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-5bc6b7a6-6754-48d1-9e48-fe22cd473d3a">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('5bc6b7a6-6754-48d1-9e48-fe22cd473d3a')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-5bc6b7a6-6754-48d1-9e48-fe22cd473d3a">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART009</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 09</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('84cad5f3-6256-46e6-97dc-3df11a580a96')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-84cad5f3-6256-46e6-97dc-3df11a580a96">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('84cad5f3-6256-46e6-97dc-3df11a580a96')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-84cad5f3-6256-46e6-97dc-3df11a580a96">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('84cad5f3-6256-46e6-97dc-3df11a580a96')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-84cad5f3-6256-46e6-97dc-3df11a580a96">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART010</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 10</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('ac5a7baa-b688-4922-9073-385a245091a1')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-ac5a7baa-b688-4922-9073-385a245091a1">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('ac5a7baa-b688-4922-9073-385a245091a1')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-ac5a7baa-b688-4922-9073-385a245091a1">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('ac5a7baa-b688-4922-9073-385a245091a1')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-ac5a7baa-b688-4922-9073-385a245091a1">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART011</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 11</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('22096842-e52c-4f70-9e69-c13a2b3e25e6')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-22096842-e52c-4f70-9e69-c13a2b3e25e6">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('22096842-e52c-4f70-9e69-c13a2b3e25e6')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-22096842-e52c-4f70-9e69-c13a2b3e25e6">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('22096842-e52c-4f70-9e69-c13a2b3e25e6')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-22096842-e52c-4f70-9e69-c13a2b3e25e6">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART012</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 12</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('74de7bc5-5237-41e9-ba5b-dbaada17b8a4')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-74de7bc5-5237-41e9-ba5b-dbaada17b8a4">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('74de7bc5-5237-41e9-ba5b-dbaada17b8a4')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-74de7bc5-5237-41e9-ba5b-dbaada17b8a4">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('74de7bc5-5237-41e9-ba5b-dbaada17b8a4')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-74de7bc5-5237-41e9-ba5b-dbaada17b8a4">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART013</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 13</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('d4af4826-9cef-4add-bfb2-37eaae8bc997')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-d4af4826-9cef-4add-bfb2-37eaae8bc997">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('d4af4826-9cef-4add-bfb2-37eaae8bc997')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-d4af4826-9cef-4add-bfb2-37eaae8bc997">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('d4af4826-9cef-4add-bfb2-37eaae8bc997')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-d4af4826-9cef-4add-bfb2-37eaae8bc997">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART014</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 14</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('12f8fac7-7520-42f1-9ac5-abee3145c07d')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-12f8fac7-7520-42f1-9ac5-abee3145c07d">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('12f8fac7-7520-42f1-9ac5-abee3145c07d')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-12f8fac7-7520-42f1-9ac5-abee3145c07d">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('12f8fac7-7520-42f1-9ac5-abee3145c07d')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-12f8fac7-7520-42f1-9ac5-abee3145c07d">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART015</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 15</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('d38c1849-f5d7-4c12-a31b-cd0be51b3d37')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-d38c1849-f5d7-4c12-a31b-cd0be51b3d37">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('d38c1849-f5d7-4c12-a31b-cd0be51b3d37')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-d38c1849-f5d7-4c12-a31b-cd0be51b3d37">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('d38c1849-f5d7-4c12-a31b-cd0be51b3d37')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-d38c1849-f5d7-4c12-a31b-cd0be51b3d37">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4 text-sm font-medium text-gray-900">ART016</td>
+                <td class="p-4 text-sm text-gray-700">Exemple Article 16</td>
+                <td class="p-4 text-sm text-gray-500">Électronique</td>
+                <td class="p-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="font-medium text-green-600">
+                            95 pcs
+                        </span>
+                    </div>
+                </td>
+                <td class="p-4 text-sm text-gray-500">25.5 MAD</td>
+                <td class="p-4 text-sm text-gray-500">Non défini</td>
+                <td class="p-4">
+                    <div class="flex space-x-1">
+                        <button onclick="generateQR('4a3c7210-1f7e-40d3-a5c8-91cf1b062c15')" title="Générer QR Code" class="p-2 text-green-600 hover:bg-green-50 rounded" data-testid="button-qr-4a3c7210-1f7e-40d3-a5c8-91cf1b062c15">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button onclick="editArticle('4a3c7210-1f7e-40d3-a5c8-91cf1b062c15')" title="Modifier" class="p-2 text-blue-600 hover:bg-blue-50 rounded" data-testid="button-edit-4a3c7210-1f7e-40d3-a5c8-91cf1b062c15">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteArticle('4a3c7210-1f7e-40d3-a5c8-91cf1b062c15')" title="Supprimer" class="p-2 text-red-600 hover:bg-red-50 rounded" data-testid="button-delete-4a3c7210-1f7e-40d3-a5c8-91cf1b062c15">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
