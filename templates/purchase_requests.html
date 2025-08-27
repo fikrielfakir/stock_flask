@@ -1,21 +1,29 @@
-{% extends "base.html" %}
-
-{% block title %}Demandes d'Achat - StockCéramique{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Demandes d'Achat - StockCéramique{%
+endblock %} {% block content %}
 <div class="space-y-6" data-testid="purchase-requests-page">
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold text-gray-900">Demandes d'Achat</h1>
-            <p class="text-sm text-gray-600">Workflow multi-articles avec approbation</p>
+            <h1 class="text-2xl font-semibold text-gray-900">
+                Demandes d'Achat
+            </h1>
+            <p class="text-sm text-gray-600">
+                Workflow multi-articles avec approbation
+            </p>
         </div>
         <div class="flex space-x-3">
-            <button onclick="refreshRequests()" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            <button
+                onclick="refreshRequests()"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            >
                 <i class="fas fa-sync-alt mr-2"></i>
                 Actualiser
             </button>
-            <button onclick="openRequestForm()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700" data-testid="button-new-request">
+            <button
+                onclick="openRequestForm()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                data-testid="button-new-request"
+            >
                 <i class="fas fa-plus mr-2"></i>
                 Nouvelle Demande
             </button>
@@ -26,15 +34,26 @@
     <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                <input type="text" placeholder="Numéro, demandeur..." 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                       id="search-input" onkeyup="filterRequests()">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Rechercher</label
+                >
+                <input
+                    type="text"
+                    placeholder="Numéro, demandeur..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    id="search-input"
+                    onkeyup="filterRequests()"
+                />
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
-                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        id="status-filter" onchange="filterRequests()">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Statut</label
+                >
+                <select
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    id="status-filter"
+                    onchange="filterRequests()"
+                >
                     <option value="all">Tous les statuts</option>
                     <option value="en_attente">En Attente</option>
                     <option value="approuve">Approuvé</option>
@@ -44,15 +63,25 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Demandeur</label>
-                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        id="requestor-filter" onchange="filterRequests()">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Demandeur</label
+                >
+                <select
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    id="requestor-filter"
+                    onchange="filterRequests()"
+                >
                     <option value="all">Tous les demandeurs</option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
-                <button onclick="clearFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Actions</label
+                >
+                <button
+                    onclick="clearFilters()"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                >
                     Effacer filtres
                 </button>
             </div>
@@ -62,22 +91,58 @@
     <!-- Requests Table -->
     <div class="bg-white rounded-lg shadow border border-gray-200">
         <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Liste des Demandes</h3>
+            <h3 class="text-lg font-semibold text-gray-900">
+                Liste des Demandes
+            </h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200" id="requests-table">
+            <table
+                class="min-w-full divide-y divide-gray-200"
+                id="requests-table"
+            >
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N° Demande</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Demandeur</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Articles</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Estimé</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            N° Demande
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Demandeur
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Articles
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Total Estimé
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Statut
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Date
+                        </th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Actions
+                        </th>
                     </tr>
                 </thead>
-                <tbody id="requests-tbody" class="bg-white divide-y divide-gray-200">
+                <tbody
+                    id="requests-tbody"
+                    class="bg-white divide-y divide-gray-200"
+                >
                     <!-- Table content will be populated here -->
                 </tbody>
             </table>
@@ -85,302 +150,361 @@
     </div>
 </div>
 
-<!-- Modern Multi-Article Request Form Modal -->
-<div id="request-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 animate-fade-in">
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto transform transition-all duration-300 scale-95 hover:scale-100">
-            <!-- Header with Gradient -->
-            <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-t-3xl px-8 py-6 sticky top-0 z-10">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
-                            <i class="fas fa-shopping-cart text-white text-lg"></i>
+<!-- Multi-Article Request Form Modal -->
+<div
+    id="request-modal"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50"
+>
+    <div
+        class="relative top-10 mx-auto p-5 border max-w-6xl shadow-lg rounded-md bg-white"
+        style="max-height: 90vh; overflow-y: auto"
+    >
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-medium text-gray-900 flex items-center">
+                    <i class="fas fa-shopping-cart text-blue-600 mr-2"></i>
+                    <span id="request-modal-title"
+                        >Nouvelle Demande d'Achat Multi-Articles</span
+                    >
+                </h3>
+                <button
+                    onclick="closeRequestForm()"
+                    class="text-gray-400 hover:text-gray-600"
+                >
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <form id="request-form" onsubmit="saveRequest(event)">
+                <input type="hidden" id="request-id" name="id" />
+
+                <!-- Request Header -->
+                <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">
+                        Informations de la Demande
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-2"
+                                >Demandeur *</label
+                            >
+                            <select
+                                id="requestor-id"
+                                name="requestorId"
+                                required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option value="">
+                                    Sélectionner un demandeur
+                                </option>
+                            </select>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white" id="request-modal-title">Nouvelle Demande Multi-Articles</h3>
-                            <p class="text-indigo-100 text-sm">Système de demande d'achat avancé</p>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-2"
+                                >Date de Besoin</label
+                            >
+                            <input
+                                type="date"
+                                id="date-besoin"
+                                name="dateBesoin"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <div class="md:col-span-2">
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-2"
+                                >Observations</label
+                            >
+                            <textarea
+                                id="observations"
+                                name="observations"
+                                rows="2"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Commentaires sur la demande..."
+                            ></textarea>
                         </div>
                     </div>
-                    <button onclick="closeRequestForm()" 
-                            class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center">
-                        <i class="fas fa-times text-lg"></i>
+                </div>
+
+                <!-- Articles Section -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-medium text-gray-900">
+                            Articles Demandés
+                        </h4>
+                        <button
+                            type="button"
+                            onclick="addArticleLine()"
+                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+                        >
+                            <i class="fas fa-plus mr-2"></i>
+                            Ajouter Article
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table
+                            class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg"
+                        >
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        N°
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Article
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Quantité
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Prix Unit. (MAD)
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Fournisseur
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Sous-total
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody
+                                id="articles-tbody"
+                                class="bg-white divide-y divide-gray-200"
+                            >
+                                <!-- Article lines will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="mt-4 flex justify-end">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="text-right">
+                                <span class="text-lg font-medium text-gray-900"
+                                    >Total Estimé:
+                                </span>
+                                <span
+                                    id="total-estime"
+                                    class="text-xl font-bold text-blue-600"
+                                    >0.00 MAD</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div
+                    class="flex justify-end space-x-3 pt-6 border-t border-gray-200"
+                >
+                    <button
+                        type="button"
+                        onclick="closeRequestForm()"
+                        class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                        Annuler
+                    </button>
+                    <button
+                        type="submit"
+                        id="save-request-btn"
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                        <i class="fas fa-save mr-2"></i>
+                        Enregistrer Demande
                     </button>
                 </div>
-            </div>
-            
-            <div class="p-8">
-                <form id="request-form" onsubmit="saveRequest(event)" class="space-y-8">
-                    <input type="hidden" id="request-id" name="id">
-                    
-                    <!-- Request Header Section -->
-                    <div class="space-y-6">
-                        <div class="border-l-4 border-indigo-500 pl-4">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Informations de la demande</h4>
-                        </div>
-                        
-                        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="group">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Demandeur *</label>
-                                    <div class="relative">
-                                        <select id="requestor-id" name="requestorId" required
-                                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300 appearance-none">
-                                            <option value="">Sélectionner un demandeur</option>
-                                        </select>
-                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-user text-gray-400"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="group">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Date de besoin</label>
-                                    <div class="relative">
-                                        <input type="date" id="date-besoin" name="dateBesoin"
-                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300">
-                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-calendar-alt text-gray-400"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="md:col-span-2 group">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Observations</label>
-                                    <div class="relative">
-                                        <textarea id="observations" name="observations" rows="3"
-                                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300 resize-none"
-                                                  placeholder="Commentaires sur la demande..."></textarea>
-                                        <div class="absolute top-3 right-0 pr-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-comment-alt text-gray-400"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Articles Section -->
-                    <div class="space-y-6">
-                        <div class="border-l-4 border-green-500 pl-4">
-                            <div class="flex items-center justify-between">
-                                <h4 class="text-lg font-semibold text-gray-900">Articles demandés</h4>
-                                <button type="button" onclick="addArticleLine()" 
-                                        class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Ajouter Article</span>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-sm">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                                        <tr>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">N°</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Article</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Quantité</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Prix Unit. (MAD)</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Fournisseur</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sous-total</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="articles-tbody" class="bg-white divide-y divide-gray-100">
-                                        <!-- Article lines will be added here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <!-- Empty State -->
-                            <div id="articles-empty-state" class="p-12 text-center text-gray-500">
-                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-boxes text-2xl text-gray-400"></i>
-                                </div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun article ajouté</h3>
-                                <p class="text-sm text-gray-600">Cliquez sur "Ajouter Article" pour commencer</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Total Section -->
-                        <div class="flex justify-end">
-                            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-6 min-w-72">
-                                <div class="text-right space-y-2">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-lg font-semibold text-gray-700">Total Estimé:</span>
-                                        <span id="total-estime" class="text-2xl font-bold text-indigo-600">0.00 MAD</span>
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        <span id="articles-count">0 article(s)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Form Actions -->
-                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
-                        <button type="button" onclick="closeRequestForm()" 
-                                class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
-                            <i class="fas fa-times"></i>
-                            <span>Annuler</span>
-                        </button>
-                        <button type="submit" id="save-request-btn" 
-                                class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2">
-                            <i class="fas fa-save"></i>
-                            <span>Enregistrer Demande</span>
-                        </button>
-                    </div>
             </form>
         </div>
     </div>
 </div>
 
 <!-- Convert to Reception Modal -->
-<div id="convert-reception-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-60 animate-fade-in" data-testid="dialog-convert-reception">
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-y-auto transform transition-all duration-300 scale-95 hover:scale-100">
-            <!-- Header with Gradient -->
-            <div class="rounded-t-3xl px-8 py-6 sticky top-0 z-10" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-box-open text-white text-xl"></i>
+<div
+    id="convert-reception-modal"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50"
+    data-testid="dialog-convert-reception"
+>
+    <div
+        class="relative top-10 mx-auto p-5 border max-w-6xl shadow-lg rounded-md bg-white"
+        style="max-height: 90vh; overflow-y: auto"
+    >
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-medium text-gray-900 flex items-center">
+                    <i class="fas fa-box text-green-600 mr-2"></i>
+                    Convertir en Réception
+                </h3>
+                <button
+                    onclick="closeConvertModal()"
+                    class="text-gray-400 hover:text-gray-600"
+                >
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Request Summary -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-medium text-gray-900 mb-4">
+                    Résumé de la Demande
+                </h4>
+                <div id="request-summary-content">
+                    <!-- Will be populated dynamically -->
+                </div>
+            </div>
+
+            <form id="convert-form" onsubmit="convertToReception(event)">
+                <input type="hidden" id="convert-request-id" />
+
+                <!-- Reception Details -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">
+                        Détails de la Réception
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-2"
+                                >Date de Réception *</label
+                            >
+                            <input
+                                type="date"
+                                id="date-reception"
+                                name="dateReception"
+                                required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
                         </div>
                         <div>
-                            <h3 class="text-2xl font-bold text-white">Convertir en Réception</h3>
-                            <p class="text-blue-100 text-sm">Transformation de la demande d'achat en réception</p>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-2"
+                                >N° Bon de Livraison</label
+                            >
+                            <input
+                                type="text"
+                                id="numero-bon-livraison"
+                                name="numeroBonLivraison"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="BL-2025-001"
+                            />
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-2"
+                                >Observations</label
+                            >
+                            <input
+                                type="text"
+                                id="reception-observations"
+                                name="receptionObservations"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
                         </div>
                     </div>
-                    <button onclick="closeConvertModal()" class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center group">
-                        <i class="fas fa-times text-lg group-hover:rotate-90 transition-transform duration-200"></i>
+                </div>
+
+                <!-- Articles Reception Table -->
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">
+                        Articles à Réceptionner
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table
+                            class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg"
+                        >
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        N°
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Article
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Qté Commandée
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Qté Reçue
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        PU (MAD)
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Fournisseur
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                                    >
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody
+                                id="reception-articles-tbody"
+                                class="bg-white divide-y divide-gray-200"
+                            >
+                                <!-- Will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div
+                    class="flex justify-end space-x-3 pt-6 border-t border-gray-200"
+                >
+                    <button
+                        type="button"
+                        onclick="closeConvertModal()"
+                        class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                        Annuler
+                    </button>
+                    <button
+                        type="submit"
+                        id="convert-btn"
+                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+                    >
+                        <i class="fas fa-check mr-2"></i>
+                        Confirmer Réception
                     </button>
                 </div>
-            </div>
-            
-            <div class="p-8 space-y-8">
-                <!-- Request Summary -->
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-                    <div class="flex items-center mb-6">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background: var(--primary-color);">
-                            <i class="fas fa-file-alt text-white text-sm"></i>
-                        </div>
-                        <h4 class="text-xl font-bold text-gray-900">Résumé de la Demande</h4>
-                    </div>
-                    <div id="request-summary-content" class="space-y-4">
-                        <!-- Content populated by JavaScript -->
-                    </div>
-                </div>
-
-                <form id="convert-form" onsubmit="convertToReception(event)" class="space-y-8">
-                    <input type="hidden" id="convert-request-id">
-                    
-                    <!-- Reception Details -->
-                    <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200">
-                        <div class="flex items-center mb-6">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background: var(--primary-light);">
-                                <i class="fas fa-calendar-check text-white text-sm"></i>
-                            </div>
-                            <h4 class="text-xl font-bold text-gray-900">Détails de la Réception</h4>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Date de Réception *</label>
-                                <div class="relative">
-                                    <input type="date" id="date-reception" name="dateReception" required 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-calendar text-gray-400"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">N° Bon de Livraison</label>
-                                <div class="relative">
-                                    <input type="text" id="numero-bon-livraison" name="numeroBonLivraison" 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
-                                           placeholder="BL-2025-001">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-receipt text-gray-400"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Observations</label>
-                                <div class="relative">
-                                    <input type="text" id="reception-observations" name="receptionObservations" 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
-                                           placeholder="Observations sur la réception...">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-comment-alt text-gray-400"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Articles Reception Table -->
-                    <div class="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-sm">
-                        <div class="px-6 py-4 border-b border-gray-100" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mr-3">
-                                    <i class="fas fa-boxes text-white text-sm"></i>
-                                </div>
-                                <h4 class="text-xl font-bold text-white">Articles à Réceptionner</h4>
-                            </div>
-                        </div>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
-                                    <tr>
-                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">N°</th>
-                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Article</th>
-                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Qté Commandée</th>
-                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Qté Reçue</th>
-                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">PU (MAD)</th>
-                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Fournisseur</th>
-                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="reception-articles-tbody" class="bg-white divide-y divide-gray-100">
-                                    <!-- Content populated by JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <!-- Empty State -->
-                        <div id="reception-empty-state" class="p-12 text-center text-gray-500 hidden">
-                            <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-2xl flex items-center justify-center">
-                                <i class="fas fa-box-open text-2xl text-gray-400"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun article à réceptionner</h3>
-                            <p class="text-sm text-gray-600">Les articles de la demande apparaîtront ici</p>
-                        </div>
-                    </div>
-
-                    <!-- Form Actions -->
-                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
-                        <button type="button" onclick="closeConvertModal()" 
-                                class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
-                            <i class="fas fa-times"></i>
-                            <span>Annuler</span>
-                        </button>
-                        <button type="submit" id="convert-btn" 
-                                class="px-8 py-3 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2"
-                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                            <i class="fas fa-check"></i>
-                            <span>Confirmer Réception</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script>
     let purchaseRequests = [];
     let filteredRequests = [];
@@ -389,10 +513,12 @@
     let suppliers = [];
     let articleLineCounter = 0;
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function () {
         loadData();
         // Set today's date as default
-        document.getElementById('date-reception').value = new Date().toISOString().split('T')[0];
+        document.getElementById("date-reception").value = new Date()
+            .toISOString()
+            .split("T")[0];
     });
 
     async function loadData() {
@@ -401,21 +527,24 @@
                 loadPurchaseRequests(),
                 loadRequestors(),
                 loadArticles(),
-                loadSuppliers()
+                loadSuppliers(),
             ]);
             updateRequestsTable();
             updateRequestorFilter();
         } catch (error) {
-            console.error('Error loading data:', error);
+            console.error("Error loading data:", error);
         }
     }
 
     async function loadPurchaseRequests() {
         try {
-            purchaseRequests = await apiRequest('GET', '/api/purchase-requests');
+            purchaseRequests = await apiRequest(
+                "GET",
+                "/api/purchase-requests",
+            );
             filteredRequests = [...purchaseRequests];
         } catch (error) {
-            console.error('Error loading purchase requests:', error);
+            console.error("Error loading purchase requests:", error);
             purchaseRequests = [];
             filteredRequests = [];
         }
@@ -423,45 +552,47 @@
 
     async function loadRequestors() {
         try {
-            requestors = await apiRequest('GET', '/api/requestors');
+            requestors = await apiRequest("GET", "/api/requestors");
         } catch (error) {
-            console.error('Error loading requestors:', error);
+            console.error("Error loading requestors:", error);
             requestors = [];
         }
     }
 
     async function loadArticles() {
         try {
-            articles = await apiRequest('GET', '/api/articles');
+            articles = await apiRequest("GET", "/api/articles");
         } catch (error) {
-            console.error('Error loading articles:', error);
+            console.error("Error loading articles:", error);
             articles = [];
         }
     }
 
     async function loadSuppliers() {
         try {
-            suppliers = await apiRequest('GET', '/api/suppliers');
+            suppliers = await apiRequest("GET", "/api/suppliers");
         } catch (error) {
-            console.error('Error loading suppliers:', error);
+            console.error("Error loading suppliers:", error);
             suppliers = [];
         }
     }
 
     function updateRequestorFilter() {
-        const requestorSelect = document.getElementById('requestor-filter');
-        const formRequestorSelect = document.getElementById('requestor-id');
-        
-        requestorSelect.innerHTML = '<option value="all">Tous les demandeurs</option>';
-        formRequestorSelect.innerHTML = '<option value="">Sélectionner un demandeur</option>';
-        
-        requestors.forEach(requestor => {
-            const option1 = document.createElement('option');
+        const requestorSelect = document.getElementById("requestor-filter");
+        const formRequestorSelect = document.getElementById("requestor-id");
+
+        requestorSelect.innerHTML =
+            '<option value="all">Tous les demandeurs</option>';
+        formRequestorSelect.innerHTML =
+            '<option value="">Sélectionner un demandeur</option>';
+
+        requestors.forEach((requestor) => {
+            const option1 = document.createElement("option");
             option1.value = requestor.id;
             option1.textContent = `${requestor.prenom} ${requestor.nom}`;
             requestorSelect.appendChild(option1);
-            
-            const option2 = document.createElement('option');
+
+            const option2 = document.createElement("option");
             option2.value = requestor.id;
             option2.textContent = `${requestor.prenom} ${requestor.nom}`;
             formRequestorSelect.appendChild(option2);
@@ -469,8 +600,8 @@
     }
 
     function updateRequestsTable() {
-        const tbody = document.getElementById('requests-tbody');
-        
+        const tbody = document.getElementById("requests-tbody");
+
         if (filteredRequests.length === 0) {
             tbody.innerHTML = `
                 <tr>
@@ -483,12 +614,17 @@
             return;
         }
 
-        tbody.innerHTML = filteredRequests.map(request => {
-            const requestor = requestors.find(r => r.id === request.requestorId);
-            const requestorName = requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu';
-            const statusBadge = getStatusBadge(request.statut);
-            
-            return `
+        tbody.innerHTML = filteredRequests
+            .map((request) => {
+                const requestor = requestors.find(
+                    (r) => r.id === request.requestorId,
+                );
+                const requestorName = requestor
+                    ? `${requestor.prenom} ${requestor.nom}`
+                    : "Inconnu";
+                const statusBadge = getStatusBadge(request.statut);
+
+                return `
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         #${request.numeroDemande || request.id.substring(0, 8)}
@@ -498,13 +634,15 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatCurrency(request.totalEstime)}</td>
                     <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${new Date(request.dateDemande).toLocaleDateString('fr-FR')}
+                        ${new Date(request.dateDemande).toLocaleDateString("fr-FR")}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <button onclick="viewRequest('${request.id}')" class="text-blue-600 hover:text-blue-900">
                             <i class="fas fa-eye"></i>
                         </button>
-                        ${request.statut === 'en_attente' ? `
+                        ${
+                            request.statut === "en_attente"
+                                ? `
                             <button onclick="editRequest('${request.id}')" class="text-yellow-600 hover:text-yellow-900">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -514,125 +652,81 @@
                             <button onclick="rejectRequest('${request.id}')" class="text-red-600 hover:text-red-900" title="Refuser">
                                 <i class="fas fa-times"></i>
                             </button>
-                        ` : ''}
-                        ${request.statut === 'approuve' ? `
+                        `
+                                : ""
+                        }
+                        ${
+                            request.statut === "approuve"
+                                ? `
                             <button onclick="openConvertModal('${request.id}')" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs" 
                                     data-testid="button-convert-${request.id}" title="Convertir en Réception">
                                 <i class="fas fa-box mr-1"></i>
                                 Convertir
                             </button>
-                        ` : ''}
+                        `
+                                : ""
+                        }
                         <button onclick="deleteRequest('${request.id}')" class="text-red-600 hover:text-red-900">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
             `;
-        }).join('');
+            })
+            .join("");
     }
 
     function getStatusBadge(status) {
         const badges = {
-            'en_attente': '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">En Attente</span>',
-            'approuve': '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Approuvé</span>',
-            'refuse': '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Refusé</span>',
-            'commande': '<span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Commandé</span>',
-            'recu': '<span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">Reçu</span>'
+            en_attente:
+                '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">En Attente</span>',
+            approuve:
+                '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Approuvé</span>',
+            refuse: '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Refusé</span>',
+            commande:
+                '<span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Commandé</span>',
+            recu: '<span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">Reçu</span>',
         };
         return badges[status] || status;
     }
 
     function formatCurrency(amount) {
-        return new Intl.NumberFormat('fr-MA', {
-            style: 'currency',
-            currency: 'MAD'
+        return new Intl.NumberFormat("fr-MA", {
+            style: "currency",
+            currency: "MAD",
         }).format(amount || 0);
     }
 
     function openRequestForm(editId = null) {
-        const modal = document.getElementById('request-modal');
-        const title = document.getElementById('request-modal-title');
-        
+        const modal = document.getElementById("request-modal");
+        const title = document.getElementById("request-modal-title");
+
         if (editId) {
-            title.textContent = 'Modifier Demande d\'Achat';
+            title.textContent = "Modifier Demande d'Achat";
             loadRequestForEdit(editId);
         } else {
-            title.textContent = 'Nouvelle Demande d\'Achat Multi-Articles';
-            document.getElementById('request-form').reset();
-            document.getElementById('request-id').value = '';
+            title.textContent = "Nouvelle Demande d'Achat Multi-Articles";
+            document.getElementById("request-form").reset();
+            document.getElementById("request-id").value = "";
             clearArticleLines();
             addArticleLine(); // Add first line
         }
-        
-        modal.classList.remove('hidden');
-    }
 
-    async function loadRequestForEdit(requestId) {
-        try {
-            const request = purchaseRequests.find(r => r.id === requestId);
-            if (!request) {
-                showToast('Demande non trouvée', 'error');
-                return;
-            }
-
-            // Load request items
-            const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
-            
-            // Fill form fields
-            document.getElementById('request-id').value = requestId;
-            document.getElementById('requestor-id').value = request.requestorId;
-            document.getElementById('observations').value = request.observations || '';
-            
-            // Clear existing article lines
-            clearArticleLines();
-            
-            // Add article lines for each item
-            items.forEach((item, index) => {
-                addArticleLine();
-                const lineNumber = articleLineCounter;
-                
-                // Fill article data
-                const articleInput = document.querySelector(`input[data-line="${lineNumber}"].article-autocomplete`);
-                const articleIdInput = document.querySelector(`input[data-line="${lineNumber}"].article-id`);
-                const quantityInput = document.querySelector(`input[data-line="${lineNumber}"].quantity-input`);
-                const priceInput = document.querySelector(`input[data-line="${lineNumber}"].price-input`);
-                const supplierSelect = document.querySelector(`select[data-line="${lineNumber}"].supplier-select`);
-                
-                if (item.article) {
-                    articleInput.value = item.article.designation;
-                    articleIdInput.value = item.articleId;
-                }
-                quantityInput.value = item.quantiteDemandee;
-                priceInput.value = item.prixUnitaireEstime || 0;
-                if (item.supplierId) {
-                    supplierSelect.value = item.supplierId;
-                }
-                
-                // Calculate subtotal
-                calculateSubtotal(lineNumber);
-            });
-            
-            // Update total
-            calculateTotal();
-            
-        } catch (error) {
-            console.error('Error loading request for edit:', error);
-            showToast('Erreur lors du chargement de la demande', 'error');
-        }
+        modal.classList.remove("hidden");
     }
 
     function closeRequestForm() {
-        document.getElementById('request-modal').classList.add('hidden');
-        document.getElementById('request-form').reset();
+        document.getElementById("request-modal").classList.add("hidden");
+        document.getElementById("request-form").reset();
         clearArticleLines();
     }
 
     function addArticleLine() {
         articleLineCounter++;
-        const tbody = document.getElementById('articles-tbody');
-        const tr = document.createElement('tr');
+        const tbody = document.getElementById("articles-tbody");
+        const tr = document.createElement("tr");
         tr.id = `article-line-${articleLineCounter}`;
-        
+
         tr.innerHTML = `
             <td class="px-4 py-3 text-sm text-gray-500">${articleLineCounter}</td>
             <td class="px-4 py-3">
@@ -652,7 +746,7 @@
             <td class="px-4 py-3">
                 <select class="w-full px-2 py-1 border border-gray-300 rounded text-sm supplier-select" data-line="${articleLineCounter}">
                     <option value="">Sélectionner</option>
-                    ${suppliers.map(s => `<option value="${s.id}">${s.nom}</option>`).join('')}
+                    ${suppliers.map((s) => `<option value="${s.id}">${s.nom}</option>`).join("")}
                 </select>
             </td>
             <td class="px-4 py-3">
@@ -664,7 +758,7 @@
                 </button>
             </td>
         `;
-        
+
         tbody.appendChild(tr);
     }
 
@@ -677,7 +771,7 @@
     }
 
     function clearArticleLines() {
-        document.getElementById('articles-tbody').innerHTML = '';
+        document.getElementById("articles-tbody").innerHTML = "";
         articleLineCounter = 0;
         calculateTotal();
     }
@@ -685,64 +779,81 @@
     function handleArticleAutocomplete(input) {
         const query = input.value;
         const lineNumber = input.dataset.line;
-        
+
         if (query.length < 3) {
             hideAutocompleteResults(input);
             return;
         }
 
-        const filteredArticles = articles.filter(article => 
-            article.designation.toLowerCase().includes(query.toLowerCase()) ||
-            article.codeArticle.toLowerCase().includes(query.toLowerCase())
+        const filteredArticles = articles.filter(
+            (article) =>
+                article.designation
+                    .toLowerCase()
+                    .includes(query.toLowerCase()) ||
+                article.codeArticle.toLowerCase().includes(query.toLowerCase()),
         );
 
         showAutocompleteResults(input, filteredArticles, lineNumber);
     }
 
     function showAutocompleteResults(input, results, lineNumber) {
-        const resultsDiv = input.parentElement.querySelector('.autocomplete-results');
-        
+        const resultsDiv = input.parentElement.querySelector(
+            ".autocomplete-results",
+        );
+
         if (results.length === 0) {
             hideAutocompleteResults(input);
             return;
         }
 
-        resultsDiv.innerHTML = results.map(article => `
+        resultsDiv.innerHTML = results
+            .map(
+                (article) => `
             <div class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectArticle('${article.id}', ${lineNumber})">
                 <div class="font-medium">${article.designation}</div>
                 <div class="text-sm text-gray-500">${article.codeArticle} - Stock: ${article.stockActuel}</div>
             </div>
-        `).join('');
-        
-        resultsDiv.classList.remove('hidden');
+        `,
+            )
+            .join("");
+
+        resultsDiv.classList.remove("hidden");
     }
 
     function hideAutocompleteResults(input) {
-        const resultsDiv = input.parentElement.querySelector('.autocomplete-results');
-        resultsDiv.classList.add('hidden');
+        const resultsDiv = input.parentElement.querySelector(
+            ".autocomplete-results",
+        );
+        resultsDiv.classList.add("hidden");
     }
 
     function selectArticle(articleId, lineNumber) {
-        const article = articles.find(a => a.id === articleId);
+        const article = articles.find((a) => a.id === articleId);
         if (!article) return;
 
         // Check if this article is already selected in another line
-        const existingArticleInputs = document.querySelectorAll('.article-id');
+        const existingArticleInputs = document.querySelectorAll(".article-id");
         for (let input of existingArticleInputs) {
-            if (input.value === articleId && input.dataset.line !== lineNumber.toString()) {
-                showToast('warning', 'Cet article est déjà sélectionné dans une autre ligne');
+            if (
+                input.value === articleId &&
+                input.dataset.line !== lineNumber.toString()
+            ) {
+                showToast(
+                    "warning",
+                    "Cet article est déjà sélectionné dans une autre ligne",
+                );
                 return;
             }
         }
 
         const line = document.getElementById(`article-line-${lineNumber}`);
-        const autocompleteInput = line.querySelector('.article-autocomplete');
-        const hiddenInput = line.querySelector('.article-id');
-        const priceInput = line.querySelector('.price-input');
+        const autocompleteInput = line.querySelector(".article-autocomplete");
+        const hiddenInput = line.querySelector(".article-id");
+        const priceInput = line.querySelector(".price-input");
 
         autocompleteInput.value = article.designation;
         hiddenInput.value = articleId;
-        
+
         // Set estimated price if available
         if (article.prixUnitaire) {
             priceInput.value = article.prixUnitaire;
@@ -754,139 +865,164 @@
 
     function calculateSubtotal(lineNumber) {
         const line = document.getElementById(`article-line-${lineNumber}`);
-        const quantity = parseFloat(line.querySelector('.quantity-input').value) || 0;
-        const price = parseFloat(line.querySelector('.price-input').value) || 0;
+        const quantity =
+            parseFloat(line.querySelector(".quantity-input").value) || 0;
+        const price = parseFloat(line.querySelector(".price-input").value) || 0;
         const subtotal = quantity * price;
-        
-        line.querySelector('.subtotal-display').textContent = formatCurrency(subtotal);
+
+        line.querySelector(".subtotal-display").textContent =
+            formatCurrency(subtotal);
         calculateTotal();
     }
 
     function calculateTotal() {
         let total = 0;
-        document.querySelectorAll('.subtotal-display').forEach(span => {
+        document.querySelectorAll(".subtotal-display").forEach((span) => {
             const lineNumber = span.dataset.line;
             const line = document.getElementById(`article-line-${lineNumber}`);
             if (line) {
-                const quantity = parseFloat(line.querySelector('.quantity-input').value) || 0;
-                const price = parseFloat(line.querySelector('.price-input').value) || 0;
+                const quantity =
+                    parseFloat(line.querySelector(".quantity-input").value) ||
+                    0;
+                const price =
+                    parseFloat(line.querySelector(".price-input").value) || 0;
                 total += quantity * price;
             }
         });
-        
-        document.getElementById('total-estime').textContent = formatCurrency(total);
+
+        document.getElementById("total-estime").textContent =
+            formatCurrency(total);
     }
 
     async function saveRequest(event) {
         event.preventDefault();
-        
+
         const formData = new FormData(event.target);
-        const requestId = formData.get('id');
-        
+        const requestId = formData.get("id");
+
         // Collect articles data
         const articlesData = [];
-        document.querySelectorAll('#articles-tbody tr').forEach(tr => {
-            const lineNumber = tr.id.split('-')[2];
-            const articleId = tr.querySelector('.article-id').value;
-            const quantity = tr.querySelector('.quantity-input').value;
-            const price = tr.querySelector('.price-input').value;
-            const supplierId = tr.querySelector('.supplier-select').value;
-            
+        document.querySelectorAll("#articles-tbody tr").forEach((tr) => {
+            const lineNumber = tr.id.split("-")[2];
+            const articleId = tr.querySelector(".article-id").value;
+            const quantity = tr.querySelector(".quantity-input").value;
+            const price = tr.querySelector(".price-input").value;
+            const supplierId = tr.querySelector(".supplier-select").value;
+
             if (articleId && quantity && price) {
                 articlesData.push({
                     articleId,
                     quantiteDemandee: parseInt(quantity),
                     prixUnitaireEstime: parseFloat(price),
-                    supplierId: supplierId || null
+                    supplierId: supplierId || null,
                 });
             }
         });
 
         if (articlesData.length === 0) {
-            showToast('Veuillez ajouter au moins un article', 'error');
+            showToast("Veuillez ajouter au moins un article", "error");
             return;
         }
 
         const requestData = {
-            requestorId: formData.get('requestorId'),
-            observations: formData.get('observations'),
-            articles: articlesData
+            requestorId: formData.get("requestorId"),
+            observations: formData.get("observations"),
+            articles: articlesData,
         };
 
         try {
             if (requestId) {
-                await apiRequest('PUT', `/api/purchase-requests/${requestId}`, requestData);
-                showToast('Demande modifiée avec succès', 'success');
+                await apiRequest(
+                    "PUT",
+                    `/api/purchase-requests/${requestId}`,
+                    requestData,
+                );
+                showToast("Demande modifiée avec succès", "success");
             } else {
-                await apiRequest('POST', '/api/purchase-requests', requestData);
-                showToast('Demande créée avec succès', 'success');
+                await apiRequest("POST", "/api/purchase-requests", requestData);
+                showToast("Demande créée avec succès", "success");
             }
-            
+
             closeRequestForm();
             // Auto-refresh data without page reload
             await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
-            console.error('Error saving request:', error);
-            showToast('Erreur lors de l\'enregistrement', 'error');
+            console.error("Error saving request:", error);
+            showToast("Erreur lors de l'enregistrement", "error");
         }
     }
 
     async function approveRequest(requestId) {
-        if (!confirm('Êtes-vous sûr de vouloir approuver cette demande ?')) return;
-        
+        if (!confirm("Êtes-vous sûr de vouloir approuver cette demande ?"))
+            return;
+
         try {
-            await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'approuve' });
-            showToast('Statut mis à jour - La demande a été approuvée', 'success');
+            await apiRequest("PUT", `/api/purchase-requests/${requestId}`, {
+                statut: "approuve",
+            });
+            showToast(
+                "Statut mis à jour - La demande a été approuvée",
+                "success",
+            );
             // Auto-refresh data without page reload
             await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
-            console.error('Error approving request:', error);
-            showToast('Erreur lors de l\'approbation', 'error');
+            console.error("Error approving request:", error);
+            showToast("Erreur lors de l'approbation", "error");
         }
     }
 
     async function rejectRequest(requestId) {
-        if (!confirm('Êtes-vous sûr de vouloir refuser cette demande ?')) return;
-        
+        if (!confirm("Êtes-vous sûr de vouloir refuser cette demande ?"))
+            return;
+
         try {
-            await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'refuse' });
-            showToast('Statut mis à jour - La demande a été refusée', 'success');
+            await apiRequest("PUT", `/api/purchase-requests/${requestId}`, {
+                statut: "refuse",
+            });
+            showToast(
+                "Statut mis à jour - La demande a été refusée",
+                "success",
+            );
             // Auto-refresh data without page reload
             await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
-            console.error('Error rejecting request:', error);
-            showToast('Erreur lors du refus', 'error');
+            console.error("Error rejecting request:", error);
+            showToast("Erreur lors du refus", "error");
         }
     }
 
     async function openConvertModal(requestId) {
-        const request = purchaseRequests.find(r => r.id === requestId);
+        const request = purchaseRequests.find((r) => r.id === requestId);
         if (!request) return;
 
-        document.getElementById('convert-request-id').value = requestId;
-        
+        document.getElementById("convert-request-id").value = requestId;
+
         // Load request items and populate summary
         try {
-            const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
+            const items = await apiRequest(
+                "GET",
+                `/api/purchase-requests/${requestId}/items`,
+            );
             populateRequestSummary(request, items);
             populateReceptionTable(items);
-            
-            // Ensure only convert modal is visible
-            document.getElementById('request-modal').classList.add('hidden');
-            document.getElementById('convert-reception-modal').classList.remove('hidden');
+
+            document
+                .getElementById("convert-reception-modal")
+                .classList.remove("hidden");
         } catch (error) {
-            console.error('Error loading request items:', error);
-            showToast('Erreur lors du chargement des articles', 'error');
+            console.error("Error loading request items:", error);
+            showToast("Erreur lors du chargement des articles", "error");
         }
     }
 
     function populateRequestSummary(request, items) {
-        const requestor = requestors.find(r => r.id === request.requestorId);
-        const content = document.getElementById('request-summary-content');
-        
+        const requestor = requestors.find((r) => r.id === request.requestorId);
+        const content = document.getElementById("request-summary-content");
+
         content.innerHTML = `
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
@@ -895,7 +1031,7 @@
                 </div>
                 <div>
                     <div class="text-sm text-gray-600">Demandeur</div>
-                    <div class="font-medium">${requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu'}</div>
+                    <div class="font-medium">${requestor ? `${requestor.prenom} ${requestor.nom}` : "Inconnu"}</div>
                 </div>
                 <div>
                     <div class="text-sm text-gray-600">Articles</div>
@@ -910,206 +1046,154 @@
     }
 
     function populateReceptionTable(items) {
-        const tbody = document.getElementById('reception-articles-tbody');
-        
-        tbody.innerHTML = items.map((item, index) => {
-            const article = articles.find(a => a.id === item.articleId);
-            const supplier = suppliers.find(s => s.id === item.supplierId);
-            
-            return `
-                <tr class="hover:bg-blue-50 transition-colors duration-150">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-500">${index + 1}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center">
-                            <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: var(--primary-color); color: white;">
-                                <i class="fas fa-cube text-xs"></i>
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold text-gray-900">${article ? article.designation : 'Article inconnu'}</div>
-                                <div class="text-xs text-gray-500">${article ? article.reference || 'Ref. non définie' : ''}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            ${item.quantiteDemandee}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
+        const tbody = document.getElementById("reception-articles-tbody");
+
+        tbody.innerHTML = items
+            .map((item, index) => {
+                const article = articles.find((a) => a.id === item.articleId);
+                const supplier = suppliers.find(
+                    (s) => s.id === item.supplierId,
+                );
+
+                return `
+                <tr>
+                    <td class="px-4 py-3 text-sm text-gray-500">${index + 1}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${article ? article.designation : "Article inconnu"}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.quantiteDemandee}</td>
+                    <td class="px-4 py-3">
                         <input type="number" min="0" max="${item.quantiteDemandee}" value="${item.quantiteDemandee}" 
                                data-testid="input-quantite-recue-${index}"
-                               class="w-24 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium quantite-recue focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
+                               class="w-20 px-2 py-1 border border-gray-300 rounded text-sm quantite-recue" 
                                data-item-id="${item.id}">
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="relative">
-                            <input type="number" step="0.01" min="0" value="${item.prixUnitaireEstime || ''}" 
-                                   data-testid="input-prix-${index}"
-                                   class="w-32 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium prix-reception focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
-                                   data-item-id="${item.id}">
-                            <span class="absolute right-3 top-2 text-xs text-gray-400">MAD</span>
-                        </div>
+                    <td class="px-4 py-3">
+                        <input type="number" step="0.01" min="0" value="${item.prixUnitaireEstime || ""}" 
+                               data-testid="input-prix-${index}"
+                               class="w-24 px-2 py-1 border border-gray-300 rounded text-sm prix-reception" 
+                               data-item-id="${item.id}">
                     </td>
-                    <td class="px-6 py-4">
-                        <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium supplier-select focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
-                                data-item-id="${item.id}">
-                            <option value="">Sélectionner fournisseur</option>
-                            ${suppliers.map(s => `<option value="${s.id}" ${supplier && supplier.id === s.id ? 'selected' : ''}>${s.nom}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td class="px-6 py-4">
-                        <button type="button" onclick="removeReceptionLine(this)" 
-                                class="p-2 rounded-lg text-red-600 hover:text-white hover:bg-red-600 transition-all duration-200 group">
-                            <i class="fas fa-trash text-sm"></i>
+                    <td class="px-4 py-3 text-sm text-gray-500">${supplier ? supplier.nom : "Non spécifié"}</td>
+                    <td class="px-4 py-3">
+                        <button type="button" onclick="removeReceptionLine(this)" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
             `;
-        }).join('');
+            })
+            .join("");
     }
 
     function removeReceptionLine(button) {
-        button.closest('tr').remove();
+        button.closest("tr").remove();
     }
 
     function closeConvertModal() {
-        document.getElementById('convert-reception-modal').classList.add('hidden');
-        // Clear any form data
-        document.getElementById('convert-form').reset();
+        document
+            .getElementById("convert-reception-modal")
+            .classList.add("hidden");
     }
 
     async function convertToReception(event) {
         event.preventDefault();
-        
-        const requestId = document.getElementById('convert-request-id').value;
-        if (!requestId) {
-            showToast('Erreur - Identifiant de demande manquant', 'error');
-            return;
-        }
-        
+
+        const requestId = document.getElementById("convert-request-id").value;
         const formData = new FormData(event.target);
-        const dateReception = formData.get('dateReception');
-        
-        // Validate required fields
-        if (!dateReception) {
-            showToast('Veuillez sélectionner une date de réception', 'error');
-            return;
-        }
-        
+
         // Collect reception data
         const receptionData = {
-            dateReception: dateReception,
-            numeroBonLivraison: formData.get('numeroBonLivraison') || '',
-            observations: formData.get('receptionObservations') || `Réception pour demande d'achat #${requestId.substring(0, 8)}`,
-            articles: []
+            dateReception: formData.get("dateReception"),
+            numeroBonLivraison: formData.get("numeroBonLivraison"),
+            observations:
+                formData.get("receptionObservations") ||
+                `Réception pour demande d'achat #${requestId.substring(0, 8)}`,
+            articles: [],
         };
 
-        // Collect articles data with validation
-        const articleRows = document.querySelectorAll('#reception-articles-tbody tr');
-        let hasErrors = false;
-        
-        articleRows.forEach((tr, index) => {
-            const quantiteInput = tr.querySelector('.quantite-recue');
-            const prixInput = tr.querySelector('.prix-reception');
-            const supplierSelect = tr.querySelector('.supplier-select');
-            
-            if (!quantiteInput || !prixInput || !supplierSelect) {
-                console.error(`Missing input elements in row ${index}`);
-                return;
-            }
-            
-            const quantiteRecue = quantiteInput.value;
-            const prix = prixInput.value;
-            const itemId = quantiteInput.dataset.itemId;
-            const supplierId = supplierSelect.value;
-            
-            if (quantiteRecue && parseFloat(quantiteRecue) > 0) {
-                const quantite = parseInt(quantiteRecue);
-                const prixUnitaire = parseFloat(prix) || 0;
-                
-                // Validation
-                if (quantite <= 0) {
-                    showToast(`Quantité invalide pour l'article ${index + 1}`, 'error');
-                    hasErrors = true;
-                    return;
-                }
-                
-                if (prixUnitaire < 0) {
-                    showToast(`Prix invalide pour l'article ${index + 1}`, 'error');
-                    hasErrors = true;
-                    return;
-                }
-                
-                receptionData.articles.push({
-                    itemId: itemId,
-                    quantiteRecue: quantite,
-                    prixUnitaire: prixUnitaire,
-                    supplierId: supplierId || null
-                });
-            }
-        });
+        // Collect articles data
+        document
+            .querySelectorAll("#reception-articles-tbody tr")
+            .forEach((tr) => {
+                const quantiteRecue = tr.querySelector(".quantite-recue").value;
+                const prix = tr.querySelector(".prix-reception").value;
+                const itemId =
+                    tr.querySelector(".quantite-recue").dataset.itemId;
 
-        if (hasErrors) {
-            return;
-        }
+                if (quantiteRecue && parseFloat(quantiteRecue) > 0) {
+                    receptionData.articles.push({
+                        itemId,
+                        quantiteRecue: parseInt(quantiteRecue),
+                        prixUnitaire: parseFloat(prix) || 0,
+                    });
+                }
+            });
 
         if (receptionData.articles.length === 0) {
-            showToast('Veuillez spécifier au moins un article à réceptionner avec une quantité positive', 'error');
+            showToast(
+                "Veuillez spécifier au moins un article à réceptionner",
+                "error",
+            );
             return;
         }
 
         try {
             showLoading();
-            
-            console.log('Converting request to reception:', { requestId, receptionData });
-            
-            // Convert to reception via API
-            const convertResponse = await apiRequest('POST', `/api/purchase-requests/${requestId}/convert-reception`, receptionData);
-            console.log('Convert response:', convertResponse);
-            
-            // Update purchase request status to received
-            const statusResponse = await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'recu' });
-            console.log('Status update response:', statusResponse);
-            
-            showToast(`Conversion réussie - ${receptionData.articles.length} articles réceptionnés`, 'success');
+
+            // Convert to reception
+            await apiRequest(
+                "POST",
+                `/api/purchase-requests/${requestId}/convert-reception`,
+                receptionData,
+            );
+
+            // Update status to received
+            await apiRequest("PUT", `/api/purchase-requests/${requestId}`, {
+                statut: "recu",
+            });
+
+            showToast(
+                "Conversion réussie - La demande d'achat a été convertie en réceptions multiples",
+                "success",
+            );
             closeConvertModal();
-            
-            // Refresh data
-            await loadPurchaseRequests();
+            loadPurchaseRequests();
             updateRequestsTable();
-            
         } catch (error) {
-            console.error('Error converting to reception:', error);
-            let errorMessage = 'Erreur lors de la conversion en réception';
-            
-            if (error.response && error.response.message) {
-                errorMessage = error.response.message;
-            } else if (error.message) {
-                errorMessage = error.message;
-            }
-            
-            showToast(errorMessage, 'error');
+            console.error("Error converting to reception:", error);
+            showToast(
+                "Erreur - Impossible de convertir la demande d'achat",
+                "error",
+            );
         } finally {
             hideLoading();
         }
     }
 
     function filterRequests() {
-        const search = document.getElementById('search-input').value.toLowerCase();
-        const status = document.getElementById('status-filter').value;
-        const requestorId = document.getElementById('requestor-filter').value;
+        const search = document
+            .getElementById("search-input")
+            .value.toLowerCase();
+        const status = document.getElementById("status-filter").value;
+        const requestorId = document.getElementById("requestor-filter").value;
 
-        filteredRequests = purchaseRequests.filter(request => {
-            const requestor = requestors.find(r => r.id === request.requestorId);
-            const requestorName = requestor ? `${requestor.prenom} ${requestor.nom}`.toLowerCase() : '';
-            
-            const matchesSearch = !search || 
-                (request.numeroDemande && request.numeroDemande.toLowerCase().includes(search)) ||
+        filteredRequests = purchaseRequests.filter((request) => {
+            const requestor = requestors.find(
+                (r) => r.id === request.requestorId,
+            );
+            const requestorName = requestor
+                ? `${requestor.prenom} ${requestor.nom}`.toLowerCase()
+                : "";
+
+            const matchesSearch =
+                !search ||
+                (request.numeroDemande &&
+                    request.numeroDemande.toLowerCase().includes(search)) ||
                 request.id.toLowerCase().includes(search) ||
                 requestorName.includes(search);
-                
-            const matchesStatus = status === 'all' || request.statut === status;
-            const matchesRequestor = requestorId === 'all' || request.requestorId === requestorId;
+
+            const matchesStatus = status === "all" || request.statut === status;
+            const matchesRequestor =
+                requestorId === "all" || request.requestorId === requestorId;
 
             return matchesSearch && matchesStatus && matchesRequestor;
         });
@@ -1118,41 +1202,47 @@
     }
 
     function clearFilters() {
-        document.getElementById('search-input').value = '';
-        document.getElementById('status-filter').value = 'all';
-        document.getElementById('requestor-filter').value = 'all';
+        document.getElementById("search-input").value = "";
+        document.getElementById("status-filter").value = "all";
+        document.getElementById("requestor-filter").value = "all";
         filteredRequests = [...purchaseRequests];
         updateRequestsTable();
     }
 
     function refreshRequests() {
         loadData();
-        showToast('Données actualisées', 'success');
+        showToast("Données actualisées", "success");
     }
 
     async function deleteRequest(requestId) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) return;
-        
+        if (!confirm("Êtes-vous sûr de vouloir supprimer cette demande ?"))
+            return;
+
         try {
-            await apiRequest('DELETE', `/api/purchase-requests/${requestId}`);
-            showToast('Demande supprimée avec succès', 'success');
+            await apiRequest("DELETE", `/api/purchase-requests/${requestId}`);
+            showToast("Demande supprimée avec succès", "success");
             // Auto-refresh data without page reload
             await loadPurchaseRequests();
             updateRequestsTable();
         } catch (error) {
-            console.error('Error deleting request:', error);
-            showToast('Erreur lors de la suppression', 'error');
+            console.error("Error deleting request:", error);
+            showToast("Erreur lors de la suppression", "error");
         }
     }
 
     async function viewRequest(requestId) {
-        const request = purchaseRequests.find(r => r.id === requestId);
+        const request = purchaseRequests.find((r) => r.id === requestId);
         if (!request) return;
 
         try {
-            const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
-            const requestor = requestors.find(r => r.id === request.requestorId);
-            
+            const items = await apiRequest(
+                "GET",
+                `/api/purchase-requests/${requestId}/items`,
+            );
+            const requestor = requestors.find(
+                (r) => r.id === request.requestorId,
+            );
+
             let detailsHTML = `
                 <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="request-details-modal">
                     <div class="relative top-10 mx-auto p-5 border max-w-4xl shadow-lg rounded-md bg-white">
@@ -1172,7 +1262,7 @@
                                     </div>
                                     <div>
                                         <div class="text-sm text-gray-600">Demandeur</div>
-                                        <div class="font-medium">${requestor ? `${requestor.prenom} ${requestor.nom}` : 'Inconnu'}</div>
+                                        <div class="font-medium">${requestor ? `${requestor.prenom} ${requestor.nom}` : "Inconnu"}</div>
                                     </div>
                                     <div>
                                         <div class="text-sm text-gray-600">Statut</div>
@@ -1182,7 +1272,7 @@
                                     </div>
                                     <div>
                                         <div class="text-sm text-gray-600">Date</div>
-                                        <div class="font-medium">${new Date(request.dateCreation).toLocaleDateString('fr-FR')}</div>
+                                        <div class="font-medium">${new Date(request.dateCreation).toLocaleDateString("fr-FR")}</div>
                                     </div>
                                 </div>
                             </div>
@@ -1200,31 +1290,45 @@
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
-                                            ${items.map(item => {
-                                                const article = articles.find(a => a.id === item.articleId);
-                                                const subtotal = item.quantiteDemandee * (item.prixUnitaireEstime || 0);
-                                                return `
+                                            ${items
+                                                .map((item) => {
+                                                    const article =
+                                                        articles.find(
+                                                            (a) =>
+                                                                a.id ===
+                                                                item.articleId,
+                                                        );
+                                                    const subtotal =
+                                                        item.quantiteDemandee *
+                                                        (item.prixUnitaireEstime ||
+                                                            0);
+                                                    return `
                                                     <tr>
-                                                        <td class="px-4 py-3 text-sm">${article ? article.designation : 'Article inconnu'}</td>
+                                                        <td class="px-4 py-3 text-sm">${article ? article.designation : "Article inconnu"}</td>
                                                         <td class="px-4 py-3 text-sm">${item.quantiteDemandee}</td>
                                                         <td class="px-4 py-3 text-sm">${formatCurrency(item.prixUnitaireEstime || 0)}</td>
                                                         <td class="px-4 py-3 text-sm font-medium">${formatCurrency(subtotal)}</td>
                                                     </tr>
                                                 `;
-                                            }).join('')}
+                                                })
+                                                .join("")}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             
-                            ${request.observations ? `
+                            ${
+                                request.observations
+                                    ? `
                                 <div>
                                     <h4 class="text-lg font-medium mb-2">Observations</h4>
                                     <div class="bg-gray-50 rounded-lg p-4">
                                         <p class="text-sm text-gray-700">${request.observations}</p>
                                     </div>
                                 </div>
-                            ` : ''}
+                            `
+                                    : ""
+                            }
                         </div>
                         
                         <div class="flex justify-end mt-6 pt-4 border-t border-gray-200">
@@ -1235,16 +1339,16 @@
                     </div>
                 </div>
             `;
-            
-            document.body.insertAdjacentHTML('beforeend', detailsHTML);
+
+            document.body.insertAdjacentHTML("beforeend", detailsHTML);
         } catch (error) {
-            console.error('Error loading request details:', error);
-            showToast('Erreur lors du chargement des détails', 'error');
+            console.error("Error loading request details:", error);
+            showToast("Erreur lors du chargement des détails", "error");
         }
     }
 
     function closeRequestDetails() {
-        const modal = document.getElementById('request-details-modal');
+        const modal = document.getElementById("request-details-modal");
         if (modal) {
             modal.remove();
         }
@@ -1254,19 +1358,14 @@
         openRequestForm(requestId);
     }
 
-    function formatCurrency(value) {
-        return new Intl.NumberFormat('fr-FR', {
-            style: 'currency',
-            currency: 'MAD'
-        }).format(value);
-    }
-
     // Close autocomplete when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.article-autocomplete')) {
-            document.querySelectorAll('.autocomplete-results').forEach(div => {
-                div.classList.add('hidden');
-            });
+    document.addEventListener("click", function (event) {
+        if (!event.target.closest(".article-autocomplete")) {
+            document
+                .querySelectorAll(".autocomplete-results")
+                .forEach((div) => {
+                    div.classList.add("hidden");
+                });
         }
     });
 </script>

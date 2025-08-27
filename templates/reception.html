@@ -1,232 +1,234 @@
 {% extends "base.html" %}
 
-{% block title %}Réception - StockCeramique{% endblock %}
+{% block title %}Réceptions - StockCéramique{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-semibold text-gray-900">Réception de Stock</h1>
-            <p class="text-sm text-gray-600">Enregistrer les livraisons et mettre à jour les stocks</p>
-        </div>
-        <div class="flex space-x-3">
-            <button 
-                onclick="openReceptionForm()"
-                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-            >
-                <i class="fas fa-plus mr-2"></i>
-                Nouvelle Réception
-            </button>
+<div class="space-y-8">
+    <!-- Modern Header -->
+    <div class="glass-card rounded-2xl p-6 border border-blue-100">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                    <i class="fas fa-shipping-fast text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Réceptions de Stock</h1>
+                    <p class="text-gray-600 font-medium">Gestion des livraisons et mise à jour automatique des stocks</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="refreshReceptions()" class="inline-flex items-center px-4 py-2 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    Actualiser
+                </button>
+                <button onclick="openReceptionForm()" class="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white transition-all duration-200 hover:shadow-xl hover:transform hover:-translate-y-1" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                    <i class="fas fa-plus mr-2"></i>
+                    Nouvelle Réception
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Reception Table -->
-    <div class="bg-white shadow rounded-lg border border-gray-200">
-        <div class="p-6 border-b border-gray-200">
-            <h3 class="text-xl font-semibold text-gray-900">Historique des Réceptions</h3>
+    <!-- Advanced Filters Section -->
+    <div class="glass-card rounded-2xl p-6 border border-gray-200">
+        <div class="flex items-center mb-6">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center mr-3" style="background: #003d9d;">
+                <i class="fas fa-filter text-white text-sm"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900">Filtres de Recherche</h3>
         </div>
-        
-        <div class="p-6 border-b border-gray-200">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                    <input 
-                        type="text" 
-                        placeholder="Article, fournisseur..." 
-                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        id="search-input"
-                        onkeyup="filterReceptions()"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                    <input 
-                        type="date" 
-                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        id="date-filter"
-                        onchange="filterReceptions()"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Actions</label>
-                    <button 
-                        class="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                        onclick="clearFilters()"
-                    >
-                        Effacer filtres
-                    </button>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="group">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Recherche Globale</label>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Article, fournisseur, bon de livraison..." class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" id="search-input" onkeyup="filterReceptions()">
                 </div>
             </div>
-        </div>
-
-        <div class="p-0">
-            <div id="receptions-table-container">
-                <div class="p-6">
-                    <div class="animate-pulse space-y-4">
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                    </div>
+            <div class="group">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Date de Réception</label>
+                <div class="relative">
+                    <i class="fas fa-calendar absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="date" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" id="date-filter" onchange="filterReceptions()">
                 </div>
+            </div>
+            <div class="group">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Fournisseur</label>
+                <div class="relative">
+                    <i class="fas fa-building absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <select class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300 appearance-none" id="supplier-filter" onchange="filterReceptions()">
+                        <option value="">Tous les fournisseurs</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-end">
+                <button class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200" onclick="clearFilters()">
+                    <i class="fas fa-times mr-2"></i>
+                    Effacer Filtres
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Reception Groups Display -->
+    <div class="space-y-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background: #003d9d;">
+                    <i class="fas fa-list text-white text-sm"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Historique des Réceptions</h3>
+                <div id="reception-count-badge" class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">0 réception(s)</div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleViewMode('group')" id="group-view-btn" class="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style="background: #003d9d; color: white;">
+                    <i class="fas fa-layer-group mr-1"></i> Groupé
+                </button>
+                <button onclick="toggleViewMode('list')" id="list-view-btn" class="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors duration-200">
+                    <i class="fas fa-list mr-1"></i> Liste
+                </button>
+            </div>
+        </div>
+        
+        <div id="receptions-container">
+            <div class="flex justify-center items-center py-12">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2" style="border-color: #003d9d;"></div>
+                <span class="ml-3 text-gray-600">Chargement des réceptions...</span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Reception Form Modal -->
-<div id="reception-modal" class="fixed inset-0 bg-black bg-opacity-60 overflow-y-auto h-full w-full hidden z-50 backdrop-blur-sm">
-    <div class="relative top-4 mx-auto p-0 border-0 max-w-7xl shadow-2xl rounded-2xl bg-white" style="max-height: 95vh; overflow-y: auto;">
-        <!-- Header Section -->
-        <div class="glass-card rounded-t-2xl p-6 border-b border-gray-100">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="p-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg">
-                        <i class="fas fa-truck text-white text-lg"></i>
+<!-- Modern Reception Form Modal -->
+<div id="reception-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto transform transition-all duration-300 scale-95 hover:scale-100">
+            <!-- Modern Header -->
+            <div class="rounded-t-3xl px-8 py-6 sticky top-0 z-10" style="background: linear-gradient(135deg, #003d9d 0%, #002875 100%);">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-truck text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white tracking-tight">Nouvelle Réception</h3>
+                            <p class="text-white/80 text-sm font-medium">Enregistrer une nouvelle livraison de marchandises</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-900">Nouvelle Réception</h3>
-                        <p class="text-sm text-gray-600">Enregistrer une nouvelle livraison</p>
-                    </div>
+                    <button onclick="closeReceptionForm()" class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center group">
+                        <i class="fas fa-times text-lg group-hover:rotate-90 transition-transform duration-200"></i>
+                    </button>
                 </div>
-                <button onclick="closeReceptionForm()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-                    <i class="fas fa-times text-gray-500 text-lg"></i>
-                </button>
             </div>
-        </div>
             
-        <!-- Content Section -->
-        <div class="p-6">
-            <form id="reception-form" onsubmit="saveManualReception(event)">
-                <!-- Reception Details -->
-                <div class="glass-card rounded-xl p-6 mb-6 border border-blue-100">
-                    <div class="flex items-center mb-6">
-                        <div class="p-2 bg-blue-100 rounded-lg mr-3">
-                            <i class="fas fa-info-circle text-blue-600"></i>
+            <div class="p-8 space-y-8">
+                <form id="reception-form" onsubmit="saveReception(event)">
+                    <!-- Reception Details -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                        <div class="flex items-center mb-6">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background: #003d9d;">
+                                <i class="fas fa-info-circle text-white text-sm"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-gray-900">Détails de la Réception</h4>
                         </div>
-                        <h4 class="text-lg font-semibold text-gray-900">Détails de la Réception</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Date de Réception *</label>
+                                <div class="relative">
+                                    <input type="date" id="date-reception" name="dateReception" required 
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-calendar text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">N° Bon de Livraison</label>
+                                <div class="relative">
+                                    <input type="text" id="numero-bon-livraison" name="numeroBonLivraison" 
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
+                                           placeholder="BL-2025-001">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-receipt text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Observations</label>
+                                <div class="relative">
+                                    <input type="text" id="reception-observations" name="receptionObservations" 
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
+                                           placeholder="Observations sur la réception...">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-comment-alt text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700">Date de Réception *</label>
-                            <div class="relative">
-                                <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                <input type="date" id="dateReception" name="dateReception" required
-                                       class="input-modern pl-10 w-full touch-target focus-ring">
+
+                    <!-- Articles Section -->
+                    <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background: #1a4fb3;">
+                                    <i class="fas fa-boxes text-white text-sm"></i>
+                                </div>
+                                <h4 class="text-xl font-bold text-gray-900">Articles à Réceptionner</h4>
                             </div>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700">N° Bon de Livraison</label>
-                            <div class="relative">
-                                <i class="fas fa-file-invoice absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                <input type="text" id="numeroBonLivraison" name="numeroBonLivraison"
-                                       class="input-modern pl-10 w-full touch-target focus-ring"
-                                       placeholder="BL-2025-001">
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700">Observations</label>
-                            <div class="relative">
-                                <i class="fas fa-sticky-note absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                <input type="text" id="observations" name="observations"
-                                       class="input-modern pl-10 w-full touch-target focus-ring"
-                                       placeholder="Remarques optionnelles">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Articles à Réceptionner -->
-                <div class="glass-card rounded-xl p-6 mb-6 border border-green-100">
-                    <div class="flex items-center mb-6">
-                        <div class="p-2 bg-green-100 rounded-lg mr-3">
-                            <i class="fas fa-boxes text-green-600"></i>
-                        </div>
-                        <h4 class="text-lg font-semibold text-gray-900">Articles à Réceptionner</h4>
-                    </div>
-                    
-                    <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-6 gap-4">
-                        <div class="flex-1 max-w-md">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Demandes d'Achat Approuvées</label>
-                            <div class="relative">
-                                <i class="fas fa-clipboard-list absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                <select id="approved-requests-select" onchange="loadPurchaseRequestItems(this.value)"
-                                        class="input-modern pl-10 w-full touch-target focus-ring">
-                                    <option value="">Sélectionner une demande approuvée</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="flex gap-3">
                             <button type="button" onclick="addArticleToReception()" 
-                                    class="btn-primary px-6 py-3 rounded-xl text-sm font-medium flex items-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-200">
+                                    class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2" style="background: linear-gradient(135deg, #1a4fb3 0%, #003d9d 100%);">
                                 <i class="fas fa-plus"></i>
                                 <span>Ajouter Article</span>
                             </button>
                         </div>
-                    </div>
-                    
-                    <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                        <table class="min-w-full">
-                            <thead>
-                                <tr class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">N°</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Article</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Qté Commandée</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Qté Reçue</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">PU (MAD)</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fournisseur</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="reception-articles-table" class="bg-white divide-y divide-gray-100">
-                                <!-- Articles will be added here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div id="no-articles-message" class="text-center py-12 bg-gray-50 rounded-xl mt-4">
-                        <div class="flex flex-col items-center space-y-3">
-                            <div class="p-4 bg-blue-100 rounded-full">
-                                <i class="fas fa-box-open text-blue-600 text-2xl"></i>
+                        
+                        <div class="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-sm">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">N°</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Article</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Quantité</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">PU (MAD)</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Fournisseur</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Total</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reception-articles-tbody" class="bg-white divide-y divide-gray-100">
+                                        <!-- Content populated by JavaScript -->
+                                    </tbody>
+                                </table>
                             </div>
-                            <div>
-                                <p class="text-gray-600 font-medium">Aucun article ajouté</p>
-                                <p class="text-gray-500 text-sm">Sélectionnez une demande approuvée ou ajoutez un article manuellement</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Footer Section -->
-                <div class="glass-card rounded-xl p-6 border border-gray-200 bg-gradient-to-r from-gray-50 to-white">
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                        <div id="reception-summary" class="space-y-1">
-                            <div class="flex items-center space-x-4 text-sm">
-                                <div class="flex items-center space-x-2">
-                                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                    <span id="articles-count" class="font-medium text-gray-700">0 article(s)</span>
+                            
+                            <!-- Empty State -->
+                            <div id="articles-empty-state" class="p-12 text-center text-gray-500">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-boxes text-2xl text-gray-400"></i>
                                 </div>
-                                <div class="flex items-center space-x-2">
-                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                                    <span id="total-amount" class="font-medium text-gray-700">Total: 0,00 MAD</span>
-                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun article ajouté</h3>
+                                <p class="text-sm text-gray-600">Cliquez sur "Ajouter Article" pour commencer</p>
                             </div>
                         </div>
-                        <div class="flex space-x-4">
-                            <button type="button" onclick="closeReceptionForm()"
-                                    class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 touch-target">
-                                <i class="fas fa-times mr-2"></i>
-                                Annuler
-                            </button>
-                            <button type="submit" id="submit-reception-btn" disabled
-                                    class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-semibold hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all duration-200 touch-target">
-                                <i class="fas fa-check mr-2"></i>
-                                Enregistrer la Réception
-                            </button>
-                        </div>
                     </div>
-                </div>
-            </form>
+
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
+                        <button type="button" onclick="closeReceptionForm()" 
+                                class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Annuler</span>
+                        </button>
+                        <button type="submit" id="save-reception-btn" 
+                                class="px-8 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                            <i class="fas fa-save"></i>
+                            <span>Enregistrer Réception</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -238,137 +240,116 @@
     let filteredReceptions = [];
     let articles = [];
     let suppliers = [];
+    let requestors = [];
+    let currentViewMode = 'group';
 
     document.addEventListener('DOMContentLoaded', function() {
-        loadReceptions();
-        loadArticles();
-        loadSuppliers();
-        loadRequestors();
+        loadData();
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date-reception').value = today;
     });
 
-    let requestors = [];
-
-    async function loadRequestors() {
+    async function loadData() {
         try {
-            requestors = await apiRequest('GET', '/api/requestors');
+            showLoading();
+            await Promise.all([
+                loadReceptions(),
+                loadArticles(),
+                loadSuppliers(),
+                loadRequestors()
+            ]);
+            updateReceptionsDisplay();
+            updateSupplierFilter();
         } catch (error) {
-            console.error('Error loading requestors:', error);
+            console.error('Error loading data:', error);
+            showToast('Erreur lors du chargement des données', 'error');
+        } finally {
+            hideLoading();
         }
     }
 
     async function loadReceptions() {
         try {
-            receptions = await apiRequest('GET', '/api/receptions');
+            const receptionsData = await apiRequest('GET', '/api/receptions');
+            
+            // Group receptions by reference (bon de livraison) and date
+            const groupedReceptions = groupReceptionsByReference(receptionsData);
+            receptions = groupedReceptions;
             filteredReceptions = [...receptions];
-            updateReceptionsTable();
+            
+            console.log('Receptions loaded and grouped:', receptions.length, 'groups');
         } catch (error) {
             console.error('Error loading receptions:', error);
+            receptions = [];
+            filteredReceptions = [];
         }
+    }
+
+    function groupReceptionsByReference(receptionsData) {
+        const groups = {};
+        
+        receptionsData.forEach(reception => {
+            const key = `${reception.dateReception}_${reception.numeroBonLivraison || 'sans_bl'}_${reception.supplierId || 'sans_fournisseur'}`;
+            
+            if (!groups[key]) {
+                groups[key] = {
+                    id: key,
+                    dateReception: reception.dateReception,
+                    numeroBonLivraison: reception.numeroBonLivraison,
+                    supplierId: reception.supplierId,
+                    observations: reception.observations,
+                    articles: [],
+                    totalQuantity: 0,
+                    totalValue: 0
+                };
+            }
+            
+            groups[key].articles.push({
+                id: reception.id,
+                articleId: reception.articleId,
+                quantiteRecue: reception.quantiteRecue,
+                prixUnitaire: reception.prixUnitaire,
+                sousTotal: reception.quantiteRecue * reception.prixUnitaire
+            });
+            
+            groups[key].totalQuantity += reception.quantiteRecue;
+            groups[key].totalValue += reception.quantiteRecue * reception.prixUnitaire;
+        });
+        
+        return Object.values(groups);
     }
 
     async function loadArticles() {
         try {
             articles = await apiRequest('GET', '/api/articles');
-            updateArticleSelect();
         } catch (error) {
             console.error('Error loading articles:', error);
+            articles = [];
         }
     }
 
     async function loadSuppliers() {
         try {
             suppliers = await apiRequest('GET', '/api/suppliers');
-            updateSupplierSelect();
         } catch (error) {
             console.error('Error loading suppliers:', error);
+            suppliers = [];
         }
     }
 
-    function updateReceptionsTable() {
-        const container = document.getElementById('receptions-table-container');
-
-        if (filteredReceptions.length === 0) {
-            container.innerHTML = `
-                <div class="p-8 text-center text-gray-500">
-                    <i class="fas fa-truck text-4xl mb-4"></i>
-                    <p class="text-lg font-medium">Aucune réception enregistrée</p>
-                    <p class="text-sm">Commencez par enregistrer votre première réception</p>
-                    <button onclick="openReceptionForm()" 
-                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                        Nouvelle réception
-                    </button>
-                </div>
-            `;
-            return;
+    async function loadRequestors() {
+        try {
+            requestors = await apiRequest('GET', '/api/requestors');
+        } catch (error) {
+            console.error('Error loading requestors:', error);
+            requestors = [];
         }
-
-        const tableHTML = `
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Date</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Article</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Quantité</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Fournisseur</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Bon de Livraison</th>
-                            <th class="text-left p-4 text-sm font-medium text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filteredReceptions.map(reception => createReceptionRow(reception)).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
-        
-        container.innerHTML = tableHTML;
     }
 
-    function createReceptionRow(reception) {
-        const article = articles.find(a => a.id === reception.articleId);
-        const supplier = suppliers.find(s => s.id === reception.fournisseurId);
-        
-        return `
-            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="p-4 text-sm text-gray-700">${new Date(reception.dateReception).toLocaleDateString('fr-FR')}</td>
-                <td class="p-4 text-sm font-medium text-gray-900">${article ? article.designation : 'Article supprimé'}</td>
-                <td class="p-4 text-sm text-gray-700">${reception.quantiteRecue}</td>
-                <td class="p-4 text-sm text-gray-500">${supplier ? supplier.nom : 'Non spécifié'}</td>
-                <td class="p-4 text-sm text-gray-500">${reception.numeroBonLivraison || '-'}</td>
-                <td class="p-4">
-                    <div class="flex space-x-1">
-                        <button onclick="viewReception('${reception.id}')" 
-                                title="Voir détails"
-                                class="p-2 text-blue-600 hover:bg-blue-50 rounded">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button onclick="deleteReception('${reception.id}')" 
-                                title="Supprimer"
-                                class="p-2 text-red-600 hover:bg-red-50 rounded">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }
-
-    function updateArticleSelect() {
-        const select = document.getElementById('articleId');
-        select.innerHTML = '<option value="">Sélectionner un article</option>';
-        
-        articles.forEach(article => {
-            const option = document.createElement('option');
-            option.value = article.id;
-            option.textContent = `${article.codeArticle} - ${article.designation}`;
-            select.appendChild(option);
-        });
-    }
-
-    function updateSupplierSelect() {
-        const select = document.getElementById('fournisseurId');
-        select.innerHTML = '<option value="">Sélectionner un fournisseur</option>';
+    function updateSupplierFilter() {
+        const select = document.getElementById('supplier-filter');
+        select.innerHTML = '<option value="">Tous les fournisseurs</option>';
         
         suppliers.forEach(supplier => {
             const option = document.createElement('option');
@@ -378,39 +359,245 @@
         });
     }
 
+    function updateReceptionsDisplay() {
+        const container = document.getElementById('receptions-container');
+        const badge = document.getElementById('reception-count-badge');
+        
+        badge.textContent = `${filteredReceptions.length} réception(s)`;
+
+        if (filteredReceptions.length === 0) {
+            container.innerHTML = `
+                <div class="glass-card rounded-2xl p-12 text-center border border-gray-200">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-shipping-fast text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucune réception enregistrée</h3>
+                    <p class="text-gray-600 mb-6">Commencez par enregistrer votre première réception de marchandises</p>
+                    <button onclick="openReceptionForm()" 
+                            class="px-6 py-3 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nouvelle Réception
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        if (currentViewMode === 'group') {
+            displayGroupedReceptions(container);
+        } else {
+            displayListReceptions(container);
+        }
+    }
+
+    function displayGroupedReceptions(container) {
+        const receptionGroups = filteredReceptions.map(group => {
+            const supplier = suppliers.find(s => s.id === group.supplierId);
+            
+            return `
+                <div class="glass-card rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all duration-200">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                                <i class="fas fa-receipt text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">
+                                    ${group.numeroBonLivraison || 'Sans bon de livraison'}
+                                </h3>
+                                <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                    <span><i class="fas fa-calendar mr-1"></i>${new Date(group.dateReception).toLocaleDateString('fr-FR')}</span>
+                                    <span><i class="fas fa-building mr-1"></i>${supplier ? supplier.nom : 'Fournisseur non spécifié'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold" style="color: #003d9d;">${group.totalValue.toFixed(2)} MAD</div>
+                            <div class="text-sm text-gray-600">${group.articles.length} article(s)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        ${group.articles.map(article => {
+                            const articleData = articles.find(a => a.id === article.articleId);
+                            return `
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: #1a4fb3;">
+                                            <i class="fas fa-cube text-white text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-gray-900">${articleData ? articleData.designation : 'Article supprimé'}</div>
+                                            <div class="text-xs text-gray-500">${articleData ? articleData.reference || 'Ref. non définie' : ''}</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-semibold text-gray-900">${article.quantiteRecue} × ${article.prixUnitaire.toFixed(2)} MAD</div>
+                                        <div class="text-sm font-bold" style="color: #003d9d;">${article.sousTotal.toFixed(2)} MAD</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    ${group.observations ? `
+                        <div class="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-200">
+                            <div class="text-sm text-gray-700">
+                                <i class="fas fa-comment text-blue-600 mr-2"></i>
+                                ${group.observations}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="mt-4 flex justify-end space-x-2">
+                        <button onclick="viewReceptionGroup('${group.id}')" class="px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200">
+                            <i class="fas fa-eye mr-1"></i> Voir détails
+                        </button>
+                        <button onclick="deleteReceptionGroup('${group.id}')" class="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200">
+                            <i class="fas fa-trash mr-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">${receptionGroups}</div>`;
+    }
+
+    function displayListReceptions(container) {
+        const allArticles = [];
+        filteredReceptions.forEach(group => {
+            group.articles.forEach(article => {
+                allArticles.push({
+                    ...article,
+                    dateReception: group.dateReception,
+                    numeroBonLivraison: group.numeroBonLivraison,
+                    supplierId: group.supplierId,
+                    observations: group.observations
+                });
+            });
+        });
+
+        const tableHTML = `
+            <div class="glass-card rounded-2xl border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Date</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Bon de Livraison</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Article</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Quantité</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Prix Unit.</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Fournisseur</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100">
+                            ${allArticles.map(item => {
+                                const articleData = articles.find(a => a.id === item.articleId);
+                                const supplier = suppliers.find(s => s.id === item.supplierId);
+                                return `
+                                    <tr class="hover:bg-blue-50 transition-colors duration-150">
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">${new Date(item.dateReception).toLocaleDateString('fr-FR')}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-700">${item.numeroBonLivraison || '-'}</td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: #003d9d;">
+                                                    <i class="fas fa-cube text-white text-xs"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-semibold text-gray-900">${articleData ? articleData.designation : 'Article supprimé'}</div>
+                                                    <div class="text-xs text-gray-500">${articleData ? articleData.reference || 'Ref. non définie' : ''}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                ${item.quantiteRecue}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-900 font-medium">${item.prixUnitaire.toFixed(2)} MAD</td>
+                                        <td class="px-6 py-4 text-sm text-gray-700">${supplier ? supplier.nom : 'Non spécifié'}</td>
+                                        <td class="px-6 py-4 text-sm font-bold" style="color: #003d9d;">${item.sousTotal.toFixed(2)} MAD</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = tableHTML;
+    }
+
+    function toggleViewMode(mode) {
+        currentViewMode = mode;
+        
+        // Update button styles
+        const groupBtn = document.getElementById('group-view-btn');
+        const listBtn = document.getElementById('list-view-btn');
+        
+        if (mode === 'group') {
+            groupBtn.style.background = '#003d9d';
+            groupBtn.style.color = 'white';
+            listBtn.style.background = '#f3f4f6';
+            listBtn.style.color = '#6b7280';
+        } else {
+            listBtn.style.background = '#003d9d';
+            listBtn.style.color = 'white';
+            groupBtn.style.background = '#f3f4f6';
+            groupBtn.style.color = '#6b7280';
+        }
+        
+        updateReceptionsDisplay();
+    }
+
     function filterReceptions() {
         const search = document.getElementById('search-input').value.toLowerCase();
         const dateFilter = document.getElementById('date-filter').value;
+        const supplierFilter = document.getElementById('supplier-filter').value;
 
-        filteredReceptions = receptions.filter(reception => {
-            const article = articles.find(a => a.id === reception.articleId);
-            const supplier = suppliers.find(s => s.id === reception.fournisseurId);
+        filteredReceptions = receptions.filter(group => {
+            const supplier = suppliers.find(s => s.id === group.supplierId);
             
             const matchesSearch = !search || 
-                (article && article.designation.toLowerCase().includes(search)) ||
-                (article && article.codeArticle.toLowerCase().includes(search)) ||
+                (group.numeroBonLivraison && group.numeroBonLivraison.toLowerCase().includes(search)) ||
                 (supplier && supplier.nom.toLowerCase().includes(search)) ||
-                (reception.numeroBonLivraison && reception.numeroBonLivraison.toLowerCase().includes(search));
+                group.articles.some(article => {
+                    const articleData = articles.find(a => a.id === article.articleId);
+                    return articleData && (
+                        articleData.designation.toLowerCase().includes(search) ||
+                        (articleData.reference && articleData.reference.toLowerCase().includes(search))
+                    );
+                });
 
-            const matchesDate = !dateFilter || 
-                reception.dateReception.startsWith(dateFilter);
+            const matchesDate = !dateFilter || group.dateReception.startsWith(dateFilter);
+            const matchesSupplier = !supplierFilter || group.supplierId === supplierFilter;
 
-            return matchesSearch && matchesDate;
+            return matchesSearch && matchesDate && matchesSupplier;
         });
 
-        updateReceptionsTable();
+        updateReceptionsDisplay();
     }
 
     function clearFilters() {
         document.getElementById('search-input').value = '';
         document.getElementById('date-filter').value = '';
-        filterReceptions();
+        document.getElementById('supplier-filter').value = '';
+        filteredReceptions = [...receptions];
+        updateReceptionsDisplay();
     }
 
-    // Manual reception article management
+    function refreshReceptions() {
+        loadData();
+        showToast('Données actualisées', 'success');
+    }
+
+    // Reception form management
     let receptionArticles = [];
     let articleCounter = 0;
-    let approvedPurchaseRequests = [];
 
     function openReceptionForm() {
         const modal = document.getElementById('reception-modal');
@@ -422,359 +609,315 @@
         
         // Set default date to today
         const today = new Date().toISOString().split('T')[0];
-        document.getElementById('dateReception').value = today;
-        
-        // Load approved purchase requests
-        loadApprovedPurchaseRequests();
+        document.getElementById('date-reception').value = today;
         
         updateReceptionArticlesTable();
-        updateReceptionSummary();
         modal.classList.remove('hidden');
     }
 
-    async function loadApprovedPurchaseRequests() {
-        try {
-            const purchaseRequests = await apiRequest('GET', '/api/purchase-requests');
-            // Filter only approved requests (status is 'approuve' in database)
-            approvedPurchaseRequests = purchaseRequests.filter(req => req.statut === 'approuve');
-            updateApprovedRequestsSelect();
-            console.log('Approved purchase requests loaded:', approvedPurchaseRequests.length);
-        } catch (error) {
-            console.error('Error loading approved purchase requests:', error);
-        }
-    }
-
-    function updateApprovedRequestsSelect() {
-        const select = document.getElementById('approved-requests-select');
-        select.innerHTML = '<option value="">Sélectionner une demande approuvée</option>';
-        
-        approvedPurchaseRequests.forEach(request => {
-            const requestor = requestors.find(r => r.id === request.requestorId);
-            const option = document.createElement('option');
-            option.value = request.id;
-            const requestDate = request.dateDemande ? new Date(request.dateDemande).toLocaleDateString('fr-FR') : 'Date inconnue';
-            option.textContent = `#${request.id.substring(0, 8)} - ${requestor ? requestor.nom : 'Inconnu'} (${requestDate})`;
-            select.appendChild(option);
-        });
-    }
-
-    async function loadPurchaseRequestItems(requestId) {
-        if (!requestId) return;
-        
-        try {
-            const items = await apiRequest('GET', `/api/purchase-requests/${requestId}/items`);
-            console.log('Purchase request items loaded:', items);
-            
-            // Clear existing articles
-            receptionArticles = [];
-            articleCounter = 0;
-            
-            // Add items from purchase request
-            items.forEach(item => {
-                articleCounter++;
-                const receptionArticle = {
-                    id: 'pr_' + articleCounter,
-                    articleId: item.articleId,
-                    quantiteCommandee: item.quantiteDemandee,
-                    quantiteRecue: item.quantiteDemandee, // Default to full quantity
-                    prixUnitaire: item.prixUnitaireEstime || 0,
-                    fournisseurId: item.supplierId || '',
-                    purchaseRequestItemId: item.id
-                };
-                receptionArticles.push(receptionArticle);
-            });
-            
-            updateReceptionArticlesTable();
-            updateReceptionSummary();
-            
-            // Auto-fill some details if available
-            const selectedRequest = approvedPurchaseRequests.find(req => req.id === requestId);
-            if (selectedRequest) {
-                const observations = document.getElementById('observations');
-                if (!observations.value) {
-                    observations.value = `Réception pour demande d'achat #${requestId.substring(0, 8)}`;
-                }
-            }
-            
-            showToast(`${items.length} article(s) ajouté(s) de la demande d'achat`, 'success');
-        } catch (error) {
-            console.error('Error loading purchase request items:', error);
-            showToast('Erreur lors du chargement des articles de la demande', 'error');
-        }
+    function closeReceptionForm() {
+        const modal = document.getElementById('reception-modal');
+        modal.classList.add('hidden');
+        receptionArticles = [];
+        articleCounter = 0;
     }
 
     function addArticleToReception() {
         articleCounter++;
         const newArticle = {
-            id: 'temp_' + articleCounter,
+            id: 'art_' + articleCounter,
             articleId: '',
-            quantiteCommandee: 0,
-            quantiteRecue: 0,
+            quantite: 1,
             prixUnitaire: 0,
-            fournisseurId: ''
+            supplierId: ''
         };
+        
         receptionArticles.push(newArticle);
         updateReceptionArticlesTable();
-        updateReceptionSummary();
     }
 
     function updateReceptionArticlesTable() {
-        const tbody = document.getElementById('reception-articles-table');
-        const noArticlesMessage = document.getElementById('no-articles-message');
+        const tbody = document.getElementById('reception-articles-tbody');
+        const emptyState = document.getElementById('articles-empty-state');
         
         if (receptionArticles.length === 0) {
-            tbody.innerHTML = '';
-            noArticlesMessage.classList.remove('hidden');
+            tbody.style.display = 'none';
+            emptyState.style.display = 'block';
             return;
         }
         
-        noArticlesMessage.classList.add('hidden');
-        tbody.innerHTML = receptionArticles.map((item, index) => createReceptionArticleRow(item, index)).join('');
-    }
-
-    function createReceptionArticleRow(item, index) {
-        const article = articles.find(a => a.id === item.articleId);
-        const supplier = suppliers.find(s => s.id === item.fournisseurId);
+        tbody.style.display = '';
+        emptyState.style.display = 'none';
         
-        // For purchase request items, show read-only article info
-        if (item.purchaseRequestItemId) {
+        tbody.innerHTML = receptionArticles.map((article, index) => {
             return `
-                <tr class="hover:bg-blue-50 transition-colors duration-200">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-600">${index + 1}</td>
+                <tr class="hover:bg-blue-50 transition-colors duration-150">
+                    <td class="px-6 py-4 text-sm font-medium text-gray-500">${index + 1}</td>
                     <td class="px-6 py-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="p-2 bg-blue-100 rounded-lg">
-                                <i class="fas fa-cube text-blue-600 text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">${article ? article.designation : 'Article inconnu'}</p>
-                                <p class="text-xs text-gray-500">${article ? article.codeArticle : ''}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">${item.quantiteCommandee}</span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <input type="number" 
-                               min="0" 
-                               max="${item.quantiteCommandee}"
-                               value="${item.quantiteRecue}" 
-                               onchange="updateArticleInReception('${item.id}', 'quantiteRecue', this.value)"
-                               class="input-modern w-20 text-center quantite-recue touch-target" 
-                               data-item-id="${item.id}">
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="relative">
-                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">MAD</span>
-                            <input type="number" 
-                                   step="0.01" 
-                                   min="0"
-                                   value="${item.prixUnitaire}" 
-                                   onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
-                                   class="input-modern w-28 pl-12 text-right prix-reception touch-target" 
-                                   data-item-id="${item.id}">
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="text-sm text-gray-600">${supplier ? supplier.nom : 'Non spécifié'}</span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <button type="button" onclick="removeArticleFromReception('${item.id}')" 
-                                class="p-2 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        } else {
-            // For manually added articles, show dropdowns
-            return `
-                <tr class="hover:bg-green-50 transition-colors duration-200">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-600">${index + 1}</td>
-                    <td class="px-6 py-4">
-                        <select onchange="updateArticleInReception('${item.id}', 'articleId', this.value)" 
-                                class="input-modern w-full touch-target">
+                        <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
+                                onchange="updateArticleSelection('${article.id}', this.value)" data-article-id="${article.id}">
                             <option value="">Sélectionner un article</option>
-                            ${articles.map(a => `
-                                <option value="${a.id}" ${a.id === item.articleId ? 'selected' : ''}>
-                                    ${a.codeArticle} - ${a.designation}
-                                </option>
-                            `).join('')}
+                            ${articles.map(a => `<option value="${a.id}" ${a.id === article.articleId ? 'selected' : ''}>${a.designation} (${a.reference || 'Ref. non définie'})</option>`).join('')}
                         </select>
                     </td>
                     <td class="px-6 py-4">
-                        <input type="number" 
-                               value="${item.quantiteCommandee}" 
-                               onchange="updateArticleInReception('${item.id}', 'quantiteCommandee', this.value)"
-                               class="input-modern w-20 text-center touch-target" 
-                               min="0" step="1">
-                    </td>
-                    <td class="px-6 py-4">
-                        <input type="number" 
-                               value="${item.quantiteRecue}" 
-                               onchange="updateArticleInReception('${item.id}', 'quantiteRecue', this.value)"
-                               class="input-modern w-20 text-center quantite-recue touch-target" 
-                               min="0" step="1" required data-item-id="${item.id}">
+                        <input type="number" min="1" value="${article.quantite}" 
+                               class="w-24 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
+                               onchange="updateArticleQuantity('${article.id}', this.value)">
                     </td>
                     <td class="px-6 py-4">
                         <div class="relative">
-                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">MAD</span>
-                            <input type="number" 
-                                   value="${item.prixUnitaire}" 
-                                   onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
-                                   class="input-modern w-28 pl-12 text-right prix-reception touch-target" 
-                                   min="0" step="0.01" placeholder="0.00" data-item-id="${item.id}">
+                            <input type="number" step="0.01" min="0" value="${article.prixUnitaire}" 
+                                   class="w-32 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
+                                   onchange="updateArticlePrice('${article.id}', this.value)">
+                            <span class="absolute right-3 top-2 text-xs text-gray-400">MAD</span>
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <select onchange="updateArticleInReception('${item.id}', 'fournisseurId', this.value)" 
-                                class="input-modern w-full touch-target">
+                        <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
+                                onchange="updateArticleSupplier('${article.id}', this.value)">
                             <option value="">Sélectionner fournisseur</option>
-                            ${suppliers.map(s => `
-                                <option value="${s.id}" ${s.id === item.fournisseurId ? 'selected' : ''}>
-                                    ${s.nom}
-                                </option>
-                            `).join('')}
+                            ${suppliers.map(s => `<option value="${s.id}" ${s.id === article.supplierId ? 'selected' : ''}>${s.nom}</option>`).join('')}
                         </select>
                     </td>
                     <td class="px-6 py-4">
-                        <button type="button" onclick="removeArticleFromReception('${item.id}')" 
-                                class="p-2 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200">
-                            <i class="fas fa-trash"></i>
+                        <span class="text-sm font-bold" style="color: #003d9d;">${(article.quantite * article.prixUnitaire).toFixed(2)} MAD</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button type="button" onclick="removeReceptionArticle('${article.id}')" 
+                                class="p-2 rounded-lg text-red-600 hover:text-white hover:bg-red-600 transition-all duration-200 group">
+                            <i class="fas fa-trash text-sm"></i>
                         </button>
                     </td>
                 </tr>
             `;
-        }
+        }).join('');
     }
 
-    function updateArticleInReception(itemId, field, value) {
-        const article = receptionArticles.find(a => a.id === itemId);
+    function updateArticleSelection(articleId, selectedArticleId) {
+        const article = receptionArticles.find(a => a.id === articleId);
         if (article) {
-            if (field === 'quantiteCommandee' || field === 'quantiteRecue') {
-                article[field] = parseInt(value) || 0;
-            } else if (field === 'prixUnitaire') {
-                article[field] = parseFloat(value) || 0;
-            } else {
-                article[field] = value;
-            }
-            updateReceptionSummary();
+            article.articleId = selectedArticleId;
+            updateReceptionArticlesTable();
         }
     }
 
-    function removeArticleFromReception(itemId) {
-        receptionArticles = receptionArticles.filter(a => a.id !== itemId);
+    function updateArticleQuantity(articleId, quantity) {
+        const article = receptionArticles.find(a => a.id === articleId);
+        if (article) {
+            article.quantite = parseInt(quantity) || 1;
+            updateReceptionArticlesTable();
+        }
+    }
+
+    function updateArticlePrice(articleId, price) {
+        const article = receptionArticles.find(a => a.id === articleId);
+        if (article) {
+            article.prixUnitaire = parseFloat(price) || 0;
+            updateReceptionArticlesTable();
+        }
+    }
+
+    function updateArticleSupplier(articleId, supplierId) {
+        const article = receptionArticles.find(a => a.id === articleId);
+        if (article) {
+            article.supplierId = supplierId;
+        }
+    }
+
+    function removeReceptionArticle(articleId) {
+        receptionArticles = receptionArticles.filter(a => a.id !== articleId);
         updateReceptionArticlesTable();
-        updateReceptionSummary();
-    }
-
-    function updateReceptionSummary() {
-        const articlesCount = receptionArticles.length;
-        const totalAmount = receptionArticles.reduce((sum, item) => {
-            return sum + (item.quantiteRecue * item.prixUnitaire);
-        }, 0);
-        
-        document.getElementById('articles-count').textContent = `${articlesCount} article(s)`;
-        document.getElementById('total-amount').textContent = `Total: ${totalAmount.toFixed(2)} MAD`;
-        
-        // Enable/disable submit button
-        const submitBtn = document.getElementById('submit-reception-btn');
-        const dateReception = document.getElementById('dateReception').value;
-        const hasValidArticles = receptionArticles.some(a => a.articleId && a.quantiteRecue > 0);
-        
-        submitBtn.disabled = !dateReception || !hasValidArticles;
-    }
-
-    async function saveManualReception(event) {
-        event.preventDefault();
-        
-        const dateReception = document.getElementById('dateReception').value;
-        const numeroBonLivraison = document.getElementById('numeroBonLivraison').value;
-        const observations = document.getElementById('observations').value;
-        
-        // Validate articles
-        const validArticles = receptionArticles.filter(a => a.articleId && a.quantiteRecue > 0);
-        
-        if (validArticles.length === 0) {
-            showToast('Veuillez ajouter au moins un article avec une quantité reçue', 'error');
-            return;
-        }
-        
-        try {
-            // Create receptions for each article
-            for (const article of validArticles) {
-                const data = {
-                    dateReception: dateReception,
-                    articleId: article.articleId,
-                    quantiteRecue: article.quantiteRecue,
-                    prixUnitaire: article.prixUnitaire,
-                    fournisseurId: article.fournisseurId,
-                    numeroBonLivraison: numeroBonLivraison,
-                    observations: observations || 'Réception manuelle'
-                };
-                
-                await apiRequest('POST', '/api/receptions', data);
-            }
-            
-            showToast(`${validArticles.length} réception(s) enregistrée(s) avec succès`, 'success');
-            closeReceptionForm();
-            loadReceptions();
-        } catch (error) {
-            console.error('Error saving manual reception:', error);
-            showToast('Erreur lors de l\'enregistrement de la réception', 'error');
-        }
-    }
-
-    function closeReceptionForm() {
-        document.getElementById('reception-modal').classList.add('hidden');
     }
 
     async function saveReception(event) {
         event.preventDefault();
         
         const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries());
+        const dateReception = formData.get('dateReception');
+        const numeroBonLivraison = formData.get('numeroBonLivraison');
+        const observations = formData.get('receptionObservations');
         
-        // Convert numeric fields
-        data.quantiteRecue = parseInt(data.quantiteRecue);
-
-        try {
-            await apiRequest('POST', '/api/receptions', data);
-            showToast('Réception enregistrée avec succès', 'success');
-            closeReceptionForm();
-            loadReceptions();
-        } catch (error) {
-            console.error('Error saving reception:', error);
-        }
-    }
-
-    function viewReception(id) {
-        const reception = receptions.find(r => r.id === id);
-        if (reception) {
-            const article = articles.find(a => a.id === reception.articleId);
-            const supplier = suppliers.find(s => s.id === reception.fournisseurId);
-            
-            alert(`Détails de la réception:
-Article: ${article ? article.designation : 'Inconnu'}
-Quantité: ${reception.quantiteRecue}
-Fournisseur: ${supplier ? supplier.nom : 'Non spécifié'}
-Date: ${new Date(reception.dateReception).toLocaleDateString('fr-FR')}
-Observations: ${reception.observations || 'Aucune'}`);
-        }
-    }
-
-    async function deleteReception(id) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette réception ?')) {
+        if (!dateReception) {
+            showToast('Veuillez sélectionner une date de réception', 'error');
             return;
         }
-
+        
+        if (receptionArticles.length === 0) {
+            showToast('Veuillez ajouter au moins un article', 'error');
+            return;
+        }
+        
+        // Validate articles
+        const invalidArticles = receptionArticles.filter(a => !a.articleId || a.quantite <= 0);
+        if (invalidArticles.length > 0) {
+            showToast('Veuillez compléter tous les articles (article et quantité)', 'error');
+            return;
+        }
+        
         try {
-            await apiRequest('DELETE', `/api/receptions/${id}`);
-            showToast('Réception supprimée avec succès', 'success');
-            loadReceptions();
+            showLoading();
+            
+            // Create receptions for each article
+            const receptionPromises = receptionArticles.map(article => {
+                return apiRequest('POST', '/api/receptions', {
+                    dateReception: dateReception,
+                    articleId: article.articleId,
+                    quantiteRecue: article.quantite,
+                    prixUnitaire: article.prixUnitaire,
+                    supplierId: article.supplierId || null,
+                    numeroBonLivraison: numeroBonLivraison || null,
+                    observations: observations || null
+                });
+            });
+            
+            await Promise.all(receptionPromises);
+            
+            showToast(`Réception enregistrée avec succès - ${receptionArticles.length} article(s)`, 'success');
+            closeReceptionForm();
+            
+            // Refresh data
+            await loadData();
+            
         } catch (error) {
-            console.error('Error deleting reception:', error);
+            console.error('Error saving reception:', error);
+            showToast('Erreur lors de l\'enregistrement de la réception', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function viewReceptionGroup(groupId) {
+        const group = filteredReceptions.find(g => g.id === groupId);
+        if (!group) return;
+        
+        const supplier = suppliers.find(s => s.id === group.supplierId);
+        
+        let detailsHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-50" id="reception-details-modal">
+                <div class="relative min-h-screen flex items-center justify-center p-4">
+                    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                        <div class="rounded-t-3xl px-8 py-6 sticky top-0 z-10" style="background: linear-gradient(135deg, #003d9d 0%, #002875 100%);">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                                        <i class="fas fa-receipt text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-white">Détails de la Réception</h3>
+                                        <p class="text-white/80 text-sm">${group.numeroBonLivraison || 'Sans bon de livraison'}</p>
+                                    </div>
+                                </div>
+                                <button onclick="closeReceptionDetails()" class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center">
+                                    <i class="fas fa-times text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-8 space-y-6">
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                                <h4 class="text-lg font-bold text-gray-900 mb-4">Informations Générales</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <span class="text-sm text-gray-600">Date de réception:</span>
+                                        <div class="font-semibold">${new Date(group.dateReception).toLocaleDateString('fr-FR')}</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-sm text-gray-600">Fournisseur:</span>
+                                        <div class="font-semibold">${supplier ? supplier.nom : 'Non spécifié'}</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-sm text-gray-600">Bon de livraison:</span>
+                                        <div class="font-semibold">${group.numeroBonLivraison || 'Non spécifié'}</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-sm text-gray-600">Valeur totale:</span>
+                                        <div class="font-semibold text-lg" style="color: #003d9d;">${group.totalValue.toFixed(2)} MAD</div>
+                                    </div>
+                                </div>
+                                ${group.observations ? `
+                                    <div class="mt-4">
+                                        <span class="text-sm text-gray-600">Observations:</span>
+                                        <div class="font-semibold">${group.observations}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900 mb-4">Articles Réceptionnés</h4>
+                                <div class="space-y-3">
+                                    ${group.articles.map(article => {
+                                        const articleData = articles.find(a => a.id === article.articleId);
+                                        return `
+                                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #003d9d;">
+                                                        <i class="fas fa-cube text-white"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="font-semibold text-gray-900">${articleData ? articleData.designation : 'Article supprimé'}</div>
+                                                        <div class="text-sm text-gray-500">${articleData ? articleData.reference || 'Ref. non définie' : ''}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="font-semibold text-gray-900">${article.quantiteRecue} × ${article.prixUnitaire.toFixed(2)} MAD</div>
+                                                    <div class="text-lg font-bold" style="color: #003d9d;">${article.sousTotal.toFixed(2)} MAD</div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end pt-6 border-t border-gray-100">
+                                <button onclick="closeReceptionDetails()" class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                                    Fermer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', detailsHTML);
+    }
+
+    function closeReceptionDetails() {
+        const modal = document.getElementById('reception-details-modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    async function deleteReceptionGroup(groupId) {
+        const group = filteredReceptions.find(g => g.id === groupId);
+        if (!group) return;
+        
+        if (!confirm(`Êtes-vous sûr de vouloir supprimer cette réception avec ${group.articles.length} article(s) ?`)) {
+            return;
+        }
+        
+        try {
+            showLoading();
+            
+            // Delete all articles in the group
+            const deletePromises = group.articles.map(article => 
+                apiRequest('DELETE', `/api/receptions/${article.id}`)
+            );
+            
+            await Promise.all(deletePromises);
+            
+            showToast('Réception supprimée avec succès', 'success');
+            
+            // Refresh data
+            await loadData();
+            
+        } catch (error) {
+            console.error('Error deleting reception group:', error);
+            showToast('Erreur lors de la suppression de la réception', 'error');
+        } finally {
+            hideLoading();
         }
     }
 </script>
