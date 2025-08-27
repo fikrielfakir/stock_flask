@@ -892,10 +892,22 @@
         }
     }
 
+    // Currency formatting function
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('fr-MA', {
+            style: 'currency',
+            currency: 'MAD',
+            minimumFractionDigits: 2
+        }).format(amount || 0);
+    }
+
     // Hide autocomplete when clicking outside
     document.addEventListener('click', function(event) {
         if (!event.target.closest('#article-search') && !event.target.closest('#outbound-autocomplete-results')) {
-            document.getElementById('outbound-autocomplete-results').classList.add('hidden');
+            const resultsElement = document.getElementById('outbound-autocomplete-results');
+            if (resultsElement) {
+                resultsElement.classList.add('hidden');
+            }
         }
     });
 </script>

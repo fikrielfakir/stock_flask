@@ -1080,13 +1080,13 @@
             return;
         }
         
-        const currentPage = pagination.page;
+        const pageNum = pagination.page;
         const totalPages = pagination.pages;
         const totalItems = pagination.total;
         const perPage = pagination.per_page;
         
-        const startItem = ((currentPage - 1) * perPage) + 1;
-        const endItem = Math.min(currentPage * perPage, totalItems);
+        const startItem = ((pageNum - 1) * perPage) + 1;
+        const endItem = Math.min(pageNum * perPage, totalItems);
         
         const paginationHTML = `
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
@@ -1098,7 +1098,7 @@
                 <div class="flex items-center space-x-2">
                     <!-- Previous Button -->
                     <button 
-                        onclick="changePage(${currentPage - 1})" 
+                        onclick="changePage(${pageNum - 1})" 
                         ${!pagination.has_prev ? 'disabled' : ''} 
                         class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         data-testid="button-prev-page"
@@ -1109,12 +1109,12 @@
                     
                     <!-- Page Numbers -->
                     <div class="flex space-x-1">
-                        ${generatePageNumbers(currentPage, totalPages)}
+                        ${generatePageNumbers(pageNum, totalPages)}
                     </div>
                     
                     <!-- Next Button -->
                     <button 
-                        onclick="changePage(${currentPage + 1})" 
+                        onclick="changePage(${pageNum + 1})" 
                         ${!pagination.has_next ? 'disabled' : ''} 
                         class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         data-testid="button-next-page"
@@ -1129,11 +1129,11 @@
         container.innerHTML = paginationHTML;
     }
 
-    function generatePageNumbers(currentPage, totalPages) {
+    function generatePageNumbers(pageNumber, totalPages) {
         const pages = [];
         const maxVisiblePages = 5;
         
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let startPage = Math.max(1, pageNumber - Math.floor(maxVisiblePages / 2));
         let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
         
         // Adjust start page if we're near the end
@@ -1159,7 +1159,7 @@
         
         // Visible page numbers
         for (let i = startPage; i <= endPage; i++) {
-            const isActive = i === currentPage;
+            const isActive = i === pageNumber;
             pages.push(`
                 <button 
                     onclick="changePage(${i})" 
