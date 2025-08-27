@@ -296,18 +296,18 @@ endblock %} {% block content %}
                         </table>
                     </div>
 
-                    <!-- Total -->
+                    <!-- Total with Articles Count -->
                     <div class="mt-4 flex justify-end">
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="text-right">
-                                <span class="text-lg font-medium text-gray-900"
-                                    >Total Estimé:
-                                </span>
-                                <span
-                                    id="total-estime"
-                                    class="text-xl font-bold text-blue-600"
-                                    >0.00 MAD</span
-                                >
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100 shadow-sm">
+                            <div class="text-right space-y-2">
+                                <div class="flex items-center justify-between space-x-8">
+                                    <span class="text-sm font-semibold text-gray-600">Total Articles:</span>
+                                    <span id="total-articles" class="text-lg font-bold" style="color: #003d9d;">0</span>
+                                </div>
+                                <div class="flex items-center justify-between space-x-8">
+                                    <span class="text-lg font-semibold text-gray-900">Total Estimé:</span>
+                                    <span id="total-estime" class="text-2xl font-bold" style="color: #003d9d;">0.00 MAD</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -737,11 +737,11 @@ endblock %} {% block content %}
             </td>
             <td class="px-4 py-3">
                 <input type="number" min="1" class="w-full px-2 py-1 border border-gray-300 rounded text-sm quantity-input" 
-                       data-line="${articleLineCounter}" onchange="calculateSubtotal(${articleLineCounter})">
+                       data-line="${articleLineCounter}" onchange="updateTotals()">
             </td>
             <td class="px-4 py-3">
                 <input type="number" step="0.01" min="0" class="w-full px-2 py-1 border border-gray-300 rounded text-sm price-input" 
-                       data-line="${articleLineCounter}" onchange="calculateSubtotal(${articleLineCounter})">
+                       data-line="${articleLineCounter}" onchange="updateTotals()">
             </td>
             <td class="px-4 py-3">
                 <select class="w-full px-2 py-1 border border-gray-300 rounded text-sm supplier-select" data-line="${articleLineCounter}">
@@ -760,20 +760,21 @@ endblock %} {% block content %}
         `;
 
         tbody.appendChild(tr);
+        updateTotals();
     }
 
     function removeArticleLine(lineNumber) {
         const line = document.getElementById(`article-line-${lineNumber}`);
         if (line) {
             line.remove();
-            calculateTotal();
+            updateTotals();
         }
     }
 
     function clearArticleLines() {
         document.getElementById("articles-tbody").innerHTML = "";
         articleLineCounter = 0;
-        calculateTotal();
+        updateTotals();
     }
 
     function handleArticleAutocomplete(input) {
@@ -872,26 +873,11 @@ endblock %} {% block content %}
 
         line.querySelector(".subtotal-display").textContent =
             formatCurrency(subtotal);
-        calculateTotal();
+        updateTotals();
     }
 
     function calculateTotal() {
-        let total = 0;
-        document.querySelectorAll(".subtotal-display").forEach((span) => {
-            const lineNumber = span.dataset.line;
-            const line = document.getElementById(`article-line-${lineNumber}`);
-            if (line) {
-                const quantity =
-                    parseFloat(line.querySelector(".quantity-input").value) ||
-                    0;
-                const price =
-                    parseFloat(line.querySelector(".price-input").value) || 0;
-                total += quantity * price;
-            }
-        });
-
-        document.getElementById("total-estime").textContent =
-            formatCurrency(total);
+        updateTotals();
     }
 
     async function saveRequest(event) {
@@ -954,7 +940,7 @@ endblock %} {% block content %}
     }
 
     async function approveRequest(requestId) {
-        if (!confirm("Êtes-vous sûr de vouloir approuver cette demande ?"))
+        if (!(await showApprovalConfirmation()))
             return;
 
         try {
@@ -1368,5 +1354,89 @@ endblock %} {% block content %}
                 });
         }
     });
+
+    // Approval confirmation popup functions
+    let approvalConfirmationResolve;
+
+    function showApprovalConfirmation() {
+        return new Promise((resolve) => {
+            approvalConfirmationResolve = resolve;
+            const modal = document.getElementById('approval-confirmation-modal');
+            modal.classList.remove('hidden');
+        });
+    }
+
+    function closeApprovalConfirmation(approved) {
+        const modal = document.getElementById('approval-confirmation-modal');
+        modal.classList.add('hidden');
+        if (approvalConfirmationResolve) {
+            approvalConfirmationResolve(approved);
+            approvalConfirmationResolve = null;
+        }
+    }
+
+    // Update total articles count function
+    function updateTotals() {
+        const articleRows = document.querySelectorAll('#articles-tbody tr');
+        let totalAmount = 0;
+        let totalArticles = articleRows.length;
+
+        articleRows.forEach(row => {
+            const quantityInput = row.querySelector('.quantity-input');
+            const priceInput = row.querySelector('.price-input');
+            
+            if (quantityInput && priceInput) {
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                totalAmount += quantity * price;
+            }
+        });
+
+        document.getElementById('total-estime').textContent = formatCurrency(totalAmount);
+        document.getElementById('total-articles').textContent = totalArticles;
+    }
 </script>
+
+<!-- Approval Confirmation Modal -->
+<div id="approval-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-60">
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 hover:scale-100">
+            <!-- Modern Header -->
+            <div class="rounded-t-3xl px-8 py-6" style="background: linear-gradient(135deg, #003d9d 0%, #002875 100%);">
+                <div class="flex items-center justify-center">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                        <i class="fas fa-check-circle text-white text-xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-white tracking-tight">Confirmation d'Approbation</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-8 space-y-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-question-circle text-3xl text-blue-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Êtes-vous sûr de vouloir approuver cette demande ?</h4>
+                    <p class="text-gray-600">Cette action changera le statut de la demande à "Approuvée" et ne pourra pas être annulée.</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
+                    <button type="button" onclick="closeApprovalConfirmation(false)" 
+                            class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                        <i class="fas fa-times"></i>
+                        <span>Annuler</span>
+                    </button>
+                    <button type="button" onclick="closeApprovalConfirmation(true)" 
+                            class="px-6 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                        <i class="fas fa-check"></i>
+                        <span>Confirmer l'Approbation</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
