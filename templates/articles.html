@@ -737,7 +737,7 @@
     let editingArticle = null;
     let categoryChart = null;
     let stockChart = null;
-    let currentPage = 1;
+    let currentArticlePage = 1;
     let totalPages = 1;
     let pagination = null;
 
@@ -768,7 +768,7 @@
                 articles = response.articles;
                 filteredArticles = [...articles];
                 pagination = response.pagination;
-                currentPage = pagination.page;
+                currentArticlePage = pagination.page;
                 totalPages = pagination.pages;
             } else {
                 // Fallback for old API format
@@ -959,7 +959,7 @@
 
     function filterArticles() {
         // Reset to page 1 when filtering and reload data
-        currentPage = 1;
+        currentArticlePage = 1;
         loadArticles(1);
     }
 
@@ -1195,6 +1195,7 @@
 
     function changePage(page) {
         if (page < 1 || (pagination && page > pagination.pages)) return;
+        currentArticlePage = page;
         loadArticles(page);
     }
 
