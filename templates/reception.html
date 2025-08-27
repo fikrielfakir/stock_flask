@@ -75,103 +75,155 @@
 </div>
 
 <!-- Reception Form Modal -->
-<div id="reception-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-10 mx-auto p-5 border max-w-6xl shadow-lg rounded-md bg-white">
-        <div class="mt-3">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-medium text-gray-900">
-                    Nouvelle Réception
-                </h3>
-                <button onclick="closeReceptionForm()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
+<div id="reception-modal" class="fixed inset-0 bg-black bg-opacity-60 overflow-y-auto h-full w-full hidden z-50 backdrop-blur-sm">
+    <div class="relative top-4 mx-auto p-0 border-0 max-w-7xl shadow-2xl rounded-2xl bg-white" style="max-height: 95vh; overflow-y: auto;">
+        <!-- Header Section -->
+        <div class="glass-card rounded-t-2xl p-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="p-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg">
+                        <i class="fas fa-truck text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">Nouvelle Réception</h3>
+                        <p class="text-sm text-gray-600">Enregistrer une nouvelle livraison</p>
+                    </div>
+                </div>
+                <button onclick="closeReceptionForm()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-times text-gray-500 text-lg"></i>
                 </button>
             </div>
+        </div>
             
+        <!-- Content Section -->
+        <div class="p-6">
             <form id="reception-form" onsubmit="saveManualReception(event)">
                 <!-- Reception Details -->
-                <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                    <h4 class="text-lg font-medium text-gray-900 mb-4">Détails de la Réception</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Date de Réception *</label>
-                            <input type="date" id="dateReception" name="dateReception" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                <div class="glass-card rounded-xl p-6 mb-6 border border-blue-100">
+                    <div class="flex items-center mb-6">
+                        <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                            <i class="fas fa-info-circle text-blue-600"></i>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">N° Bon de Livraison</label>
-                            <input type="text" id="numeroBonLivraison" name="numeroBonLivraison"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="BL-2025-001">
+                        <h4 class="text-lg font-semibold text-gray-900">Détails de la Réception</h4>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Date de Réception *</label>
+                            <div class="relative">
+                                <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="date" id="dateReception" name="dateReception" required
+                                       class="input-modern pl-10 w-full touch-target focus-ring">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Observations</label>
-                            <input type="text" id="observations" name="observations"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">N° Bon de Livraison</label>
+                            <div class="relative">
+                                <i class="fas fa-file-invoice absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="numeroBonLivraison" name="numeroBonLivraison"
+                                       class="input-modern pl-10 w-full touch-target focus-ring"
+                                       placeholder="BL-2025-001">
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Observations</label>
+                            <div class="relative">
+                                <i class="fas fa-sticky-note absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="observations" name="observations"
+                                       class="input-modern pl-10 w-full touch-target focus-ring"
+                                       placeholder="Remarques optionnelles">
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Articles à Réceptionner -->
-                <div class="mb-6">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
-                        <h4 class="text-lg font-medium text-gray-900">Articles à Réceptionner</h4>
-                        <div class="flex flex-wrap gap-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Demandes d'Achat Approuvées</label>
+                <div class="glass-card rounded-xl p-6 mb-6 border border-green-100">
+                    <div class="flex items-center mb-6">
+                        <div class="p-2 bg-green-100 rounded-lg mr-3">
+                            <i class="fas fa-boxes text-green-600"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-900">Articles à Réceptionner</h4>
+                    </div>
+                    
+                    <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-6 gap-4">
+                        <div class="flex-1 max-w-md">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Demandes d'Achat Approuvées</label>
+                            <div class="relative">
+                                <i class="fas fa-clipboard-list absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                                 <select id="approved-requests-select" onchange="loadPurchaseRequestItems(this.value)"
-                                        class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                        class="input-modern pl-10 w-full touch-target focus-ring">
                                     <option value="">Sélectionner une demande approuvée</option>
                                 </select>
                             </div>
-                            <div class="flex items-end">
-                                <button type="button" onclick="addArticleToReception()" 
-                                        class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Ajouter Article</span>
-                                </button>
-                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="addArticleToReception()" 
+                                    class="btn-primary px-6 py-3 rounded-xl text-sm font-medium flex items-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-200">
+                                <i class="fas fa-plus"></i>
+                                <span>Ajouter Article</span>
+                            </button>
                         </div>
                     </div>
                     
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">N°</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Article</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Commandée</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Reçue</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">PU (MAD)</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseur</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">N°</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Article</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Qté Commandée</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Qté Reçue</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">PU (MAD)</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fournisseur</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="reception-articles-table" class="bg-white divide-y divide-gray-200">
+                            <tbody id="reception-articles-table" class="bg-white divide-y divide-gray-100">
                                 <!-- Articles will be added here -->
                             </tbody>
                         </table>
                     </div>
                     
-                    <div id="no-articles-message" class="text-center py-8 text-gray-500">
-                        <i class="fas fa-box-open text-3xl mb-2"></i>
-                        <p>Aucun article ajouté. Cliquez sur "Ajouter Article" pour commencer.</p>
+                    <div id="no-articles-message" class="text-center py-12 bg-gray-50 rounded-xl mt-4">
+                        <div class="flex flex-col items-center space-y-3">
+                            <div class="p-4 bg-blue-100 rounded-full">
+                                <i class="fas fa-box-open text-blue-600 text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-medium">Aucun article ajouté</p>
+                                <p class="text-gray-500 text-sm">Sélectionnez une demande approuvée ou ajoutez un article manuellement</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="flex justify-between items-center mt-6">
-                    <div id="reception-summary" class="text-sm text-gray-600">
-                        <span id="articles-count">0 article(s)</span> - 
-                        <span id="total-amount">Total: 0,00 MAD</span>
-                    </div>
-                    <div class="flex space-x-3">
-                        <button type="button" onclick="closeReceptionForm()"
-                                class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            Annuler
-                        </button>
-                        <button type="submit" id="submit-reception-btn" disabled
-                                class="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
-                            Enregistrer la Réception
-                        </button>
+                <!-- Footer Section -->
+                <div class="glass-card rounded-xl p-6 border border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div id="reception-summary" class="space-y-1">
+                            <div class="flex items-center space-x-4 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <span id="articles-count" class="font-medium text-gray-700">0 article(s)</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span id="total-amount" class="font-medium text-gray-700">Total: 0,00 MAD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button type="button" onclick="closeReceptionForm()"
+                                    class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 touch-target">
+                                <i class="fas fa-times mr-2"></i>
+                                Annuler
+                            </button>
+                            <button type="submit" id="submit-reception-btn" disabled
+                                    class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-semibold hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all duration-200 touch-target">
+                                <i class="fas fa-check mr-2"></i>
+                                Enregistrer la Réception
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -487,32 +539,49 @@
         // For purchase request items, show read-only article info
         if (item.purchaseRequestItemId) {
             return `
-                <tr>
-                    <td class="px-4 py-3 text-sm text-gray-500">${index + 1}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">${article ? article.designation : 'Article inconnu'}</td>
-                    <td class="px-4 py-3 text-sm text-gray-500">${item.quantiteCommandee}</td>
-                    <td class="px-4 py-3">
+                <tr class="hover:bg-blue-50 transition-colors duration-200">
+                    <td class="px-6 py-4 text-sm font-medium text-gray-600">${index + 1}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-blue-100 rounded-lg">
+                                <i class="fas fa-cube text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${article ? article.designation : 'Article inconnu'}</p>
+                                <p class="text-xs text-gray-500">${article ? article.codeArticle : ''}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">${item.quantiteCommandee}</span>
+                    </td>
+                    <td class="px-6 py-4">
                         <input type="number" 
                                min="0" 
                                max="${item.quantiteCommandee}"
                                value="${item.quantiteRecue}" 
                                onchange="updateArticleInReception('${item.id}', 'quantiteRecue', this.value)"
-                               class="w-20 px-2 py-1 border border-gray-300 rounded text-sm quantite-recue" 
+                               class="input-modern w-20 text-center quantite-recue touch-target" 
                                data-item-id="${item.id}">
                     </td>
-                    <td class="px-4 py-3">
-                        <input type="number" 
-                               step="0.01" 
-                               min="0"
-                               value="${item.prixUnitaire}" 
-                               onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
-                               class="w-24 px-2 py-1 border border-gray-300 rounded text-sm prix-reception" 
-                               data-item-id="${item.id}">
+                    <td class="px-6 py-4">
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">MAD</span>
+                            <input type="number" 
+                                   step="0.01" 
+                                   min="0"
+                                   value="${item.prixUnitaire}" 
+                                   onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
+                                   class="input-modern w-28 pl-12 text-right prix-reception touch-target" 
+                                   data-item-id="${item.id}">
+                        </div>
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-500">${supplier ? supplier.nom : 'Non spécifié'}</td>
-                    <td class="px-4 py-3">
+                    <td class="px-6 py-4">
+                        <span class="text-sm text-gray-600">${supplier ? supplier.nom : 'Non spécifié'}</span>
+                    </td>
+                    <td class="px-6 py-4">
                         <button type="button" onclick="removeArticleFromReception('${item.id}')" 
-                                class="text-red-600 hover:text-red-900">
+                                class="p-2 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -521,11 +590,11 @@
         } else {
             // For manually added articles, show dropdowns
             return `
-                <tr>
-                    <td class="px-4 py-3 text-sm text-gray-500">${index + 1}</td>
-                    <td class="px-4 py-3">
+                <tr class="hover:bg-green-50 transition-colors duration-200">
+                    <td class="px-6 py-4 text-sm font-medium text-gray-600">${index + 1}</td>
+                    <td class="px-6 py-4">
                         <select onchange="updateArticleInReception('${item.id}', 'articleId', this.value)" 
-                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                class="input-modern w-full touch-target">
                             <option value="">Sélectionner un article</option>
                             ${articles.map(a => `
                                 <option value="${a.id}" ${a.id === item.articleId ? 'selected' : ''}>
@@ -534,30 +603,33 @@
                             `).join('')}
                         </select>
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-6 py-4">
                         <input type="number" 
                                value="${item.quantiteCommandee}" 
                                onchange="updateArticleInReception('${item.id}', 'quantiteCommandee', this.value)"
-                               class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center" 
+                               class="input-modern w-20 text-center touch-target" 
                                min="0" step="1">
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-6 py-4">
                         <input type="number" 
                                value="${item.quantiteRecue}" 
                                onchange="updateArticleInReception('${item.id}', 'quantiteRecue', this.value)"
-                               class="w-20 px-2 py-1 border border-gray-300 rounded text-sm quantite-recue" 
+                               class="input-modern w-20 text-center quantite-recue touch-target" 
                                min="0" step="1" required data-item-id="${item.id}">
                     </td>
-                    <td class="px-4 py-3">
-                        <input type="number" 
-                               value="${item.prixUnitaire}" 
-                               onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
-                               class="w-24 px-2 py-1 border border-gray-300 rounded text-sm prix-reception" 
-                               min="0" step="0.01" placeholder="0.00" data-item-id="${item.id}">
+                    <td class="px-6 py-4">
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">MAD</span>
+                            <input type="number" 
+                                   value="${item.prixUnitaire}" 
+                                   onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
+                                   class="input-modern w-28 pl-12 text-right prix-reception touch-target" 
+                                   min="0" step="0.01" placeholder="0.00" data-item-id="${item.id}">
+                        </div>
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-6 py-4">
                         <select onchange="updateArticleInReception('${item.id}', 'fournisseurId', this.value)" 
-                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                class="input-modern w-full touch-target">
                             <option value="">Sélectionner fournisseur</option>
                             ${suppliers.map(s => `
                                 <option value="${s.id}" ${s.id === item.fournisseurId ? 'selected' : ''}>
@@ -566,9 +638,9 @@
                             `).join('')}
                         </select>
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-6 py-4">
                         <button type="button" onclick="removeArticleFromReception('${item.id}')" 
-                                class="text-red-600 hover:text-red-900">
+                                class="p-2 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>

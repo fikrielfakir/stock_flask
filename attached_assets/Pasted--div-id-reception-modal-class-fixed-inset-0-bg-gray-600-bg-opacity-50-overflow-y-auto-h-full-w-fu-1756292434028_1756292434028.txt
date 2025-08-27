@@ -1,0 +1,91 @@
+<div id="reception-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border max-w-lg shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">
+                    Nouvelle Réception
+                </h3>
+                <button onclick="closeReceptionForm()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="reception-form" onsubmit="saveManualReception(event)">
+                <!-- Reception Details -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Détails de la Réception</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date de Réception *</label>
+                            <input type="date" id="dateReception" name="dateReception" required="" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">N° Bon de Livraison</label>
+                            <input type="text" id="numeroBonLivraison" name="numeroBonLivraison" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="BL-2025-001">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observations</label>
+                            <input type="text" id="observations" name="observations" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Articles à Réceptionner -->
+                <div class="mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+                        <h4 class="text-lg font-medium text-gray-900">Articles à Réceptionner</h4>
+                        <div class="flex flex-wrap gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Demandes d'Achat Approuvées</label>
+                                <select id="approved-requests-select" onchange="loadPurchaseRequestItems(this.value)" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"><option value="">Sélectionner une demande approuvée</option><option value="8c978d5d-8339-4703-8bc5-0cd7b7bbcb0a">#8c978d5d - Bens (23/08/2025)</option></select>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="button" onclick="addArticleToReception()" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Ajouter Article</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">N°</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Article</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Commandée</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Reçue</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">PU (MAD)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseur</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reception-articles-table" class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="no-articles-message" class="text-center py-8 text-gray-500">
+                        <i class="fas fa-box-open text-3xl mb-2"></i>
+                        <p>Aucun article ajouté. Cliquez sur "Ajouter Article" pour commencer.</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center mt-6">
+                    <div id="reception-summary" class="text-sm text-gray-600">
+                        <span id="articles-count">0 article(s)</span> - 
+                        <span id="total-amount">Total: 0.00 MAD</span>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="closeReceptionForm()" class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Annuler
+                        </button>
+                        <button type="submit" id="submit-reception-btn" disabled="" class="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                            Enregistrer la Réception
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
