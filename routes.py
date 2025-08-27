@@ -1322,10 +1322,15 @@ def register_routes(app, db):
             </html>
             """
             
-            # For now, return HTML content as text (you would use a library like weasyprint for real PDF)
-            response = make_response(html_content)
-            response.headers['Content-Type'] = 'text/html; charset=utf-8'
-            response.headers['Content-Disposition'] = f'attachment; filename=articles_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.html'
+            # Generate actual PDF using weasyprint
+            from weasyprint import HTML
+            pdf_buffer = io.BytesIO()
+            HTML(string=html_content).write_pdf(pdf_buffer)
+            pdf_buffer.seek(0)
+            
+            response = make_response(pdf_buffer.getvalue())
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = f'attachment; filename=articles_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
             return response
             
         except Exception as e:
