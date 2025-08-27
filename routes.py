@@ -715,28 +715,48 @@ def register_routes(app, db):
     def create_outbound():
         try:
             data = request.get_json()
-            outbound = Outbound(
-                date_sortie=datetime.fromisoformat(data['dateSortie'].replace('Z', '+00:00')) if 'dateSortie' in data else datetime.utcnow(),
-                requestor_id=data.get('requestorId'),
-                article_id=data['articleId'],
-                quantite_sortie=data['quantiteSortie'],
-                motif_sortie=data['motifSortie'],
-                observations=data.get('observations')
-            )
-            db.session.add(outbound)
             
-            # Update article stock
-            article = Article.query.get(data['articleId'])
-            if article:
-                article.stock_actuel -= data['quantiteSortie']
-                if article.stock_actuel < 0:
-                    article.stock_actuel = 0
+            # Generate a unique transaction number
+            numero_sortie = f"OUT-{datetime.now().strftime('%Y%m%d')}-{str(int(time.time()))[-6:]}"
+            
+            # Handle multi-article outbound transaction
+            articles_data = data.get('articles', [])
+            if not articles_data:
+                return jsonify({'message': 'Aucun article spécifié'}), 400
+            
+            created_outbounds = []
+            
+            for article_item in articles_data:
+                outbound = Outbound(
+                    numero_sortie=numero_sortie,
+                    date_sortie=datetime.now(),
+                    requestor_id=data.get('requestorId'),
+                    article_id=article_item['articleId'],
+                    quantite_sortie=article_item['quantiteSortie'],
+                    motif_sortie=data['motifSortie'],
+                    observations=data.get('observations', '')
+                )
+                
+                db.session.add(outbound)
+                created_outbounds.append(outbound)
+                
+                # Update article stock
+                article = Article.query.get(article_item['articleId'])
+                if article:
+                    article.stock_actuel -= article_item['quantiteSortie']
+                    if article.stock_actuel < 0:
+                        article.stock_actuel = 0
             
             db.session.commit()
-            return jsonify(outbound.to_dict()), 201
+            return jsonify({
+                'message': 'Sortie créée avec succès',
+                'numeroSortie': numero_sortie,
+                'outbounds': [outbound.to_dict() for outbound in created_outbounds]
+            }), 201
+            
         except Exception as e:
             db.session.rollback()
-            return jsonify({'message': 'Données invalides', 'error': str(e)}), 400
+            return jsonify({'message': f'Erreur lors de la création de la sortie: {str(e)}'}), 500
 
     # Analytics routes
     @app.route("/api/analytics/overview", methods=['GET'])

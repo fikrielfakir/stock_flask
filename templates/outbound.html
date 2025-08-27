@@ -557,13 +557,190 @@
         const form = document.getElementById('outbound-form');
         
         form.reset();
-        document.getElementById('stock-info').classList.add('hidden');
-        document.getElementById('quantity-warning').classList.add('hidden');
+        outboundArticles = [];
+        articleRowCounter = 0;
+        
+        // Reset the articles table
+        document.getElementById('articles-tbody').innerHTML = '';
+        document.getElementById('no-articles-message').style.display = 'block';
+        updateFormTotals();
+        
         modal.classList.remove('hidden');
     }
 
     function closeOutboundForm() {
         document.getElementById('outbound-modal').classList.add('hidden');
+    }
+
+    // Multi-article form functions
+    let articleRowCounter = 0;
+
+    function addArticleRow() {
+        articleRowCounter++;
+        const tbody = document.getElementById('articles-tbody');
+        const noArticlesMsg = document.getElementById('no-articles-message');
+        
+        if (noArticlesMsg) {
+            noArticlesMsg.style.display = 'none';
+        }
+        
+        const row = document.createElement('tr');
+        row.id = `article-row-${articleRowCounter}`;
+        row.className = 'border-b border-gray-100 hover:bg-gray-50';
+        
+        row.innerHTML = `
+            <td class="p-4 text-sm font-medium text-gray-700">${articleRowCounter}</td>
+            <td class="p-4">
+                <div class="relative">
+                    <input type="text" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-0 text-sm article-search"
+                           placeholder="Rechercher un article..."
+                           onkeyup="handleArticleSearch(this, ${articleRowCounter})"
+                           data-row="${articleRowCounter}">
+                    <input type="hidden" class="article-id" data-row="${articleRowCounter}">
+                    <div class="autocomplete-results absolute z-20 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-32 overflow-y-auto hidden top-full mt-1"></div>
+                </div>
+            </td>
+            <td class="p-4">
+                <input type="number" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-0 text-sm quantity-input"
+                       placeholder="0" min="1" 
+                       onchange="updateRowTotal(${articleRowCounter})"
+                       data-row="${articleRowCounter}">
+            </td>
+            <td class="p-4">
+                <span class="text-sm text-gray-600 price-display" data-row="${articleRowCounter}">-</span>
+            </td>
+            <td class="p-4">
+                <span class="text-sm text-gray-600 supplier-display" data-row="${articleRowCounter}">-</span>
+            </td>
+            <td class="p-4">
+                <span class="text-sm font-medium text-gray-900 total-display" data-row="${articleRowCounter}">0.00 MAD</span>
+            </td>
+            <td class="p-4">
+                <button type="button" onclick="removeArticleRow(${articleRowCounter})" 
+                        class="p-2 text-red-600 hover:bg-red-50 rounded" title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+        updateFormTotals();
+        
+        // Focus on the new article search input
+        row.querySelector('.article-search').focus();
+    }
+
+    function removeArticleRow(rowId) {
+        const row = document.getElementById(`article-row-${rowId}`);
+        if (row) {
+            row.remove();
+            updateFormTotals();
+            
+            // Show no articles message if no rows left
+            const tbody = document.getElementById('articles-tbody');
+            if (tbody.children.length === 0) {
+                document.getElementById('no-articles-message').style.display = 'block';
+            }
+        }
+    }
+
+    function handleArticleSearch(input, rowId) {
+        const query = input.value;
+        const resultsDiv = input.nextElementSibling.nextElementSibling; // Skip hidden input
+        
+        if (query.length < 2) {
+            resultsDiv.classList.add('hidden');
+            // Clear the hidden article ID
+            input.nextElementSibling.value = '';
+            updateRowTotal(rowId);
+            return;
+        }
+
+        const filteredArticles = articles.filter(article =>
+            article.designation.toLowerCase().includes(query.toLowerCase()) ||
+            (article.reference && article.reference.toLowerCase().includes(query.toLowerCase())) ||
+            (article.codeArticle && article.codeArticle.toLowerCase().includes(query.toLowerCase()))
+        );
+
+        if (filteredArticles.length === 0) {
+            resultsDiv.classList.add('hidden');
+            return;
+        }
+
+        const resultsHTML = filteredArticles.map(article => `
+            <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                 onclick="selectArticle('${article.id}', '${article.designation}', ${rowId})">
+                <div class="font-medium text-gray-900">${article.designation}</div>
+                <div class="text-sm text-gray-500">
+                    Stock: ${article.stockActuel || 0} • 
+                    Prix: ${formatCurrency(article.prixUnitaire || 0)}
+                </div>
+            </div>
+        `).join('');
+        
+        resultsDiv.innerHTML = resultsHTML;
+        resultsDiv.classList.remove('hidden');
+    }
+
+    function selectArticle(articleId, articleName, rowId) {
+        const row = document.getElementById(`article-row-${rowId}`);
+        const searchInput = row.querySelector('.article-search');
+        const hiddenInput = row.querySelector('.article-id');
+        const resultsDiv = row.querySelector('.autocomplete-results');
+        
+        searchInput.value = articleName;
+        hiddenInput.value = articleId;
+        resultsDiv.classList.add('hidden');
+        
+        // Update price and supplier display
+        const article = articles.find(a => a.id === articleId);
+        if (article) {
+            row.querySelector('.price-display').textContent = formatCurrency(article.prixUnitaire || 0);
+            row.querySelector('.supplier-display').textContent = article.supplierName || '-';
+        }
+        
+        updateRowTotal(rowId);
+    }
+
+    function updateRowTotal(rowId) {
+        const row = document.getElementById(`article-row-${rowId}`);
+        const articleId = row.querySelector('.article-id').value;
+        const quantity = parseFloat(row.querySelector('.quantity-input').value) || 0;
+        
+        if (articleId && quantity > 0) {
+            const article = articles.find(a => a.id === articleId);
+            const price = article ? (article.prixUnitaire || 0) : 0;
+            const total = quantity * price;
+            
+            row.querySelector('.total-display').textContent = formatCurrency(total);
+        } else {
+            row.querySelector('.total-display').textContent = '0.00 MAD';
+        }
+        
+        updateFormTotals();
+    }
+
+    function updateFormTotals() {
+        const rows = document.querySelectorAll('#articles-tbody tr');
+        let totalArticles = rows.length;
+        let totalQuantity = 0;
+        let totalValue = 0;
+        
+        rows.forEach(row => {
+            const quantity = parseFloat(row.querySelector('.quantity-input').value) || 0;
+            const totalText = row.querySelector('.total-display').textContent;
+            const value = parseFloat(totalText.replace(/[^\d.-]/g, '')) || 0;
+            
+            totalQuantity += quantity;
+            totalValue += value;
+        });
+        
+        document.getElementById('total-articles').textContent = totalArticles;
+        document.getElementById('total-quantity').textContent = totalQuantity;
+        document.getElementById('total-value').textContent = formatCurrency(totalValue);
+        document.getElementById('stock-impact').textContent = totalQuantity;
     }
 
     async function saveOutbound(event) {
@@ -572,40 +749,130 @@
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
         
-        // Convert numeric fields and map field names to match API
+        // Collect articles from the table
+        const rows = document.querySelectorAll('#articles-tbody tr');
+        const articles = [];
+        
+        for (let row of rows) {
+            const articleId = row.querySelector('.article-id').value;
+            const quantity = parseFloat(row.querySelector('.quantity-input').value);
+            
+            if (articleId && quantity > 0) {
+                articles.push({
+                    articleId: articleId,
+                    quantiteSortie: quantity
+                });
+            }
+        }
+        
+        if (articles.length === 0) {
+            showToast('Veuillez ajouter au moins un article', 'error');
+            return;
+        }
+        
+        if (!data.motifSortie) {
+            showToast('Veuillez sélectionner un motif de sortie', 'error');
+            return;
+        }
+        
         const outboundData = {
-            articleId: data.articleId,
-            quantiteSortie: parseInt(data.quantiteSortie),
+            articles: articles,
             requestorId: data.demandeurId,
             motifSortie: data.motifSortie,
             observations: data.observations || ''
         };
 
         try {
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Enregistrement...';
+            
             await apiRequest('POST', '/api/outbounds', outboundData);
             showToast('Sortie enregistrée avec succès', 'success');
             closeOutboundForm();
-            loadOutbounds();
-            // Reload articles to update stock info
-            loadArticles();
+            loadData(); // Reload all data
         } catch (error) {
             console.error('Error saving outbound:', error);
+            showToast('Erreur lors de l\'enregistrement', 'error');
+        } finally {
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i><span>Enregistrer Sortie</span>';
         }
     }
 
-    function viewOutbound(id) {
-        const outbound = outbounds.find(o => o.id === id);
-        if (outbound) {
-            const article = articles.find(a => a.id === outbound.articleId);
-            const requestor = requestors.find(r => r.id === outbound.demandeurId);
+    function viewOutboundGroup(numeroSortie) {
+        const outboundGroup = groupedOutbounds.find(g => g.numeroSortie === numeroSortie);
+        if (outboundGroup) {
+            const requestor = requestors.find(r => r.id === outboundGroup.requestorId);
+            const articlesDetail = outboundGroup.articles.map(item => {
+                const article = articles.find(a => a.id === item.articleId);
+                return `• ${article ? article.designation : 'Article supprimé'}: ${item.quantiteSortie} unités`;
+            }).join('\n');
             
-            alert(`Détails de la sortie:
-Article: ${article ? article.designation : 'Inconnu'}
-Quantité: ${outbound.quantiteSortie}
-Demandeur: ${requestor ? `${requestor.prenom} ${requestor.nom}` : 'Non spécifié'}
-Motif: ${outbound.motif}
-Date: ${new Date(outbound.dateSortie).toLocaleDateString('fr-FR')}
-Observations: ${outbound.observations || 'Aucune'}`);
+            const modalContent = `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Détails de la sortie #${outboundGroup.numeroSortie}</h3>
+                            <button onclick="closeViewModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                                <i class="fas fa-times text-gray-500"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Date de sortie</label>
+                                    <p class="text-gray-900">${new Date(outboundGroup.dateSortie).toLocaleDateString('fr-FR')}</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Demandeur</label>
+                                    <p class="text-gray-900">${requestor ? `${requestor.prenom} ${requestor.nom}` : 'Non spécifié'}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Motif</label>
+                                <p class="text-gray-900">${outboundGroup.motifSortie}</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Articles (${outboundGroup.articles.length})</label>
+                                <div class="mt-2 space-y-2">
+                                    ${outboundGroup.articles.map(item => {
+                                        const article = articles.find(a => a.id === item.articleId);
+                                        return `
+                                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                                <div>
+                                                    <p class="font-medium text-gray-900">${article ? article.designation : 'Article supprimé'}</p>
+                                                    <p class="text-sm text-gray-500">${article ? article.reference || 'Pas de référence' : ''}</p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="font-medium text-gray-900">${item.quantiteSortie} unités</p>
+                                                    <p class="text-sm text-gray-500">${formatCurrency((article?.prixUnitaire || 0) * item.quantiteSortie)}</p>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            ${outboundGroup.observations ? `
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Observations</label>
+                                    <p class="text-gray-900">${outboundGroup.observations}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalContent);
+        }
+    }
+    
+    function closeViewModal() {
+        const modal = document.querySelector('.fixed.inset-0.bg-black');
+        if (modal) {
+            modal.remove();
         }
     }
 
