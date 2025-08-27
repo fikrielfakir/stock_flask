@@ -34,10 +34,10 @@
 
             <!-- User Menu -->
             <div class="flex items-center space-x-4">
-                <button onclick="toggleNotifications()" class="touch-target p-3 text-gray-400 hover:text-gray-600 focus-ring rounded-lg hover:bg-white/50 transition-all duration-200 relative" id="notification-btn">
+                <a href="/notifications" class="touch-target p-3 text-gray-400 hover:text-gray-600 focus-ring rounded-lg hover:bg-white/50 transition-all duration-200 relative" id="notification-btn">
                     <i class="fas fa-bell text-lg"></i>
                     <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="notification-count">3</span>
-                </button>
+                </a>
                 
                 <!-- Quick Actions -->
                 <div class="relative">
@@ -120,6 +120,10 @@
                 <a href="/analytics" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'analytics' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Analytics</span>
+                </a>
+                <a href="/notifications" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'notifications' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
                 </a>
 
             </nav>

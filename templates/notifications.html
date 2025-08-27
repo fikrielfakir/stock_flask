@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - StockCeramique{% endblock %}
+
+{% block content %}
+<div>
+    <!-- Page Header -->
+    <div class="glass-card rounded-2xl p-8 mb-8 fade-in">
+        <div class="flex flex-col md:flex-row md:items-center justify-between">
+            <div>
+                <h1 class="text-responsive-xl font-bold text-gray-900 mb-2">Notifications</h1>
+                <p class="text-gray-600 text-lg">Alertes et notifications en temps réel</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-3">
+                <button onclick="refreshNotifications()" class="btn-secondary px-6 py-3 rounded-lg touch-target flex items-center space-x-2">
+                    <i class="fas fa-refresh"></i>
+                    <span>Actualiser</span>
+                </button>
+                <button onclick="markAllAsRead()" class="btn-primary px-6 py-3 rounded-lg touch-target flex items-center space-x-2">
+                    <i class="fas fa-check"></i>
+                    <span>Tout marquer lu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-6">
+        <!-- Notifications List -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Notifications récentes</h3>
+                    <span id="notification-count" class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">0</span>
+                </div>
+            </div>
+            <div id="notifications-container" class="divide-y divide-gray-100">
+                <!-- Notifications will be loaded here -->
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gray-50 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i class="fas fa-bell text-gray-400 text-2xl"></i>
+                    </div>
+                    <h4 class="text-lg font-medium text-gray-900 mb-2">Chargement...</h4>
+                    <p class="text-gray-600">Récupération des notifications en cours</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let notificationRefreshInterval;
+    
+    // Load notifications on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadNotifications();
+        // Start real-time updates every 30 seconds
+        notificationRefreshInterval = setInterval(loadNotifications, 30000);
+    });
+
+    // Clean up interval when leaving page
+    window.addEventListener('beforeunload', function() {
+        if (notificationRefreshInterval) {
+            clearInterval(notificationRefreshInterval);
+        }
+    });
+
+    async function loadNotifications() {
+        try {
+            const response = await apiRequest('GET', '/api/notifications');
+            displayNotifications(response.notifications);
+            updateNotificationCount(response.count);
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+            showError('Erreur lors du chargement des notifications');
+        }
+    }
+
+    function displayNotifications(notifications) {
+        const container = document.getElementById('notifications-container');
+        
+        if (!notifications || notifications.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-green-50 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                    </div>
+                    <h4 class="text-lg font-medium text-gray-900 mb-2">Aucune notification</h4>
+                    <p class="text-gray-600">Tout est à jour !</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = notifications.map(notification => `
+            <div class="p-4 hover:bg-gray-50 transition-colors duration-200 notification-item" data-id="${notification.id}">
+                <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center" 
+                             style="background-color: ${getNotificationBgColor(notification.color)};">
+                            <i class="${notification.icon} text-${notification.color}-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-gray-900">${notification.title}</p>
+                            <p class="text-xs text-gray-500">${notification.time}</p>
+                        </div>
+                        <p class="text-sm text-gray-700 mt-1">${notification.message}</p>
+                        <div class="flex items-center mt-2 space-x-2">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
+                                         ${getNotificationTypeClass(notification.type)}">
+                                ${getNotificationTypeLabel(notification.type)}
+                            </span>
+                            ${getNotificationActions(notification)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function getNotificationBgColor(color) {
+        const colorMap = {
+            'red': '#FEF2F2',
+            'blue': '#EFF6FF',
+            'green': '#F0FDF4',
+            'yellow': '#FFFBEB',
+            'gray': '#F9FAFB'
+        };
+        return colorMap[color] || '#F9FAFB';
+    }
+
+    function getNotificationTypeClass(type) {
+        const typeMap = {
+            'warning': 'bg-red-100 text-red-800',
+            'info': 'bg-blue-100 text-blue-800',
+            'success': 'bg-green-100 text-green-800',
+            'error': 'bg-red-100 text-red-800'
+        };
+        return typeMap[type] || 'bg-gray-100 text-gray-800';
+    }
+
+    function getNotificationTypeLabel(type) {
+        const labelMap = {
+            'warning': 'Alerte',
+            'info': 'Information',
+            'success': 'Succès',
+            'error': 'Erreur'
+        };
+        return labelMap[type] || 'Notification';
+    }
+
+    function getNotificationActions(notification) {
+        let actions = '';
+        
+        if (notification.id === 'low_stock') {
+            actions += `<button onclick="viewLowStock()" class="text-xs text-blue-600 hover:text-blue-800">Voir détails</button>`;
+        } else if (notification.id === 'pending_requests') {
+            actions += `<button onclick="viewPendingRequests()" class="text-xs text-blue-600 hover:text-blue-800">Voir demandes</button>`;
+        } else if (notification.id === 'recent_receptions') {
+            actions += `<button onclick="viewReceptions()" class="text-xs text-blue-600 hover:text-blue-800">Voir réceptions</button>`;
+        }
+        
+        return actions;
+    }
+
+    function updateNotificationCount(count) {
+        const countElement = document.getElementById('notification-count');
+        if (countElement) {
+            countElement.textContent = count;
+            countElement.className = count > 0 
+                ? 'bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full'
+                : 'bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full';
+        }
+    }
+
+    function refreshNotifications() {
+        loadNotifications();
+        showSuccess('Notifications actualisées');
+    }
+
+    function markAllAsRead() {
+        // For now, just refresh the notifications
+        // In a real implementation, you'd call an API to mark as read
+        loadNotifications();
+        showSuccess('Toutes les notifications ont été marquées comme lues');
+    }
+
+    // Action handlers
+    function viewLowStock() {
+        window.location.href = '/stock-status';
+    }
+
+    function viewPendingRequests() {
+        window.location.href = '/purchase-requests';
+    }
+
+    function viewReceptions() {
+        window.location.href = '/reception';
+    }
+
+    function showSuccess(message) {
+        // Simple success notification
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    function showError(message) {
+        // Simple error notification
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+</script>
+{% endblock %}

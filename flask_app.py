@@ -91,6 +91,10 @@ def create_app():
     def reports():
         return render_template('reports.html')
     
+    @app.route('/notifications')
+    def notifications():
+        return render_template('notifications.html')
+    
     @app.route('/profile')
     def profile():
         return render_template('profile.html')
