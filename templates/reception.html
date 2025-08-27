@@ -384,9 +384,10 @@
     async function loadApprovedPurchaseRequests() {
         try {
             const purchaseRequests = await apiRequest('GET', '/api/purchase-requests');
-            // Filter only approved requests
-            approvedPurchaseRequests = purchaseRequests.filter(req => req.statut === 'Approuvé');
+            // Filter only approved requests (status is 'approuve' in database)
+            approvedPurchaseRequests = purchaseRequests.filter(req => req.statut === 'approuve');
             updateApprovedRequestsSelect();
+            console.log('Approved purchase requests loaded:', approvedPurchaseRequests.length);
         } catch (error) {
             console.error('Error loading approved purchase requests:', error);
         }
