@@ -87,53 +87,82 @@
                 </button>
             </div>
             
-            <form id="reception-form" onsubmit="saveReception(event)">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Article *</label>
-                        <select id="articleId" name="articleId" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Sélectionner un article</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantité Reçue *</label>
-                        <input type="number" id="quantiteRecue" name="quantiteRecue" required min="1"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Fournisseur</label>
-                        <select id="fournisseurId" name="fournisseurId"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Sélectionner un fournisseur</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Numéro Bon de Livraison</label>
-                        <input type="text" id="numeroBonLivraison" name="numeroBonLivraison"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Observations</label>
-                        <textarea id="observations" name="observations" rows="3"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                  placeholder="Remarques sur la livraison..."></textarea>
+            <form id="reception-form" onsubmit="saveManualReception(event)">
+                <!-- Détails de la Réception -->
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Détails de la Réception</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date de Réception *</label>
+                            <input type="date" id="dateReception" name="dateReception" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">N° Bon de Livraison</label>
+                            <input type="text" id="numeroBonLivraison" name="numeroBonLivraison"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="Numéro du bon de livraison">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Observations</label>
+                            <textarea id="observations" name="observations" rows="2"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                      placeholder="Remarques sur la livraison..."></textarea>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" onclick="closeReceptionForm()"
-                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        Annuler
-                    </button>
-                    <button type="submit"
-                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                        Enregistrer Réception
-                    </button>
+                <!-- Articles à Réceptionner -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-lg font-medium text-gray-900">Articles à Réceptionner</h4>
+                        <button type="button" onclick="addArticleToReception()" 
+                                class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
+                            <i class="fas fa-plus"></i>
+                            <span>Ajouter Article</span>
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qté Commandée</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qté Reçue</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PU (MAD)</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fournisseur</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reception-articles-table" class="bg-white divide-y divide-gray-200">
+                                <!-- Articles will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="no-articles-message" class="text-center py-8 text-gray-500">
+                        <i class="fas fa-box-open text-3xl mb-2"></i>
+                        <p>Aucun article ajouté. Cliquez sur "Ajouter Article" pour commencer.</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center mt-6">
+                    <div id="reception-summary" class="text-sm text-gray-600">
+                        <span id="articles-count">0 article(s)</span> - 
+                        <span id="total-amount">Total: 0,00 MAD</span>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="closeReceptionForm()"
+                                class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Annuler
+                        </button>
+                        <button type="submit" id="submit-reception-btn" disabled
+                                class="px-6 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                            Enregistrer la Réception
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -305,12 +334,191 @@
         filterReceptions();
     }
 
+    // Manual reception article management
+    let receptionArticles = [];
+    let articleCounter = 0;
+
     function openReceptionForm() {
         const modal = document.getElementById('reception-modal');
         const form = document.getElementById('reception-form');
         
         form.reset();
+        receptionArticles = [];
+        articleCounter = 0;
+        
+        // Set default date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dateReception').value = today;
+        
+        updateReceptionArticlesTable();
+        updateReceptionSummary();
         modal.classList.remove('hidden');
+    }
+
+    function addArticleToReception() {
+        articleCounter++;
+        const newArticle = {
+            id: 'temp_' + articleCounter,
+            articleId: '',
+            quantiteCommandee: 0,
+            quantiteRecue: 0,
+            prixUnitaire: 0,
+            fournisseurId: ''
+        };
+        receptionArticles.push(newArticle);
+        updateReceptionArticlesTable();
+        updateReceptionSummary();
+    }
+
+    function updateReceptionArticlesTable() {
+        const tbody = document.getElementById('reception-articles-table');
+        const noArticlesMessage = document.getElementById('no-articles-message');
+        
+        if (receptionArticles.length === 0) {
+            tbody.innerHTML = '';
+            noArticlesMessage.classList.remove('hidden');
+            return;
+        }
+        
+        noArticlesMessage.classList.add('hidden');
+        tbody.innerHTML = receptionArticles.map((item, index) => createReceptionArticleRow(item, index)).join('');
+    }
+
+    function createReceptionArticleRow(item, index) {
+        const article = articles.find(a => a.id === item.articleId);
+        const supplier = suppliers.find(s => s.id === item.fournisseurId);
+        
+        return `
+            <tr>
+                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">${index + 1}</td>
+                <td class="px-3 py-4 whitespace-nowrap">
+                    <select onchange="updateArticleInReception('${item.id}', 'articleId', this.value)" 
+                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                        <option value="">Sélectionner un article</option>
+                        ${articles.map(a => `
+                            <option value="${a.id}" ${a.id === item.articleId ? 'selected' : ''}>
+                                ${a.codeArticle} - ${a.designation}
+                            </option>
+                        `).join('')}
+                    </select>
+                </td>
+                <td class="px-3 py-4 whitespace-nowrap">
+                    <input type="number" 
+                           value="${item.quantiteCommandee}" 
+                           onchange="updateArticleInReception('${item.id}', 'quantiteCommandee', this.value)"
+                           class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center" 
+                           min="0" step="1">
+                </td>
+                <td class="px-3 py-4 whitespace-nowrap">
+                    <input type="number" 
+                           value="${item.quantiteRecue}" 
+                           onchange="updateArticleInReception('${item.id}', 'quantiteRecue', this.value)"
+                           class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center" 
+                           min="0" step="1" required>
+                </td>
+                <td class="px-3 py-4 whitespace-nowrap">
+                    <input type="number" 
+                           value="${item.prixUnitaire}" 
+                           onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
+                           class="w-24 px-2 py-1 border border-gray-300 rounded text-sm text-right" 
+                           min="0" step="0.01" placeholder="0.00">
+                </td>
+                <td class="px-3 py-4 whitespace-nowrap">
+                    <select onchange="updateArticleInReception('${item.id}', 'fournisseurId', this.value)" 
+                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                        <option value="">Sélectionner fournisseur</option>
+                        ${suppliers.map(s => `
+                            <option value="${s.id}" ${s.id === item.fournisseurId ? 'selected' : ''}>
+                                ${s.nom}
+                            </option>
+                        `).join('')}
+                    </select>
+                </td>
+                <td class="px-3 py-4 whitespace-nowrap text-center">
+                    <button type="button" onclick="removeArticleFromReception('${item.id}')" 
+                            class="text-red-600 hover:text-red-800">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+
+    function updateArticleInReception(itemId, field, value) {
+        const article = receptionArticles.find(a => a.id === itemId);
+        if (article) {
+            if (field === 'quantiteCommandee' || field === 'quantiteRecue') {
+                article[field] = parseInt(value) || 0;
+            } else if (field === 'prixUnitaire') {
+                article[field] = parseFloat(value) || 0;
+            } else {
+                article[field] = value;
+            }
+            updateReceptionSummary();
+        }
+    }
+
+    function removeArticleFromReception(itemId) {
+        receptionArticles = receptionArticles.filter(a => a.id !== itemId);
+        updateReceptionArticlesTable();
+        updateReceptionSummary();
+    }
+
+    function updateReceptionSummary() {
+        const articlesCount = receptionArticles.length;
+        const totalAmount = receptionArticles.reduce((sum, item) => {
+            return sum + (item.quantiteRecue * item.prixUnitaire);
+        }, 0);
+        
+        document.getElementById('articles-count').textContent = `${articlesCount} article(s)`;
+        document.getElementById('total-amount').textContent = `Total: ${totalAmount.toFixed(2)} MAD`;
+        
+        // Enable/disable submit button
+        const submitBtn = document.getElementById('submit-reception-btn');
+        const dateReception = document.getElementById('dateReception').value;
+        const hasValidArticles = receptionArticles.some(a => a.articleId && a.quantiteRecue > 0);
+        
+        submitBtn.disabled = !dateReception || !hasValidArticles;
+    }
+
+    async function saveManualReception(event) {
+        event.preventDefault();
+        
+        const dateReception = document.getElementById('dateReception').value;
+        const numeroBonLivraison = document.getElementById('numeroBonLivraison').value;
+        const observations = document.getElementById('observations').value;
+        
+        // Validate articles
+        const validArticles = receptionArticles.filter(a => a.articleId && a.quantiteRecue > 0);
+        
+        if (validArticles.length === 0) {
+            showToast('Veuillez ajouter au moins un article avec une quantité reçue', 'error');
+            return;
+        }
+        
+        try {
+            // Create receptions for each article
+            for (const article of validArticles) {
+                const data = {
+                    dateReception: dateReception,
+                    articleId: article.articleId,
+                    quantiteRecue: article.quantiteRecue,
+                    prixUnitaire: article.prixUnitaire,
+                    fournisseurId: article.fournisseurId,
+                    numeroBonLivraison: numeroBonLivraison,
+                    observations: observations || 'Réception manuelle'
+                };
+                
+                await apiRequest('POST', '/api/receptions', data);
+            }
+            
+            showToast(`${validArticles.length} réception(s) enregistrée(s) avec succès`, 'success');
+            closeReceptionForm();
+            loadReceptions();
+        } catch (error) {
+            console.error('Error saving manual reception:', error);
+            showToast('Erreur lors de l\'enregistrement de la réception', 'error');
+        }
     }
 
     function closeReceptionForm() {
