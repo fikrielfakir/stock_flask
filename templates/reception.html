@@ -88,26 +88,25 @@
             </div>
             
             <form id="reception-form" onsubmit="saveManualReception(event)">
-                <!-- Détails de la Réception -->
-                <div class="mb-6">
+                <!-- Reception Details -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-6">
                     <h4 class="text-lg font-medium text-gray-900 mb-4">Détails de la Réception</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Date de Réception *</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date de Réception *</label>
                             <input type="date" id="dateReception" name="dateReception" required
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">N° Bon de Livraison</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">N° Bon de Livraison</label>
                             <input type="text" id="numeroBonLivraison" name="numeroBonLivraison"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="Numéro du bon de livraison">
+                                   placeholder="BL-2025-001">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Observations</label>
-                            <textarea id="observations" name="observations" rows="2"
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                      placeholder="Remarques sur la livraison..."></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observations</label>
+                            <input type="text" id="observations" name="observations"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
                 </div>
@@ -135,16 +134,16 @@
                     </div>
                     
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qté Commandée</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qté Reçue</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PU (MAD)</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fournisseur</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">N°</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Article</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Commandée</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Reçue</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">PU (MAD)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseur</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="reception-articles-table" class="bg-white divide-y divide-gray-200">
@@ -483,60 +482,97 @@
         const article = articles.find(a => a.id === item.articleId);
         const supplier = suppliers.find(s => s.id === item.fournisseurId);
         
-        return `
-            <tr>
-                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">${index + 1}</td>
-                <td class="px-3 py-4 whitespace-nowrap">
-                    <select onchange="updateArticleInReception('${item.id}', 'articleId', this.value)" 
-                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
-                        <option value="">Sélectionner un article</option>
-                        ${articles.map(a => `
-                            <option value="${a.id}" ${a.id === item.articleId ? 'selected' : ''}>
-                                ${a.codeArticle} - ${a.designation}
-                            </option>
-                        `).join('')}
-                    </select>
-                </td>
-                <td class="px-3 py-4 whitespace-nowrap">
-                    <input type="number" 
-                           value="${item.quantiteCommandee}" 
-                           onchange="updateArticleInReception('${item.id}', 'quantiteCommandee', this.value)"
-                           class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center" 
-                           min="0" step="1">
-                </td>
-                <td class="px-3 py-4 whitespace-nowrap">
-                    <input type="number" 
-                           value="${item.quantiteRecue}" 
-                           onchange="updateArticleInReception('${item.id}', 'quantiteRecue', this.value)"
-                           class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center" 
-                           min="0" step="1" required>
-                </td>
-                <td class="px-3 py-4 whitespace-nowrap">
-                    <input type="number" 
-                           value="${item.prixUnitaire}" 
-                           onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
-                           class="w-24 px-2 py-1 border border-gray-300 rounded text-sm text-right" 
-                           min="0" step="0.01" placeholder="0.00">
-                </td>
-                <td class="px-3 py-4 whitespace-nowrap">
-                    <select onchange="updateArticleInReception('${item.id}', 'fournisseurId', this.value)" 
-                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
-                        <option value="">Sélectionner fournisseur</option>
-                        ${suppliers.map(s => `
-                            <option value="${s.id}" ${s.id === item.fournisseurId ? 'selected' : ''}>
-                                ${s.nom}
-                            </option>
-                        `).join('')}
-                    </select>
-                </td>
-                <td class="px-3 py-4 whitespace-nowrap text-center">
-                    <button type="button" onclick="removeArticleFromReception('${item.id}')" 
-                            class="text-red-600 hover:text-red-800">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
+        // For purchase request items, show read-only article info
+        if (item.purchaseRequestItemId) {
+            return `
+                <tr>
+                    <td class="px-4 py-3 text-sm text-gray-500">${index + 1}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${article ? article.designation : 'Article inconnu'}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.quantiteCommandee}</td>
+                    <td class="px-4 py-3">
+                        <input type="number" 
+                               min="0" 
+                               max="${item.quantiteCommandee}"
+                               value="${item.quantiteRecue}" 
+                               onchange="updateArticleInReception('${item.id}', 'quantiteRecue', this.value)"
+                               class="w-20 px-2 py-1 border border-gray-300 rounded text-sm quantite-recue" 
+                               data-item-id="${item.id}">
+                    </td>
+                    <td class="px-4 py-3">
+                        <input type="number" 
+                               step="0.01" 
+                               min="0"
+                               value="${item.prixUnitaire}" 
+                               onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
+                               class="w-24 px-2 py-1 border border-gray-300 rounded text-sm prix-reception" 
+                               data-item-id="${item.id}">
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${supplier ? supplier.nom : 'Non spécifié'}</td>
+                    <td class="px-4 py-3">
+                        <button type="button" onclick="removeArticleFromReception('${item.id}')" 
+                                class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        } else {
+            // For manually added articles, show dropdowns
+            return `
+                <tr>
+                    <td class="px-4 py-3 text-sm text-gray-500">${index + 1}</td>
+                    <td class="px-4 py-3">
+                        <select onchange="updateArticleInReception('${item.id}', 'articleId', this.value)" 
+                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="">Sélectionner un article</option>
+                            ${articles.map(a => `
+                                <option value="${a.id}" ${a.id === item.articleId ? 'selected' : ''}>
+                                    ${a.codeArticle} - ${a.designation}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </td>
+                    <td class="px-4 py-3">
+                        <input type="number" 
+                               value="${item.quantiteCommandee}" 
+                               onchange="updateArticleInReception('${item.id}', 'quantiteCommandee', this.value)"
+                               class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center" 
+                               min="0" step="1">
+                    </td>
+                    <td class="px-4 py-3">
+                        <input type="number" 
+                               value="${item.quantiteRecue}" 
+                               onchange="updateArticleInReception('${item.id}', 'quantiteRecue', this.value)"
+                               class="w-20 px-2 py-1 border border-gray-300 rounded text-sm quantite-recue" 
+                               min="0" step="1" required data-item-id="${item.id}">
+                    </td>
+                    <td class="px-4 py-3">
+                        <input type="number" 
+                               value="${item.prixUnitaire}" 
+                               onchange="updateArticleInReception('${item.id}', 'prixUnitaire', this.value)"
+                               class="w-24 px-2 py-1 border border-gray-300 rounded text-sm prix-reception" 
+                               min="0" step="0.01" placeholder="0.00" data-item-id="${item.id}">
+                    </td>
+                    <td class="px-4 py-3">
+                        <select onchange="updateArticleInReception('${item.id}', 'fournisseurId', this.value)" 
+                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option value="">Sélectionner fournisseur</option>
+                            ${suppliers.map(s => `
+                                <option value="${s.id}" ${s.id === item.fournisseurId ? 'selected' : ''}>
+                                    ${s.nom}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button type="button" onclick="removeArticleFromReception('${item.id}')" 
+                                class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
     }
 
     function updateArticleInReception(itemId, field, value) {
