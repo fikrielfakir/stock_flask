@@ -1,0 +1,299 @@
+<div id="request-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 animate-fade-in">
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto transform transition-all duration-300 scale-95 hover:scale-100">
+            <!-- Header with Gradient -->
+            <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-t-3xl px-8 py-6 sticky top-0 z-10">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white" id="request-modal-title">Nouvelle Demande d'Achat Multi-Articles</h3>
+                            <p class="text-indigo-100 text-sm">Système de demande d'achat avancé</p>
+                        </div>
+                    </div>
+                    <button onclick="closeRequestForm()" class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <form id="request-form" onsubmit="saveRequest(event)" class="space-y-8">
+                    <input type="hidden" id="request-id" name="id" value="">
+                    
+                    <!-- Request Header Section -->
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-indigo-500 pl-4">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Informations de la demande</h4>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="group">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Demandeur *</label>
+                                    <div class="relative">
+                                        <select id="requestor-id" name="requestorId" required="" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300 appearance-none"><option value="">Sélectionner un demandeur</option><option value="6045b425-e8c2-4465-b3b1-35b292d7e001">Abdelhak Bens</option></select>
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-user text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="group">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Date de besoin</label>
+                                    <div class="relative">
+                                        <input type="date" id="date-besoin" name="dateBesoin" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300">
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-calendar-alt text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="md:col-span-2 group">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Observations</label>
+                                    <div class="relative">
+                                        <textarea id="observations" name="observations" rows="3" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300 resize-none" placeholder="Commentaires sur la demande..."></textarea>
+                                        <div class="absolute top-3 right-0 pr-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-comment-alt text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Articles Section -->
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-lg font-semibold text-gray-900">Articles demandés</h4>
+                                <button type="button" onclick="addArticleLine()" class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Ajouter Article</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-sm">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">N°</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Article</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Quantité</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Prix Unit. (MAD)</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Fournisseur</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sous-total</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="articles-tbody" class="bg-white divide-y divide-gray-100"><tr id="article-line-1">
+            <td class="px-4 py-3 text-sm text-gray-500">1</td>
+            <td class="px-4 py-3">
+                <input type="text" class="w-full px-2 py-1 border border-gray-300 rounded text-sm article-autocomplete" data-line="1" placeholder="Tapez 3 caractères..." onkeyup="handleArticleAutocomplete(this)">
+                <input type="hidden" class="article-id" data-line="1">
+                <div class="autocomplete-results hidden absolute bg-white border border-gray-300 rounded shadow-lg max-h-48 overflow-y-auto z-10"></div>
+            </td>
+            <td class="px-4 py-3">
+                <input type="number" min="1" class="w-full px-2 py-1 border border-gray-300 rounded text-sm quantity-input" data-line="1" onchange="calculateSubtotal(1)">
+            </td>
+            <td class="px-4 py-3">
+                <input type="number" step="0.01" min="0" class="w-full px-2 py-1 border border-gray-300 rounded text-sm price-input" data-line="1" onchange="calculateSubtotal(1)">
+            </td>
+            <td class="px-4 py-3">
+                <select class="w-full px-2 py-1 border border-gray-300 rounded text-sm supplier-select" data-line="1">
+                    <option value="">Sélectionner</option>
+                    <option value="997a5616-9a2d-42c6-a47c-71947b6f59b5">Abdelhak Bens</option>
+                </select>
+            </td>
+            <td class="px-4 py-3">
+                <span class="text-sm font-medium subtotal-display" data-line="1">0.00 MAD</span>
+            </td>
+            <td class="px-4 py-3">
+                <button type="button" onclick="removeArticleLine(1)" class="text-red-600 hover:text-red-900">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr></tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Empty State -->
+                            <div id="articles-empty-state" class="p-12 text-center text-gray-500">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-boxes text-2xl text-gray-400"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun article ajouté</h3>
+                                <p class="text-sm text-gray-600">Cliquez sur "Ajouter Article" pour commencer</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Total Section -->
+                        <div class="flex justify-end">
+                            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-6 min-w-72">
+                                <div class="text-right space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-semibold text-gray-700">Total Estimé:</span>
+                                        <span id="total-estime" class="text-2xl font-bold text-indigo-600">0,00&nbsp;MAD</span>
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        <span id="articles-count">0 article(s)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
+                        <button type="button" onclick="closeRequestForm()" class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Annuler</span>
+                        </button>
+                        <button type="submit" id="save-request-btn" class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-save"></i>
+                            <span>Enregistrer Demande</span>
+                        </button>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Convert to Reception Modal -->
+<div id="convert-reception-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden" data-testid="dialog-convert-reception">
+    <div class="relative top-10 mx-auto p-5 border max-w-6xl shadow-lg rounded-md bg-white" style="max-height: 90vh; overflow-y: auto;">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-medium text-gray-900 flex items-center">
+                    <i class="fas fa-box text-green-600 mr-2"></i>
+                    Convertir en Réception
+                </h3>
+                <button onclick="closeConvertModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Request Summary -->
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-medium text-gray-900 mb-4">Résumé de la Demande</h4>
+                <div id="request-summary-content">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <div class="text-sm text-gray-600">N° Demande</div>
+                    <div class="font-medium">#DA-2025-0001</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Demandeur</div>
+                    <div class="font-medium">Abdelhak Bens</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Articles</div>
+                    <div class="font-medium">2 article(s)</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Statut</div>
+                    <div><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Approuvé</span></div>
+                </div>
+            </div>
+        </div>
+            </div>
+
+            <form id="convert-form" onsubmit="convertToReception(event)">
+                <input type="hidden" id="convert-request-id" value="8c978d5d-8339-4703-8bc5-0cd7b7bbcb0a">
+                
+                <!-- Reception Details -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Détails de la Réception</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date de Réception *</label>
+                            <input type="date" id="date-reception" name="dateReception" required="" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">N° Bon de Livraison</label>
+                            <input type="text" id="numero-bon-livraison" name="numeroBonLivraison" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="BL-2025-001">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observations</label>
+                            <input type="text" id="reception-observations" name="receptionObservations" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Articles Reception Table -->
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Articles à Réceptionner</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">N°</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Article</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Commandée</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qté Reçue</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">PU (MAD)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fournisseur</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reception-articles-tbody" class="bg-white divide-y divide-gray-200">
+                <tr>
+                    <td class="px-4 py-3 text-sm text-gray-500">1</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">Exemple Article 01</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">322</td>
+                    <td class="px-4 py-3">
+                        <input type="number" min="0" max="322" value="322" data-testid="input-quantite-recue-0" class="w-20 px-2 py-1 border border-gray-300 rounded text-sm quantite-recue" data-item-id="b980296c-6aa7-4b25-98a2-2bfee528f597">
+                    </td>
+                    <td class="px-4 py-3">
+                        <input type="number" step="0.01" min="0" value="25.5" data-testid="input-prix-0" class="w-24 px-2 py-1 border border-gray-300 rounded text-sm prix-reception" data-item-id="b980296c-6aa7-4b25-98a2-2bfee528f597">
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">Non spécifié</td>
+                    <td class="px-4 py-3">
+                        <button type="button" onclick="removeReceptionLine(this)" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            
+                <tr>
+                    <td class="px-4 py-3 text-sm text-gray-500">2</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">Exemple Article 12</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">123</td>
+                    <td class="px-4 py-3">
+                        <input type="number" min="0" max="123" value="123" data-testid="input-quantite-recue-1" class="w-20 px-2 py-1 border border-gray-300 rounded text-sm quantite-recue" data-item-id="8f7da154-e273-4a27-95a4-b7439bbce28e">
+                    </td>
+                    <td class="px-4 py-3">
+                        <input type="number" step="0.01" min="0" value="25.5" data-testid="input-prix-1" class="w-24 px-2 py-1 border border-gray-300 rounded text-sm prix-reception" data-item-id="8f7da154-e273-4a27-95a4-b7439bbce28e">
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">Non spécifié</td>
+                    <td class="px-4 py-3">
+                        <button type="button" onclick="removeReceptionLine(this)" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeConvertModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </button>
+                    <button type="submit" id="convert-btn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                        <i class="fas fa-check mr-2"></i>
+                        Confirmer Réception
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+            </div>
