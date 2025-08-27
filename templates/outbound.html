@@ -594,7 +594,7 @@
                 <div class="relative">
                     <input type="text" 
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-red-500 focus:ring-0 text-sm article-search"
-                           placeholder="Tapez 3 caractères pour rechercher..."
+                           placeholder="Tapez 3 caractères (Code ou Désignation)..."
                            onkeyup="handleArticleSearch(this, ${articleRowCounter})"
                            data-row="${articleRowCounter}">
                     <input type="hidden" class="article-id" data-row="${articleRowCounter}">
@@ -674,6 +674,7 @@
                  onclick="selectArticle('${article.id}', '${article.designation}', ${rowId})">
                 <div class="font-medium text-gray-900">${article.designation}</div>
                 <div class="text-sm text-gray-500">
+                    Code: ${article.codeArticle || 'N/A'} • 
                     Stock: ${article.stockActuel || 0} • 
                     Prix: ${formatCurrency(article.prixUnitaire || 0)}
                 </div>
