@@ -1,0 +1,39 @@
+<nav class="flex space-x-1 overflow-x-auto modern-scrollbar pb-2">
+                <a href="/" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-white shadow-md text-blue-600 border-b-2 border-blue-600" style="background: var(--primary-color);">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/articles" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white/60 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-boxes"></i>
+                    <span>Articles</span>
+                </a>
+                <a href="/suppliers" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white/60 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-truck"></i>
+                    <span>Fournisseurs</span>
+                </a>
+                <a href="/requestors" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white/60 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-users"></i>
+                    <span>Demandeurs</span>
+                </a>
+                <a href="/purchase-requests" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white/60 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Demandes</span>
+                </a>
+                <a href="/reception" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white/60 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Réception</span>
+                </a>
+                <a href="/outbound" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white/60 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Sortie</span>
+                </a>
+                <a href="/analytics" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white/60 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="/notifications" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white/60 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+
+            </nav>

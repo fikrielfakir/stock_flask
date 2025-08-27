@@ -1,0 +1,964 @@
+<div id="articles-table-container">
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b-2 border-indigo-100">
+                        <tr>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Code Article</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Désignation</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Catégorie</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Stock</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Prix Unitaire</th>
+                            <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Fournisseur</th>
+                            <th class="text-center px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART001</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 01</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('21e0191c-0f45-4d27-a64e-940d75872004')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-21e0191c-0f45-4d27-a64e-940d75872004">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('21e0191c-0f45-4d27-a64e-940d75872004')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-21e0191c-0f45-4d27-a64e-940d75872004">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('21e0191c-0f45-4d27-a64e-940d75872004')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-21e0191c-0f45-4d27-a64e-940d75872004">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART002</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 02</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('1cf8c192-365e-4dfb-aa05-dd503b289eb6')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-1cf8c192-365e-4dfb-aa05-dd503b289eb6">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('1cf8c192-365e-4dfb-aa05-dd503b289eb6')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-1cf8c192-365e-4dfb-aa05-dd503b289eb6">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('1cf8c192-365e-4dfb-aa05-dd503b289eb6')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-1cf8c192-365e-4dfb-aa05-dd503b289eb6">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART003</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 03</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-4328bcc7-65fd-4bb1-afc1-6a67f49d3d2f">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART004</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 04</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('dea0b8e0-a9b7-4816-932a-fbc19f33ac22')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-dea0b8e0-a9b7-4816-932a-fbc19f33ac22">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('dea0b8e0-a9b7-4816-932a-fbc19f33ac22')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-dea0b8e0-a9b7-4816-932a-fbc19f33ac22">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('dea0b8e0-a9b7-4816-932a-fbc19f33ac22')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-dea0b8e0-a9b7-4816-932a-fbc19f33ac22">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART005</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 05</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('d8188afb-e7bf-48f6-b146-55e08b4ce063')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-d8188afb-e7bf-48f6-b146-55e08b4ce063">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('d8188afb-e7bf-48f6-b146-55e08b4ce063')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-d8188afb-e7bf-48f6-b146-55e08b4ce063">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('d8188afb-e7bf-48f6-b146-55e08b4ce063')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-d8188afb-e7bf-48f6-b146-55e08b4ce063">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART006</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 06</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('e5524afa-6f9f-46ec-8481-e9e1c6a4e171')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-e5524afa-6f9f-46ec-8481-e9e1c6a4e171">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('e5524afa-6f9f-46ec-8481-e9e1c6a4e171')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-e5524afa-6f9f-46ec-8481-e9e1c6a4e171">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('e5524afa-6f9f-46ec-8481-e9e1c6a4e171')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-e5524afa-6f9f-46ec-8481-e9e1c6a4e171">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART007</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 07</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('8899952d-044f-425f-97af-0cc88365e20b')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-8899952d-044f-425f-97af-0cc88365e20b">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('8899952d-044f-425f-97af-0cc88365e20b')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-8899952d-044f-425f-97af-0cc88365e20b">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('8899952d-044f-425f-97af-0cc88365e20b')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-8899952d-044f-425f-97af-0cc88365e20b">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART008</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 08</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('5bc6b7a6-6754-48d1-9e48-fe22cd473d3a')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-5bc6b7a6-6754-48d1-9e48-fe22cd473d3a">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('5bc6b7a6-6754-48d1-9e48-fe22cd473d3a')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-5bc6b7a6-6754-48d1-9e48-fe22cd473d3a">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('5bc6b7a6-6754-48d1-9e48-fe22cd473d3a')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-5bc6b7a6-6754-48d1-9e48-fe22cd473d3a">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART009</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 09</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('84cad5f3-6256-46e6-97dc-3df11a580a96')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-84cad5f3-6256-46e6-97dc-3df11a580a96">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('84cad5f3-6256-46e6-97dc-3df11a580a96')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-84cad5f3-6256-46e6-97dc-3df11a580a96">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('84cad5f3-6256-46e6-97dc-3df11a580a96')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-84cad5f3-6256-46e6-97dc-3df11a580a96">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART010</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 10</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('ac5a7baa-b688-4922-9073-385a245091a1')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-ac5a7baa-b688-4922-9073-385a245091a1">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('ac5a7baa-b688-4922-9073-385a245091a1')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-ac5a7baa-b688-4922-9073-385a245091a1">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('ac5a7baa-b688-4922-9073-385a245091a1')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-ac5a7baa-b688-4922-9073-385a245091a1">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART011</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 11</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('22096842-e52c-4f70-9e69-c13a2b3e25e6')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-22096842-e52c-4f70-9e69-c13a2b3e25e6">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('22096842-e52c-4f70-9e69-c13a2b3e25e6')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-22096842-e52c-4f70-9e69-c13a2b3e25e6">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('22096842-e52c-4f70-9e69-c13a2b3e25e6')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-22096842-e52c-4f70-9e69-c13a2b3e25e6">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART012</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 12</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('74de7bc5-5237-41e9-ba5b-dbaada17b8a4')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-74de7bc5-5237-41e9-ba5b-dbaada17b8a4">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('74de7bc5-5237-41e9-ba5b-dbaada17b8a4')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-74de7bc5-5237-41e9-ba5b-dbaada17b8a4">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('74de7bc5-5237-41e9-ba5b-dbaada17b8a4')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-74de7bc5-5237-41e9-ba5b-dbaada17b8a4">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART013</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 13</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('d4af4826-9cef-4add-bfb2-37eaae8bc997')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-d4af4826-9cef-4add-bfb2-37eaae8bc997">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('d4af4826-9cef-4add-bfb2-37eaae8bc997')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-d4af4826-9cef-4add-bfb2-37eaae8bc997">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('d4af4826-9cef-4add-bfb2-37eaae8bc997')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-d4af4826-9cef-4add-bfb2-37eaae8bc997">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART014</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 14</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('12f8fac7-7520-42f1-9ac5-abee3145c07d')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-12f8fac7-7520-42f1-9ac5-abee3145c07d">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('12f8fac7-7520-42f1-9ac5-abee3145c07d')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-12f8fac7-7520-42f1-9ac5-abee3145c07d">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('12f8fac7-7520-42f1-9ac5-abee3145c07d')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-12f8fac7-7520-42f1-9ac5-abee3145c07d">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART015</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 15</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('d38c1849-f5d7-4c12-a31b-cd0be51b3d37')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-d38c1849-f5d7-4c12-a31b-cd0be51b3d37">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('d38c1849-f5d7-4c12-a31b-cd0be51b3d37')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-d38c1849-f5d7-4c12-a31b-cd0be51b3d37">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('d38c1849-f5d7-4c12-a31b-cd0be51b3d37')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-d38c1849-f5d7-4c12-a31b-cd0be51b3d37">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-cube text-indigo-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-gray-900">ART016</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="max-w-xs">
+                        <p class="text-sm font-semibold text-gray-900 truncate">Exemple Article 16</p>
+                        <p class="text-xs text-gray-500 mt-1">Samsung</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Électronique
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-green-600">
+                            95
+                        </span>
+                        <span class="text-xs text-gray-500">pcs</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Seuil: 10
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-bold text-gray-900">
+                        25.50 MAD
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600">
+                        Non défini
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex justify-center space-x-1">
+                        <button onclick="generateQR('4a3c7210-1f7e-40d3-a5c8-91cf1b062c15')" title="Générer QR Code" class="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-qr-4a3c7210-1f7e-40d3-a5c8-91cf1b062c15">
+                            <i class="fas fa-qrcode text-sm"></i>
+                        </button>
+                        <button onclick="editArticle('4a3c7210-1f7e-40d3-a5c8-91cf1b062c15')" title="Modifier" class="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-edit-4a3c7210-1f7e-40d3-a5c8-91cf1b062c15">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button onclick="deleteArticle('4a3c7210-1f7e-40d3-a5c8-91cf1b062c15')" title="Supprimer" class="p-2.5 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group-hover:shadow-md" data-testid="button-delete-4a3c7210-1f7e-40d3-a5c8-91cf1b062c15">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        
+                    </tbody>
+                </table>
+            </div>
+        </div>
