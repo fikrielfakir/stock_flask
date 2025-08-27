@@ -1,7 +1,7 @@
 from flask import jsonify, request, send_file, make_response
 from datetime import datetime
 import uuid
-from sqlalchemy import or_, func, desc
+from sqlalchemy import or_, func, desc, and_
 import pandas as pd
 import io
 import csv
@@ -9,6 +9,8 @@ from werkzeug.utils import secure_filename
 
 def register_routes(app, db):
     from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound
+    import logging
+    logger = logging.getLogger(__name__)
     
     # Load settings at startup  
     def load_system_settings():
@@ -105,9 +107,71 @@ def register_routes(app, db):
     @app.route("/api/articles", methods=['GET'])
     def get_articles():
         try:
-            articles = Article.query.all()
-            return jsonify([article.to_dict() for article in articles])
+            # Get pagination parameters
+            page = request.args.get('page', 1, type=int)
+            per_page = request.args.get('per_page', 20, type=int)  # Default 20 per page
+            
+            # Get search and filter parameters
+            search = request.args.get('search', '', type=str)
+            category = request.args.get('category', 'all', type=str)
+            stock_filter = request.args.get('stock_filter', 'all', type=str)
+            
+            # Build query with filters
+            query = Article.query
+            
+            # Apply search filter
+            if search:
+                search_term = f"%{search}%"
+                query = query.filter(
+                    or_(
+                        Article.designation.ilike(search_term),
+                        Article.code_article.ilike(search_term),
+                        Article.reference.ilike(search_term),
+                        Article.marque.ilike(search_term)
+                    )
+                )
+            
+            # Apply category filter
+            if category != 'all':
+                query = query.filter(Article.categorie == category)
+            
+            # Apply stock level filter
+            if stock_filter == 'low':
+                query = query.filter(Article.stock_actuel <= Article.seuil_minimum)
+            elif stock_filter == 'normal':
+                query = query.filter(
+                    and_(
+                        Article.stock_actuel > Article.seuil_minimum,
+                        Article.stock_actuel <= Article.seuil_minimum * 3
+                    )
+                )
+            elif stock_filter == 'high':
+                query = query.filter(Article.stock_actuel > Article.seuil_minimum * 3)
+            
+            # Get paginated results
+            pagination = query.paginate(
+                page=page,
+                per_page=per_page,
+                error_out=False
+            )
+            
+            articles = [article.to_dict() for article in pagination.items]
+            
+            return jsonify({
+                'articles': articles,
+                'pagination': {
+                    'page': page,
+                    'per_page': per_page,
+                    'total': pagination.total,
+                    'pages': pagination.pages,
+                    'has_prev': pagination.has_prev,
+                    'has_next': pagination.has_next,
+                    'prev_num': pagination.prev_num,
+                    'next_num': pagination.next_num
+                }
+            })
         except Exception as e:
+            logger.error(f"Error getting articles: {str(e)}")
             return jsonify({'message': 'Erreur lors de la récupération des articles'}), 500
 
     @app.route("/api/articles/search", methods=['GET'])
