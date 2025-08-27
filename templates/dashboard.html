@@ -5,63 +5,77 @@
 {% block content %}
 <div>
     <!-- Page Header -->
-    <div class="bg-white border-b border-gray-200 px-6 py-4 mb-6">
-        <h1 class="text-2xl font-semibold text-gray-900 mb-1">Tableau de Bord</h1>
-        <p class="text-sm text-gray-600">Vue d'ensemble de votre système de gestion de stock</p>
+    <div class="glass-card rounded-2xl p-8 mb-8 fade-in">
+        <div class="flex flex-col md:flex-row md:items-center justify-between">
+            <div>
+                <h1 class="text-responsive-xl font-bold text-gray-900 mb-2">Tableau de Bord</h1>
+                <p class="text-gray-600 text-lg">Vue d'ensemble de votre système de gestion de stock</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-3">
+                <button class="btn-primary px-6 py-3 rounded-lg touch-target flex items-center space-x-2">
+                    <i class="fas fa-plus"></i>
+                    <span>Nouvelle Demande</span>
+                </button>
+                <button class="btn-secondary px-6 py-3 rounded-lg touch-target flex items-center space-x-2">
+                    <i class="fas fa-download"></i>
+                    <span>Rapport</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="px-6">
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8" id="stats-cards">
+        <div class="grid-responsive mb-8" id="stats-cards">
             <!-- Initial empty state -->
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <div class="glass-card card-hover rounded-2xl p-6 fade-in">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Total Articles</p>
-                        <p class="text-3xl font-bold text-gray-900">0</p>
-                        <p class="text-sm text-blue-600 mt-1">Articles référencés</p>
+                        <p class="text-3xl font-bold" style="color: var(--primary-color);">0</p>
+                        <p class="text-sm mt-1" style="color: var(--primary-color);">Articles référencés</p>
                     </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-boxes text-blue-600 text-xl"></i>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);">
+                        <i class="fas fa-boxes text-white text-xl"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <div class="glass-card card-hover rounded-2xl p-6 fade-in">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Stock Bas</p>
-                        <p class="text-3xl font-bold text-gray-900">0</p>
+                        <p class="text-3xl font-bold text-red-600">0</p>
                         <p class="text-sm text-red-600 mt-1">Attention requise</p>
                     </div>
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, var(--error-color) 0%, #dc2626 100%);">
+                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <div class="glass-card card-hover rounded-2xl p-6 fade-in">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Demandes en Cours</p>
-                        <p class="text-3xl font-bold text-gray-900">0</p>
+                        <p class="text-3xl font-bold text-yellow-600">0</p>
                         <p class="text-sm text-yellow-600 mt-1">0 en attente</p>
                     </div>
-                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-shopping-cart text-yellow-600 text-xl"></i>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);">
+                        <i class="fas fa-shopping-cart text-white text-xl"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <div class="glass-card card-hover rounded-2xl p-6 fade-in">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-600 mb-1">Valeur Stock</p>
-                        <p class="text-3xl font-bold text-gray-900">0,00 €</p>
+                        <p class="text-3xl font-bold text-gray-900">0,00 MAD</p>
                         <p class="text-sm text-green-600 mt-1">Inventaire total</p>
                     </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
                     </div>
                 </div>
             </div>

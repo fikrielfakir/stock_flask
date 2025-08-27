@@ -1,14 +1,14 @@
-<nav class="bg-white border-b border-gray-200">
+<nav class="glass-card border-b border-white/20 shadow-lg">
     <div class="px-6 py-4">
         <div class="flex items-center justify-between">
             <!-- Logo and Title -->
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center shadow-md" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
                         <i class="fas fa-boxes text-white text-sm"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-900">StockCéramique</h1>
+                        <h1 class="text-responsive-lg font-bold text-gray-900">StockCéramique</h1>
                         <p class="text-xs text-gray-500">Système de Gestion</p>
                     </div>
                 </div>
@@ -23,7 +23,7 @@
                     <input
                         type="text"
                         placeholder="Recherche globale..."
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        class="input-modern w-full pl-10 pr-4 py-3 text-sm focus-ring touch-target"
                         id="global-search"
                     >
                     <div id="search-results" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg mt-1 hidden max-h-96 overflow-y-auto z-10">
@@ -34,14 +34,14 @@
 
             <!-- User Menu -->
             <div class="flex items-center space-x-4">
-                <button onclick="toggleNotifications()" class="p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition duration-150 ease-in-out relative" id="notification-btn">
+                <button onclick="toggleNotifications()" class="touch-target p-3 text-gray-400 hover:text-gray-600 focus-ring rounded-lg hover:bg-white/50 transition-all duration-200 relative" id="notification-btn">
                     <i class="fas fa-bell text-lg"></i>
                     <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="notification-count">3</span>
                 </button>
                 
                 <!-- Quick Actions -->
                 <div class="relative">
-                    <button onclick="toggleQuickActions()" class="p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition duration-150 ease-in-out">
+                    <button onclick="toggleQuickActions()" class="touch-target p-3 text-gray-400 hover:text-gray-600 focus-ring rounded-lg hover:bg-white/50 transition-all duration-200">
                         <i class="fas fa-plus-circle text-lg"></i>
                     </button>
                     <div id="quick-actions" class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50">
@@ -63,7 +63,7 @@
                 </div>
                 
                 <div class="relative">
-                    <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out" id="user-menu-btn">
+                    <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 focus-ring rounded-lg px-3 py-2 hover:bg-white/50 transition-all duration-200 touch-target" id="user-menu-btn">
                         <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                             <i class="fas fa-user text-white text-sm"></i>
                         </div>
@@ -94,45 +94,45 @@
         </div>
 
         <!-- Navigation Menu -->
-        <div class="mt-4">
-            <nav class="flex space-x-8">
-                <a href="/" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'dashboard' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+        <div class="mt-6">
+            <nav class="flex space-x-1 overflow-x-auto modern-scrollbar pb-2">
+                <a href="/" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'dashboard' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="/articles" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'articles' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/articles" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'articles' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-boxes"></i>
                     <span>Articles</span>
                 </a>
-                <a href="/suppliers" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'suppliers' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/suppliers" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'suppliers' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-truck"></i>
                     <span>Fournisseurs</span>
                 </a>
-                <a href="/requestors" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'requestors' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/requestors" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'requestors' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-users"></i>
                     <span>Demandeurs</span>
                 </a>
-                <a href="/purchase-requests" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'purchase_requests' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/purchase-requests" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'purchase_requests' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Demandes</span>
                 </a>
-                <a href="/reception" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'reception' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/reception" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'reception' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-warehouse"></i>
                     <span>Réception</span>
                 </a>
-                <a href="/outbound" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'outbound' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/outbound" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'outbound' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-arrow-up"></i>
                     <span>Sortie</span>
                 </a>
-                <a href="/analytics" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'analytics' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/analytics" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'analytics' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Analytics</span>
                 </a>
-                <a href="/profile" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'profile' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/profile" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'profile' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-user"></i>
                     <span>Profil</span>
                 </a>
-                <a href="/settings" class="flex items-center space-x-2 text-sm font-medium {% if request.endpoint == 'settings' %}text-blue-600 border-b-2 border-blue-600{% else %}text-gray-500 hover:text-gray-700{% endif %} pb-2">
+                <a href="/settings" class="nav-item flex items-center space-x-2 text-sm font-medium px-4 py-3 rounded-lg whitespace-nowrap transition-all duration-200 {% if request.endpoint == 'settings' %}text-white shadow-md" style="background: var(--primary-color);{% else %}text-gray-600 hover:text-gray-900 hover:bg-white/60{% endif %}">
                     <i class="fas fa-cog"></i>
                     <span>Paramètres</span>
                 </a>
