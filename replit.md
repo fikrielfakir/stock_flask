@@ -13,6 +13,7 @@ Preferred communication style: Simple, everyday language.
 - Database initialized with full schema and relationships
 - Imported 2,421 real inventory articles with proper categorization and pricing
 - Application verified working with all 12 modules accessible
+- Enhanced dashboard currency formatting with K/M suffixes for large values (6+ digits)
 - Migration completed with zero data loss and full functionality preserved
 
 ## Previous Changes (August 23, 2025)
