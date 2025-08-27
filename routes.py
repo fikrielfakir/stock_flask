@@ -1235,6 +1235,244 @@ def register_routes(app, db):
         except Exception as e:
             return jsonify({'message': f'Erreur lors de l\'export: {str(e)}'}), 500
 
+    # Modern export endpoints with options
+    @app.route("/api/articles/export/pdf", methods=['POST'])
+    def export_articles_pdf():
+        try:
+            # Get export options from request body
+            options = request.get_json() or {}
+            include_stock = options.get('includeStock', True)
+            include_prices = options.get('includePrices', True)
+            include_suppliers = options.get('includeSuppliers', True)
+            
+            # Get all articles
+            articles = Article.query.all()
+            
+            # Prepare data based on options
+            data = []
+            for article in articles:
+                row = {
+                    'Code Article': article.code_article,
+                    'Désignation': article.designation,
+                    'Catégorie': article.categorie,
+                    'Marque': article.marque or '',
+                    'Référence': article.reference or '',
+                    'Unité': article.unite,
+                }
+                
+                if include_stock:
+                    row.update({
+                        'Stock Initial': article.stock_initial,
+                        'Stock Actuel': article.stock_actuel,
+                        'Seuil Minimum': article.seuil_minimum,
+                    })
+                
+                if include_prices:
+                    row['Prix Unitaire'] = f"{float(article.prix_unitaire):.2f} MAD" if article.prix_unitaire else "0.00 MAD"
+                
+                if include_suppliers:
+                    row['Fournisseur ID'] = article.fournisseur_id or ''
+                
+                row['Date Création'] = article.created_at.strftime('%Y-%m-%d') if article.created_at else ''
+                data.append(row)
+            
+            # Create HTML content for PDF
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Export Articles - StockCéramique</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 20px; }}
+                    .header {{ text-align: center; margin-bottom: 30px; }}
+                    .company {{ color: #003d9d; font-size: 24px; font-weight: bold; }}
+                    .title {{ color: #666; font-size: 18px; margin-top: 10px; }}
+                    .date {{ color: #999; font-size: 12px; margin-top: 5px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
+                    th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 10px; }}
+                    th {{ background-color: #003d9d; color: white; font-weight: bold; }}
+                    tr:nth-child(even) {{ background-color: #f9f9f9; }}
+                    .footer {{ margin-top: 30px; text-align: center; font-size: 10px; color: #666; }}
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div class="company">StockCéramique</div>
+                    <div class="title">Export Articles</div>
+                    <div class="date">Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}</div>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            {''.join(f'<th>{col}</th>' for col in data[0].keys() if data)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {''.join('<tr>' + ''.join(f'<td>{value}</td>' for value in row.values()) + '</tr>' for row in data)}
+                    </tbody>
+                </table>
+                
+                <div class="footer">
+                    <p>Total: {len(data)} articles</p>
+                    <p>StockCéramique - Système de Gestion d'Inventaire</p>
+                </div>
+            </body>
+            </html>
+            """
+            
+            # For now, return HTML content as text (you would use a library like weasyprint for real PDF)
+            response = make_response(html_content)
+            response.headers['Content-Type'] = 'text/html; charset=utf-8'
+            response.headers['Content-Disposition'] = f'attachment; filename=articles_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.html'
+            return response
+            
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de l\'export PDF: {str(e)}'}), 500
+
+    @app.route("/api/articles/export/excel", methods=['POST'])
+    def export_articles_excel():
+        try:
+            # Get export options from request body
+            options = request.get_json() or {}
+            include_stock = options.get('includeStock', True)
+            include_prices = options.get('includePrices', True)
+            include_suppliers = options.get('includeSuppliers', True)
+            
+            # Get all articles
+            articles = Article.query.all()
+            
+            # Prepare data based on options
+            data = []
+            for article in articles:
+                row = {
+                    'Code Article': article.code_article,
+                    'Désignation': article.designation,
+                    'Catégorie': article.categorie,
+                    'Marque': article.marque or '',
+                    'Référence': article.reference or '',
+                    'Unité': article.unite,
+                }
+                
+                if include_stock:
+                    row.update({
+                        'Stock Initial': article.stock_initial,
+                        'Stock Actuel': article.stock_actuel,
+                        'Seuil Minimum': article.seuil_minimum,
+                    })
+                
+                if include_prices:
+                    row['Prix Unitaire'] = float(article.prix_unitaire) if article.prix_unitaire else 0
+                
+                if include_suppliers:
+                    row['Fournisseur ID'] = article.fournisseur_id or ''
+                
+                row['Date Création'] = article.created_at.strftime('%Y-%m-%d %H:%M:%S') if article.created_at else ''
+                data.append(row)
+            
+            # Create dataframe
+            df = pd.DataFrame(data)
+            
+            # Export to Excel with styling
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, sheet_name='Articles', index=False)
+                
+                # Get the workbook and worksheet for styling
+                workbook = writer.book
+                worksheet = writer.sheets['Articles']
+                
+                # Style the header row
+                from openpyxl.styles import Font, PatternFill, Alignment
+                header_font = Font(bold=True, color='FFFFFF')
+                header_fill = PatternFill(start_color='003d9d', end_color='003d9d', fill_type='solid')
+                
+                for col_num, column_title in enumerate(df.columns, 1):
+                    cell = worksheet.cell(row=1, column=col_num)
+                    cell.font = header_font
+                    cell.fill = header_fill
+                    cell.alignment = Alignment(horizontal='center')
+                
+                # Auto-adjust column widths
+                for column in worksheet.columns:
+                    max_length = 0
+                    column_letter = column[0].column_letter
+                    for cell in column:
+                        try:
+                            if len(str(cell.value)) > max_length:
+                                max_length = len(str(cell.value))
+                        except:
+                            pass
+                    adjusted_width = min(max_length + 2, 50)
+                    worksheet.column_dimensions[column_letter].width = adjusted_width
+            
+            output.seek(0)
+            
+            response = make_response(output.getvalue())
+            response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            response.headers['Content-Disposition'] = f'attachment; filename=articles_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+            return response
+            
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de l\'export Excel: {str(e)}'}), 500
+
+    @app.route("/api/articles/export/csv", methods=['POST'])
+    def export_articles_csv():
+        try:
+            # Get export options from request body
+            options = request.get_json() or {}
+            include_stock = options.get('includeStock', True)
+            include_prices = options.get('includePrices', True)
+            include_suppliers = options.get('includeSuppliers', True)
+            
+            # Get all articles
+            articles = Article.query.all()
+            
+            # Prepare data based on options
+            data = []
+            for article in articles:
+                row = {
+                    'Code Article': article.code_article,
+                    'Désignation': article.designation,
+                    'Catégorie': article.categorie,
+                    'Marque': article.marque or '',
+                    'Référence': article.reference or '',
+                    'Unité': article.unite,
+                }
+                
+                if include_stock:
+                    row.update({
+                        'Stock Initial': article.stock_initial,
+                        'Stock Actuel': article.stock_actuel,
+                        'Seuil Minimum': article.seuil_minimum,
+                    })
+                
+                if include_prices:
+                    row['Prix Unitaire'] = float(article.prix_unitaire) if article.prix_unitaire else 0
+                
+                if include_suppliers:
+                    row['Fournisseur ID'] = article.fournisseur_id or ''
+                
+                row['Date Création'] = article.created_at.strftime('%Y-%m-%d %H:%M:%S') if article.created_at else ''
+                data.append(row)
+            
+            # Create dataframe
+            df = pd.DataFrame(data)
+            
+            # Export to CSV
+            output = io.StringIO()
+            df.to_csv(output, index=False, encoding='utf-8')
+            output.seek(0)
+            
+            response = make_response(output.getvalue())
+            response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+            response.headers['Content-Disposition'] = f'attachment; filename=articles_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+            return response
+            
+        except Exception as e:
+            return jsonify({'message': f'Erreur lors de l\'export CSV: {str(e)}'}), 500
+
     @app.route("/api/articles/import", methods=['POST'])
     def import_articles():
         try:
