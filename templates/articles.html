@@ -154,97 +154,169 @@
     </div>
 </div>
 
-<!-- Article Form Modal -->
-<div id="article-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <div class="mt-3">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-medium text-gray-900" id="modal-title">
-                    Nouvel Article
-                </h3>
-                <button onclick="closeArticleForm()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+<!-- Modern Article Form Modal -->
+<div id="article-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 animate-fade-in">
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 scale-95 hover:scale-100">
+            <!-- Header with Gradient -->
+            <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-3xl px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+                            <i class="fas fa-box text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white" id="modal-title">Nouvel Article</h3>
+                            <p class="text-blue-100 text-sm">Ajouter un nouveau produit au stock</p>
+                        </div>
+                    </div>
+                    <button onclick="closeArticleForm()" 
+                            class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
             </div>
             
-            <form id="article-form" onsubmit="saveArticle(event)">
-                <input type="hidden" id="article-id" name="id">
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Code Article *</label>
-                        <input type="text" id="codeArticle" name="codeArticle" required
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <div class="p-8">
+                <form id="article-form" onsubmit="saveArticle(event)" class="space-y-6">
+                    <input type="hidden" id="article-id" name="id">
+                    
+                    <!-- Basic Information Section -->
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Informations de base</h4>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Code Article *</label>
+                                <div class="relative">
+                                    <input type="text" id="codeArticle" name="codeArticle" required
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                           placeholder="Ex: ART-001">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-barcode text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Catégorie *</label>
+                                <div class="relative">
+                                    <input type="text" id="categorie" name="categorie" required
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                           placeholder="Ex: Céramique industrielle">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-tags text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Désignation *</label>
+                            <div class="relative">
+                                <input type="text" id="designation" name="designation" required
+                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                       placeholder="Description détaillée du produit">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-align-left text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Marque</label>
+                                <input type="text" id="marque" name="marque"
+                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                       placeholder="Marque du fabricant">
+                            </div>
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Référence</label>
+                                <input type="text" id="reference" name="reference"
+                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                       placeholder="Référence fabricant">
+                            </div>
+                        </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Désignation *</label>
-                        <input type="text" id="designation" name="designation" required
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <!-- Stock & Pricing Section -->
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Stock et tarification</h4>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Stock Initial *</label>
+                                <div class="relative">
+                                    <input type="number" id="stockInitial" name="stockInitial" required min="0"
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                           placeholder="0">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-cubes text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Unité</label>
+                                <div class="relative">
+                                    <select id="unite" name="unite"
+                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none">
+                                        <option value="pcs">Pièces</option>
+                                        <option value="kg">Kilogrammes</option>
+                                        <option value="m">Mètres</option>
+                                        <option value="l">Litres</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-chevron-down text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Seuil Minimum</label>
+                                <div class="relative">
+                                    <input type="number" id="seuilMinimum" name="seuilMinimum" min="0" value="10"
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                           placeholder="10">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-exclamation-triangle text-orange-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Prix Unitaire</label>
+                            <div class="relative">
+                                <input type="number" id="prixUnitaire" name="prixUnitaire" step="0.01" min="0"
+                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 pl-12"
+                                       placeholder="0.00">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">€</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie *</label>
-                        <input type="text" id="categorie" name="categorie" required
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
+                        <button type="button" onclick="closeArticleForm()"
+                                class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Annuler</span>
+                        </button>
+                        <button type="submit"
+                                class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-save"></i>
+                            <span>Enregistrer</span>
+                        </button>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Marque</label>
-                            <input type="text" id="marque" name="marque"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Référence</label>
-                            <input type="text" id="reference" name="reference"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Stock Initial *</label>
-                            <input type="number" id="stockInitial" name="stockInitial" required min="0"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Unité</label>
-                            <select id="unite" name="unite"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                <option value="pcs">Pièces</option>
-                                <option value="kg">Kilogrammes</option>
-                                <option value="m">Mètres</option>
-                                <option value="l">Litres</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Prix Unitaire</label>
-                            <input type="number" id="prixUnitaire" name="prixUnitaire" step="0.01" min="0"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Seuil Minimum</label>
-                            <input type="number" id="seuilMinimum" name="seuilMinimum" min="0" value="10"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" onclick="closeArticleForm()"
-                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        Annuler
-                    </button>
-                    <button type="submit"
-                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                        Enregistrer
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
