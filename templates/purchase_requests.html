@@ -288,8 +288,7 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Date de Réception *</label>
                                 <div class="relative">
                                     <input type="date" id="date-reception" name="dateReception" required 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
-                                           style="focus:border-color: var(--primary-color);">
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                         <i class="fas fa-calendar text-gray-400"></i>
                                     </div>
@@ -299,8 +298,8 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-3">N° Bon de Livraison</label>
                                 <div class="relative">
                                     <input type="text" id="numero-bon-livraison" name="numeroBonLivraison" 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
-                                           placeholder="BL-2025-001" style="focus:border-color: var(--primary-color);">
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
+                                           placeholder="BL-2025-001">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                         <i class="fas fa-receipt text-gray-400"></i>
                                     </div>
@@ -310,8 +309,8 @@
                                 <label class="block text-sm font-semibold text-gray-700 mb-3">Observations</label>
                                 <div class="relative">
                                     <input type="text" id="reception-observations" name="receptionObservations" 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
-                                           placeholder="Observations sur la réception..." style="focus:border-color: var(--primary-color);">
+                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
+                                           placeholder="Observations sur la réception...">
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                         <i class="fas fa-comment-alt text-gray-400"></i>
                                     </div>
@@ -939,23 +938,21 @@
                     <td class="px-6 py-4">
                         <input type="number" min="0" max="${item.quantiteDemandee}" value="${item.quantiteDemandee}" 
                                data-testid="input-quantite-recue-${index}"
-                               class="w-24 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium quantite-recue focus:ring-0 transition-colors duration-200" 
-                               style="focus:border-color: var(--primary-color);"
+                               class="w-24 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium quantite-recue focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
                                data-item-id="${item.id}">
                     </td>
                     <td class="px-6 py-4">
                         <div class="relative">
                             <input type="number" step="0.01" min="0" value="${item.prixUnitaireEstime || ''}" 
                                    data-testid="input-prix-${index}"
-                                   class="w-32 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium prix-reception focus:ring-0 transition-colors duration-200" 
-                                   style="focus:border-color: var(--primary-color);"
+                                   class="w-32 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium prix-reception focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
                                    data-item-id="${item.id}">
                             <span class="absolute right-3 top-2 text-xs text-gray-400">MAD</span>
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium supplier-select focus:ring-0 transition-colors duration-200" 
-                                style="focus:border-color: var(--primary-color);" data-item-id="${item.id}">
+                        <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium supplier-select focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
+                                data-item-id="${item.id}">
                             <option value="">Sélectionner fournisseur</option>
                             ${suppliers.map(s => `<option value="${s.id}" ${supplier && supplier.id === s.id ? 'selected' : ''}>${s.nom}</option>`).join('')}
                         </select>
@@ -985,54 +982,113 @@
         event.preventDefault();
         
         const requestId = document.getElementById('convert-request-id').value;
+        if (!requestId) {
+            showToast('Erreur - Identifiant de demande manquant', 'error');
+            return;
+        }
+        
         const formData = new FormData(event.target);
+        const dateReception = formData.get('dateReception');
+        
+        // Validate required fields
+        if (!dateReception) {
+            showToast('Veuillez sélectionner une date de réception', 'error');
+            return;
+        }
         
         // Collect reception data
         const receptionData = {
-            dateReception: formData.get('dateReception'),
-            numeroBonLivraison: formData.get('numeroBonLivraison'),
+            dateReception: dateReception,
+            numeroBonLivraison: formData.get('numeroBonLivraison') || '',
             observations: formData.get('receptionObservations') || `Réception pour demande d'achat #${requestId.substring(0, 8)}`,
             articles: []
         };
 
-        // Collect articles data
-        document.querySelectorAll('#reception-articles-tbody tr').forEach(tr => {
-            const quantiteRecue = tr.querySelector('.quantite-recue').value;
-            const prix = tr.querySelector('.prix-reception').value;
-            const itemId = tr.querySelector('.quantite-recue').dataset.itemId;
-            const supplierId = tr.querySelector('.supplier-select').value;
+        // Collect articles data with validation
+        const articleRows = document.querySelectorAll('#reception-articles-tbody tr');
+        let hasErrors = false;
+        
+        articleRows.forEach((tr, index) => {
+            const quantiteInput = tr.querySelector('.quantite-recue');
+            const prixInput = tr.querySelector('.prix-reception');
+            const supplierSelect = tr.querySelector('.supplier-select');
+            
+            if (!quantiteInput || !prixInput || !supplierSelect) {
+                console.error(`Missing input elements in row ${index}`);
+                return;
+            }
+            
+            const quantiteRecue = quantiteInput.value;
+            const prix = prixInput.value;
+            const itemId = quantiteInput.dataset.itemId;
+            const supplierId = supplierSelect.value;
             
             if (quantiteRecue && parseFloat(quantiteRecue) > 0) {
+                const quantite = parseInt(quantiteRecue);
+                const prixUnitaire = parseFloat(prix) || 0;
+                
+                // Validation
+                if (quantite <= 0) {
+                    showToast(`Quantité invalide pour l'article ${index + 1}`, 'error');
+                    hasErrors = true;
+                    return;
+                }
+                
+                if (prixUnitaire < 0) {
+                    showToast(`Prix invalide pour l'article ${index + 1}`, 'error');
+                    hasErrors = true;
+                    return;
+                }
+                
                 receptionData.articles.push({
-                    itemId,
-                    quantiteRecue: parseInt(quantiteRecue),
-                    prixUnitaire: parseFloat(prix) || 0,
+                    itemId: itemId,
+                    quantiteRecue: quantite,
+                    prixUnitaire: prixUnitaire,
                     supplierId: supplierId || null
                 });
             }
         });
 
+        if (hasErrors) {
+            return;
+        }
+
         if (receptionData.articles.length === 0) {
-            showToast('Veuillez spécifier au moins un article à réceptionner', 'error');
+            showToast('Veuillez spécifier au moins un article à réceptionner avec une quantité positive', 'error');
             return;
         }
 
         try {
             showLoading();
             
-            // Convert to reception
-            await apiRequest('POST', `/api/purchase-requests/${requestId}/convert-reception`, receptionData);
+            console.log('Converting request to reception:', { requestId, receptionData });
             
-            // Update status to received
-            await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'recu' });
+            // Convert to reception via API
+            const convertResponse = await apiRequest('POST', `/api/purchase-requests/${requestId}/convert-reception`, receptionData);
+            console.log('Convert response:', convertResponse);
             
-            showToast('Conversion réussie - La demande d\'achat a été convertie en réceptions multiples', 'success');
+            // Update purchase request status to received
+            const statusResponse = await apiRequest('PUT', `/api/purchase-requests/${requestId}`, { statut: 'recu' });
+            console.log('Status update response:', statusResponse);
+            
+            showToast(`Conversion réussie - ${receptionData.articles.length} articles réceptionnés`, 'success');
             closeConvertModal();
-            loadPurchaseRequests();
+            
+            // Refresh data
+            await loadPurchaseRequests();
             updateRequestsTable();
+            
         } catch (error) {
             console.error('Error converting to reception:', error);
-            showToast('Erreur - Impossible de convertir la demande d\'achat', 'error');
+            let errorMessage = 'Erreur lors de la conversion en réception';
+            
+            if (error.response && error.response.message) {
+                errorMessage = error.response.message;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            showToast(errorMessage, 'error');
         } finally {
             hideLoading();
         }

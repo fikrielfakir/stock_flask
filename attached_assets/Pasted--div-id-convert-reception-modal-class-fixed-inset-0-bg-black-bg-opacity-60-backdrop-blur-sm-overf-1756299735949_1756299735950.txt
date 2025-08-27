@@ -1,0 +1,228 @@
+<div id="convert-reception-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-60 animate-fade-in" data-testid="dialog-convert-reception">
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-y-auto transform transition-all duration-300 scale-95 hover:scale-100">
+            <!-- Header with Gradient -->
+            <div class="rounded-t-3xl px-8 py-6 sticky top-0 z-10" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-box-open text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">Convertir en Réception</h3>
+                            <p class="text-blue-100 text-sm">Transformation de la demande d'achat en réception</p>
+                        </div>
+                    </div>
+                    <button onclick="closeConvertModal()" class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center group">
+                        <i class="fas fa-times text-lg group-hover:rotate-90 transition-transform duration-200"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8 space-y-8">
+                <!-- Request Summary -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background: var(--primary-color);">
+                            <i class="fas fa-file-alt text-white text-sm"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900">Résumé de la Demande</h4>
+                    </div>
+                    <div id="request-summary-content" class="space-y-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <div class="text-sm text-gray-600">N° Demande</div>
+                    <div class="font-medium">#DA-2025-0001</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Demandeur</div>
+                    <div class="font-medium">Abdelhak Bens</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Articles</div>
+                    <div class="font-medium">2 article(s)</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600">Statut</div>
+                    <div><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Approuvé</span></div>
+                </div>
+            </div>
+        </div>
+                </div>
+
+                <form id="convert-form" onsubmit="convertToReception(event)" class="space-y-8">
+                    <input type="hidden" id="convert-request-id" value="8c978d5d-8339-4703-8bc5-0cd7b7bbcb0a">
+                    
+                    <!-- Reception Details -->
+                    <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200">
+                        <div class="flex items-center mb-6">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background: var(--primary-light);">
+                                <i class="fas fa-calendar-check text-white text-sm"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-gray-900">Détails de la Réception</h4>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Date de Réception *</label>
+                                <div class="relative">
+                                    <input type="date" id="date-reception" name="dateReception" required="" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" style="focus:border-color: var(--primary-color);">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-calendar text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">N° Bon de Livraison</label>
+                                <div class="relative">
+                                    <input type="text" id="numero-bon-livraison" name="numeroBonLivraison" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" placeholder="BL-2025-001" style="focus:border-color: var(--primary-color);">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-receipt text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Observations</label>
+                                <div class="relative">
+                                    <input type="text" id="reception-observations" name="receptionObservations" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" placeholder="Observations sur la réception..." style="focus:border-color: var(--primary-color);">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-comment-alt text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Articles Reception Table -->
+                    <div class="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-sm">
+                        <div class="px-6 py-4 border-b border-gray-100" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mr-3">
+                                    <i class="fas fa-boxes text-white text-sm"></i>
+                                </div>
+                                <h4 class="text-xl font-bold text-white">Articles à Réceptionner</h4>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">N°</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Article</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Qté Commandée</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Qté Reçue</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">PU (MAD)</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Fournisseur</th>
+                                        <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: var(--primary-color);">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reception-articles-tbody" class="bg-white divide-y divide-gray-100">
+                <tr class="hover:bg-blue-50 transition-colors duration-150">
+                    <td class="px-6 py-4 text-sm font-medium text-gray-500">1</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: var(--primary-color); color: white;">
+                                <i class="fas fa-cube text-xs"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">Exemple Article 01</div>
+                                <div class="text-xs text-gray-500">REF001</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            322
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <input type="number" min="0" max="322" value="322" data-testid="input-quantite-recue-0" class="w-24 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium quantite-recue focus:ring-0 transition-colors duration-200" style="focus:border-color: var(--primary-color);" data-item-id="b980296c-6aa7-4b25-98a2-2bfee528f597">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="relative">
+                            <input type="number" step="0.01" min="0" value="25.5" data-testid="input-prix-0" class="w-32 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium prix-reception focus:ring-0 transition-colors duration-200" style="focus:border-color: var(--primary-color);" data-item-id="b980296c-6aa7-4b25-98a2-2bfee528f597">
+                            <span class="absolute right-3 top-2 text-xs text-gray-400">MAD</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium supplier-select focus:ring-0 transition-colors duration-200" style="focus:border-color: var(--primary-color);" data-item-id="b980296c-6aa7-4b25-98a2-2bfee528f597">
+                            <option value="">Sélectionner fournisseur</option>
+                            <option value="997a5616-9a2d-42c6-a47c-71947b6f59b5">Abdelhak Bens</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button type="button" onclick="removeReceptionLine(this)" class="p-2 rounded-lg text-red-600 hover:text-white hover:bg-red-600 transition-all duration-200 group">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </td>
+                </tr>
+            
+                <tr class="hover:bg-blue-50 transition-colors duration-150">
+                    <td class="px-6 py-4 text-sm font-medium text-gray-500">2</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: var(--primary-color); color: white;">
+                                <i class="fas fa-cube text-xs"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">Exemple Article 12</div>
+                                <div class="text-xs text-gray-500">REF012</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            123
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <input type="number" min="0" max="123" value="123" data-testid="input-quantite-recue-1" class="w-24 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium quantite-recue focus:ring-0 transition-colors duration-200" style="focus:border-color: var(--primary-color);" data-item-id="8f7da154-e273-4a27-95a4-b7439bbce28e">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="relative">
+                            <input type="number" step="0.01" min="0" value="25.5" data-testid="input-prix-1" class="w-32 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium prix-reception focus:ring-0 transition-colors duration-200" style="focus:border-color: var(--primary-color);" data-item-id="8f7da154-e273-4a27-95a4-b7439bbce28e">
+                            <span class="absolute right-3 top-2 text-xs text-gray-400">MAD</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium supplier-select focus:ring-0 transition-colors duration-200" style="focus:border-color: var(--primary-color);" data-item-id="8f7da154-e273-4a27-95a4-b7439bbce28e">
+                            <option value="">Sélectionner fournisseur</option>
+                            <option value="997a5616-9a2d-42c6-a47c-71947b6f59b5">Abdelhak Bens</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button type="button" onclick="removeReceptionLine(this)" class="p-2 rounded-lg text-red-600 hover:text-white hover:bg-red-600 transition-all duration-200 group">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="reception-empty-state" class="p-12 text-center text-gray-500 hidden">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-box-open text-2xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun article à réceptionner</h3>
+                            <p class="text-sm text-gray-600">Les articles de la demande apparaîtront ici</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
+                        <button type="button" onclick="closeConvertModal()" class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Annuler</span>
+                        </button>
+                        <button type="submit" id="convert-btn" class="px-8 py-3 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                            <i class="fas fa-check"></i>
+                            <span>Confirmer Réception</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
