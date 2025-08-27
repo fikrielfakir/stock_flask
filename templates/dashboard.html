@@ -140,8 +140,8 @@
                         <a href="/articles" class="block">
                             <div class="w-full border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200">
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-blue-50 rounded-sm flex items-center justify-center mr-3">
-                                        <i class="fas fa-plus text-blue-600 text-sm"></i>
+                                    <div class="w-8 h-8 rounded-sm flex items-center justify-center mr-3" style="background-color: rgba(0, 61, 157, 0.1);">
+                                        <i class="fas fa-plus text-sm" style="color: var(--primary-color);"></i>
                                     </div>
                                     <div>
                                         <p class="font-medium text-gray-900">Ajouter Article</p>
@@ -281,7 +281,7 @@
                 datasets: [{
                     label: 'Répartition Stock',
                     data: [stats.totalArticles || 0, stats.lowStock || 0, (stats.totalArticles || 0) - (stats.lowStock || 0)],
-                    borderColor: '#3B82F6',
+                    borderColor: 'var(--primary-color)',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
                     tension: 0.4,
                     fill: true
@@ -322,7 +322,7 @@
         if (statusCounts.commande > 0) {
             statusLabels.push('Commandé');
             statusData.push(statusCounts.commande);
-            statusColors.push('#3B82F6');
+            statusColors.push('var(--primary-color)');
         }
         if (statusCounts.recu > 0) {
             statusLabels.push('Reçu');

@@ -47,7 +47,7 @@
                     <div id="quick-actions" class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden z-50">
                         <div class="py-1">
                             <a href="/articles?action=create" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-box mr-3 text-blue-600"></i>
+                                <i class="fas fa-box mr-3" style="color: var(--primary-color);"></i>
                                 Nouvel Article
                             </a>
                             <a href="/purchase-requests?action=create" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -288,7 +288,7 @@
     <div class="p-4 border-b border-gray-200">
         <div class="flex justify-between items-center">
             <h3 class="text-lg font-medium text-gray-900">Notifications</h3>
-            <button onclick="markAllAsRead()" class="text-sm text-blue-600 hover:text-blue-700">Tout marquer lu</button>
+            <button onclick="markAllAsRead()" class="text-sm hover:opacity-80" style="color: var(--primary-color);">Tout marquer lu</button>
         </div>
     </div>
     <div class="divide-y divide-gray-200">
@@ -306,8 +306,8 @@
         </div>
         <div class="p-4 hover:bg-gray-50 cursor-pointer">
             <div class="flex items-start">
-                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                    <i class="fas fa-shopping-cart text-blue-600 text-sm"></i>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0" style="background-color: rgba(0, 61, 157, 0.1);">
+                    <i class="fas fa-shopping-cart text-sm" style="color: var(--primary-color);"></i>
                 </div>
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-900">Nouvelle demande</p>
@@ -330,6 +330,6 @@
         </div>
     </div>
     <div class="p-4 border-t border-gray-200">
-        <a href="/notifications" class="text-sm text-blue-600 hover:text-blue-700">Voir toutes les notifications</a>
+        <a href="/notifications" class="text-sm hover:opacity-80" style="color: var(--primary-color);">Voir toutes les notifications</a>
     </div>
 </div>

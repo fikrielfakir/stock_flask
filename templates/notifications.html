@@ -30,7 +30,7 @@
             <div class="p-6 border-b border-gray-100">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">Notifications récentes</h3>
-                    <span id="notification-count" class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">0</span>
+                    <span id="notification-count" class="text-white text-xs px-2 py-1 rounded-full" style="background-color: var(--primary-color);">0</span>
                 </div>
             </div>
             <div id="notifications-container" class="divide-y divide-gray-100">
@@ -109,8 +109,8 @@
                         </div>
                         <p class="text-sm text-gray-700 mt-1">${notification.message}</p>
                         <div class="flex items-center mt-2 space-x-2">
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
-                                         ${getNotificationTypeClass(notification.type)}">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getNotificationTypeClass(notification.type)}"
+                                  ${notification.type === 'info' ? 'style="background-color: rgba(0, 61, 157, 0.1); color: var(--primary-color);"' : ''}>
                                 ${getNotificationTypeLabel(notification.type)}
                             </span>
                             ${getNotificationActions(notification)}
@@ -135,7 +135,7 @@
     function getNotificationTypeClass(type) {
         const typeMap = {
             'warning': 'bg-red-100 text-red-800',
-            'info': 'bg-blue-100 text-blue-800',
+            'info': 'text-white',  // Will use inline style for background
             'success': 'bg-green-100 text-green-800',
             'error': 'bg-red-100 text-red-800'
         };
@@ -156,11 +156,11 @@
         let actions = '';
         
         if (notification.id === 'low_stock') {
-            actions += `<button onclick="viewLowStock()" class="text-xs text-blue-600 hover:text-blue-800">Voir détails</button>`;
+            actions += `<button onclick="viewLowStock()" class="text-xs hover:opacity-80" style="color: var(--primary-color);">Voir détails</button>`;
         } else if (notification.id === 'pending_requests') {
-            actions += `<button onclick="viewPendingRequests()" class="text-xs text-blue-600 hover:text-blue-800">Voir demandes</button>`;
+            actions += `<button onclick="viewPendingRequests()" class="text-xs hover:opacity-80" style="color: var(--primary-color);">Voir demandes</button>`;
         } else if (notification.id === 'recent_receptions') {
-            actions += `<button onclick="viewReceptions()" class="text-xs text-blue-600 hover:text-blue-800">Voir réceptions</button>`;
+            actions += `<button onclick="viewReceptions()" class="text-xs hover:opacity-80" style="color: var(--primary-color);">Voir réceptions</button>`;
         }
         
         return actions;
@@ -172,7 +172,10 @@
             countElement.textContent = count;
             countElement.className = count > 0 
                 ? 'bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full'
-                : 'bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full';
+                : 'text-white text-xs px-2 py-1 rounded-full';
+            if (count === 0) {
+                countElement.style.backgroundColor = 'var(--primary-color)';
+            }
         }
     }
 

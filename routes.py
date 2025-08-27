@@ -949,7 +949,7 @@ def register_routes(app, db):
                         'alertErrors': False
                     },
                     'customization': {
-                        'primaryColor': '#3B82F6',
+                        'primaryColor': '#003d9d',
                         'secondaryColor': '#6B7280',
                         'navStyle': 'top',
                         'displayDensity': 'comfortable',
