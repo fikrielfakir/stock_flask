@@ -237,7 +237,7 @@
 </div>
 
 <!-- Convert to Reception Modal -->
-<div id="convert-reception-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50" data-testid="dialog-convert-reception">
+<div id="convert-reception-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-60" data-testid="dialog-convert-reception">
     <div class="relative top-10 mx-auto p-5 border max-w-6xl shadow-lg rounded-md bg-white" style="max-height: 90vh; overflow-y: auto;">
         <div class="mt-3">
             <div class="flex items-center justify-between mb-6">
@@ -817,6 +817,8 @@
             populateRequestSummary(request, items);
             populateReceptionTable(items);
             
+            // Ensure only convert modal is visible
+            document.getElementById('request-modal').classList.add('hidden');
             document.getElementById('convert-reception-modal').classList.remove('hidden');
         } catch (error) {
             console.error('Error loading request items:', error);
@@ -891,6 +893,8 @@
 
     function closeConvertModal() {
         document.getElementById('convert-reception-modal').classList.add('hidden');
+        // Clear any form data
+        document.getElementById('convert-form').reset();
     }
 
     async function convertToReception(event) {

@@ -275,10 +275,23 @@
                 }
                 
                 const response = await fetch(url, config);
-                const result = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(result.message || 'Une erreur est survenue');
+                    let errorMessage = 'Une erreur est survenue';
+                    try {
+                        const result = await response.json();
+                        errorMessage = result.message || errorMessage;
+                    } catch (e) {
+                        // Ignore JSON parse errors for error responses
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                // Handle responses that may not have JSON content (like DELETE requests)
+                const contentType = response.headers.get('content-type');
+                let result = null;
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
                 }
                 
                 return result;
