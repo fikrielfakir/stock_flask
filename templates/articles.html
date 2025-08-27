@@ -395,33 +395,128 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Export Section -->
                 <div class="space-y-4">
-                    <h4 class="text-md font-semibold text-gray-900 mb-4">
-                        <i class="fas fa-download mr-2 text-blue-600"></i>Exporter Articles
+                    <h4 class="text-md font-semibold text-gray-900 mb-4 flex items-center">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);">
+                            <i class="fas fa-download text-white text-sm"></i>
+                        </div>
+                        Exporter Articles
                     </h4>
                     
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        <p class="text-sm text-gray-600 mb-4">
-                            Téléchargez tous vos articles dans le format de votre choix.
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200">
+                        <p class="text-sm text-gray-600 mb-6">
+                            Téléchargez tous vos articles dans le format de votre choix avec des options personnalisées.
                         </p>
                         
-                        <div class="space-y-3">
+                        <!-- Export Options -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Options d'export</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="include-stock" checked class="rounded border-gray-300 focus:ring-offset-0" style="color: var(--primary-color); --tw-ring-color: var(--primary-color);">
+                                    <span class="ml-2 text-sm text-gray-600">Inclure les données de stock</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="include-prices" checked class="rounded border-gray-300 focus:ring-offset-0" style="color: var(--primary-color); --tw-ring-color: var(--primary-color);">
+                                    <span class="ml-2 text-sm text-gray-600">Inclure les prix</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="include-suppliers" checked class="rounded border-gray-300 focus:ring-offset-0" style="color: var(--primary-color); --tw-ring-color: var(--primary-color);">
+                                    <span class="ml-2 text-sm text-gray-600">Inclure les fournisseurs</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Export Buttons -->
+                        <div class="grid grid-cols-1 gap-3">
+                            <!-- PDF Export -->
                             <button 
-                                onclick="exportData('csv')"
-                                class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                                data-testid="button-export-csv"
+                                onclick="exportToPDF()"
+                                class="group relative w-full flex items-center justify-between px-6 py-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
+                                data-testid="button-export-pdf"
                             >
-                                <i class="fas fa-file-csv mr-2"></i>
-                                Exporter en CSV
+                                <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative flex items-center">
+                                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-red-200 transition-colors duration-300">
+                                        <i class="fas fa-file-pdf text-red-600 text-lg"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="font-semibold text-gray-900 group-hover:text-red-700 transition-colors duration-300">
+                                            Export PDF
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            Document formaté avec mise en page
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all duration-300"></i>
+                                </div>
                             </button>
                             
+                            <!-- Excel Export -->
                             <button 
-                                onclick="exportData('excel')"
-                                class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                onclick="exportToExcel()"
+                                class="group relative w-full flex items-center justify-between px-6 py-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
                                 data-testid="button-export-excel"
                             >
-                                <i class="fas fa-file-excel mr-2"></i>
-                                Exporter en Excel
+                                <div class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-green-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative flex items-center">
+                                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors duration-300">
+                                        <i class="fas fa-file-excel text-green-600 text-lg"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="font-semibold text-gray-900 group-hover:text-green-700 transition-colors duration-300">
+                                            Export Excel
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            Feuille de calcul avec données filtrables
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all duration-300"></i>
+                                </div>
                             </button>
+                            
+                            <!-- CSV Export -->
+                            <button 
+                                onclick="exportToCSV()"
+                                class="group relative w-full flex items-center justify-between px-6 py-4 bg-white rounded-xl border-2 border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden"
+                                data-testid="button-export-csv"
+                                style="border-color: var(--primary-color); background: rgba(0, 61, 157, 0.02);"
+                            >
+                                <div class="relative flex items-center">
+                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-4 transition-colors duration-300" style="background: rgba(0, 61, 157, 0.1);">
+                                        <i class="fas fa-file-csv text-lg" style="color: var(--primary-color);"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="font-semibold text-gray-900 transition-colors duration-300">
+                                            Export CSV
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            Données brutes pour import/export
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <i class="fas fa-arrow-right text-gray-400 group-hover:translate-x-1 transition-all duration-300" style="color: var(--primary-color);"></i>
+                                </div>
+                            </button>
+                        </div>
+                        
+                        <!-- Export Progress -->
+                        <div id="export-progress" class="hidden mt-4">
+                            <div class="bg-white rounded-lg p-4 border border-gray-200">
+                                <div class="flex items-center">
+                                    <div class="w-6 h-6 rounded-full mr-3" style="background: var(--primary-color);">
+                                        <div class="w-full h-full rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">Génération en cours...</div>
+                                        <div class="text-xs text-gray-500">Préparation de votre fichier d'export</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -954,27 +1049,139 @@
         if (fileInput) fileInput.value = '';
     }
 
-    async function exportData(format = 'csv') {
+    // Modern export functions with progress and options
+    function getExportOptions() {
+        return {
+            includeStock: document.getElementById('include-stock').checked,
+            includePrices: document.getElementById('include-prices').checked,
+            includeSuppliers: document.getElementById('include-suppliers').checked
+        };
+    }
+
+    function showExportProgress() {
+        document.getElementById('export-progress').classList.remove('hidden');
+    }
+
+    function hideExportProgress() {
+        document.getElementById('export-progress').classList.add('hidden');
+    }
+
+    async function exportToPDF() {
         try {
-            const response = await fetch(`/api/articles/export?format=${format}`);
+            showExportProgress();
+            const options = getExportOptions();
+            
+            const response = await fetch('/api/articles/export/pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(options)
+            });
+
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `articles_export_${new Date().toISOString().slice(0,10)}.${format === 'excel' ? 'xlsx' : 'csv'}`;
+                a.download = `articles_export_${new Date().toISOString().slice(0,10)}.pdf`;
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
-                showToast(`Export ${format.toUpperCase()} terminé avec succès`, 'success');
+                showToast('Export PDF terminé avec succès', 'success');
             } else {
                 const error = await response.json();
-                showToast(`Erreur lors de l'export: ${error.message}`, 'error');
+                showToast(`Erreur lors de l'export PDF: ${error.message}`, 'error');
             }
         } catch (error) {
-            console.error('Export error:', error);
-            showToast('Erreur lors de l\'export des données', 'error');
+            console.error('PDF export error:', error);
+            showToast('Erreur lors de l\'export PDF', 'error');
+        } finally {
+            hideExportProgress();
+        }
+    }
+
+    async function exportToExcel() {
+        try {
+            showExportProgress();
+            const options = getExportOptions();
+            
+            const response = await fetch('/api/articles/export/excel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(options)
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `articles_export_${new Date().toISOString().slice(0,10)}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                showToast('Export Excel terminé avec succès', 'success');
+            } else {
+                const error = await response.json();
+                showToast(`Erreur lors de l'export Excel: ${error.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('Excel export error:', error);
+            showToast('Erreur lors de l\'export Excel', 'error');
+        } finally {
+            hideExportProgress();
+        }
+    }
+
+    async function exportToCSV() {
+        try {
+            showExportProgress();
+            const options = getExportOptions();
+            
+            const response = await fetch('/api/articles/export/csv', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(options)
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `articles_export_${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                showToast('Export CSV terminé avec succès', 'success');
+            } else {
+                const error = await response.json();
+                showToast(`Erreur lors de l'export CSV: ${error.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('CSV export error:', error);
+            showToast('Erreur lors de l\'export CSV', 'error');
+        } finally {
+            hideExportProgress();
+        }
+    }
+
+    // Legacy export function (keeping for backward compatibility)
+    async function exportData(format = 'csv') {
+        if (format === 'pdf') {
+            return exportToPDF();
+        } else if (format === 'excel') {
+            return exportToExcel();
+        } else {
+            return exportToCSV();
         }
     }
 
