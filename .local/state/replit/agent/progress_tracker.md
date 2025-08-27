@@ -25,3 +25,6 @@
 [x] 9. Prevent duplicate articles in purchase request form
 [x] 10. Fix supplier_id constraint error in purchase request conversion
 [x] 11. Complete migration and verify functionality
+[x] 12. Fix workflow to properly run Python Flask application
+[x] 13. Set currency to MAD (Moroccan Dirham) throughout application
+[x] 14. Verify all components working correctly in Replit environment
