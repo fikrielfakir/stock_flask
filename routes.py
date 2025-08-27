@@ -588,8 +588,14 @@ def register_routes(app, db):
                     if article and article.fournisseur_id:
                         supplier_id = article.fournisseur_id
                 
+                # If no supplier found, create with null supplier (will be updated later)
                 if not supplier_id:
-                    return jsonify({'message': f'Fournisseur manquant pour l\'article {item.article.designation if item.article else "inconnu"}'}), 400
+                    # Try to get the default supplier from the first available supplier
+                    default_supplier = Supplier.query.first()
+                    if default_supplier:
+                        supplier_id = default_supplier.id
+                    else:
+                        return jsonify({'message': f'Aucun fournisseur disponible dans le système pour l\'article {item.article.designation if item.article else "inconnu"}'}), 400
                 
                 # Create reception record
                 reception = Reception(
