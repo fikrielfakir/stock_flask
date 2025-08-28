@@ -1,26 +1,44 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
     ['desktop_main.py'],
     pathex=[],
     binaries=[],
     datas=[('templates', 'templates')],
-    hiddenimports=[],
+    hiddenimports=[
+        'flask_models',
+        'routes',
+        'flask_app',
+        'sqlalchemy.dialects.sqlite',
+        'sqlalchemy.pool'
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['PyQt5', 'PyQt6'],
     noarchive=False,
     optimize=0,
 )
+
 pyz = PYZ(a.pure)
+
+splash = Splash(
+    'splash.png',
+    binaries=a.binaries,
+    datas=a.datas,
+    text_pos=None,
+    text_size=12,
+    minify_script=True,
+    always_on_top=True,
+)
 
 exe = EXE(
     pyz,
     a.scripts,
     a.binaries,
     a.datas,
+    splash,
+    splash.binaries,
     [],
     name='StockCeramique',
     debug=False,
@@ -35,4 +53,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='icon.ico',
 )

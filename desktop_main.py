@@ -1,43 +1,53 @@
-    #!/usr/bin/env python3
-    """
-    StockCeramique Desktop Application
-    Desktop entry point for the Flask-based inventory management system using webview with splash screen
-    """
+#!/usr/bin/env python3
+"""
+StockCeramique Desktop Application
+Desktop entry point for the Flask-based inventory management system using webview with splash screen
+"""
 
-    import threading
-    import time
-    import webview
-    import webbrowser
-    from flask_app import create_app
-    from flask_models import db
-    import sys
-    import os
-    import socket
-    import logging
-    import requests
-    from tkinter import filedialog
-    import tkinter as tk
+import threading
+import time
+import webview
+import webbrowser
+from flask_app import create_app
+from flask_models import db
+import sys
+import os
+import socket
+import logging
+import requests
+from tkinter import filedialog
+import tkinter as tk
 
-    # Set up logging
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-    # Get base path for PyInstaller and set up database path
+# Get base path for PyInstaller and set up database path
     if getattr(sys, 'frozen', False):
         # Running as compiled executable
         BASE_PATH = sys._MEIPASS
         # Use user's AppData directory for database
         DB_DIR = os.path.join(os.path.expanduser("~"), "StockCeramique")
         os.makedirs(DB_DIR, exist_ok=True)
-        DB_PATH = os.path.join(DB_DIR, "stockceramique.db")
-        # Set environment variable for Flask app to use
+        
+        # Create instance directory for database
+        INSTANCE_DIR = os.path.join(DB_DIR, "instance")
+        os.makedirs(INSTANCE_DIR, exist_ok=True)
+        
+        DB_PATH = os.path.join(INSTANCE_DIR, "stockceramique.db")
+        # Set environment variable for Flask app to use SQLite
         os.environ['DATABASE_URL'] = f'sqlite:///{DB_PATH}'
         logger.info(f"Database will be created at: {DB_PATH}")
+        logger.info(f"Instance directory: {INSTANCE_DIR}")
     else:
-        # Running as script
+        # Running as script - use local instance directory
         BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-        DB_DIR = BASE_PATH
-        DB_PATH = os.path.join(BASE_PATH, "stockceramique.db")
+        INSTANCE_DIR = os.path.join(BASE_PATH, "instance")
+        os.makedirs(INSTANCE_DIR, exist_ok=True)
+        DB_PATH = os.path.join(INSTANCE_DIR, "stockceramique.db")
+        # Set SQLite database URL for development/script mode
+        os.environ['DATABASE_URL'] = f'sqlite:///{DB_PATH}'
+        logger.info(f"Development database at: {DB_PATH}")
 
     class DownloadAPI:
         """API class to handle download operations from webview"""
