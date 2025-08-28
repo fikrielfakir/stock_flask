@@ -770,11 +770,11 @@ endblock %} {% block content %}
             </td>
             <td class="px-4 py-3">
                 <input type="number" min="1" class="w-full px-2 py-1 border border-gray-300 rounded text-sm quantity-input" 
-                       data-line="${articleLineCounter}" onchange="updateTotals()">
+                       data-line="${articleLineCounter}" onchange="calculateSubtotal(${articleLineCounter})">
             </td>
             <td class="px-4 py-3">
                 <input type="number" step="0.01" min="0" class="w-full px-2 py-1 border border-gray-300 rounded text-sm price-input" 
-                       data-line="${articleLineCounter}" onchange="updateTotals()">
+                       data-line="${articleLineCounter}" onchange="calculateSubtotal(${articleLineCounter})">
             </td>
             <td class="px-4 py-3">
                 <select class="w-full px-2 py-1 border border-gray-300 rounded text-sm supplier-select" data-line="${articleLineCounter}">

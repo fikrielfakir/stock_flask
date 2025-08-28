@@ -267,7 +267,21 @@
         // Stock Value Card
         if (cards[3]) {
             const valueElement = cards[3].querySelector('.text-3xl');
-            if (valueElement) valueElement.textContent = formatCurrency(stats.stockValue || 0);
+            const subtitleElement = cards[3].querySelector('.text-sm.mt-1');
+            const stockValue = stats.stockValue || 0;
+            
+            if (valueElement) valueElement.textContent = formatCurrency(stockValue);
+            
+            // Add full number display below for large values
+            if (subtitleElement && stockValue >= 100000) {
+                const fullNumber = new Intl.NumberFormat('fr-FR', {
+                    style: 'currency',
+                    currency: 'MAD',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(stockValue);
+                subtitleElement.innerHTML = `Inventaire total<br><span class="text-xs text-gray-500">${fullNumber}</span>`;
+            }
         }
     }
 
@@ -368,20 +382,10 @@
         // Format large numbers with K or M suffixes
         if (value >= 1000000) {
             const millions = value / 1000000;
-            return new Intl.NumberFormat('fr-FR', {
-                style: 'currency',
-                currency: 'MAD',
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1
-            }).format(millions) + 'M';
+            return millions.toFixed(1) + 'M MAD';
         } else if (value >= 100000) { // 6 digits (100,000+)
             const thousands = value / 1000;
-            return new Intl.NumberFormat('fr-FR', {
-                style: 'currency',
-                currency: 'MAD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(thousands) + 'K';
+            return thousands.toFixed(0) + 'K MAD';
         } else {
             return new Intl.NumberFormat('fr-FR', {
                 style: 'currency',
