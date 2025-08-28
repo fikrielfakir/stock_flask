@@ -7,6 +7,7 @@ from datetime import datetime
 import uuid
 import logging
 from license_manager import license_manager
+from onetime_license_manager import onetime_license_manager
 
 # Initialize extensions
 migrate = Migrate()
@@ -54,7 +55,8 @@ def create_app():
         if request.endpoint in ['activation', 'activate_license']:
             return None
             
-        if not license_manager.is_machine_licensed():
+        # Check both old MAC-based and new one-time license systems
+        if not (license_manager.is_machine_licensed() or onetime_license_manager.is_machine_licensed()):
             return redirect(url_for('activation'))
         return None
 
@@ -82,7 +84,12 @@ def create_app():
             if not license_key:
                 return jsonify({'success': False, 'message': 'License key is required'}), 400
             
-            success, message = license_manager.activate_license(license_key)
+            # Try one-time license first
+            success, message = onetime_license_manager.activate_license_key(license_key)
+            
+            # If one-time license fails, try MAC-based license (backward compatibility)
+            if not success:
+                success, message = license_manager.activate_license(license_key)
             
             if success:
                 return jsonify({'success': True, 'message': message})
@@ -97,13 +104,19 @@ def create_app():
     @app.route('/api/license-status')
     def license_status():
         try:
-            info = license_manager.get_license_info()
-            is_licensed = license_manager.is_machine_licensed()
+            # Check both license systems
+            mac_info = license_manager.get_license_info()
+            onetime_info = onetime_license_manager.get_machine_license_info()
+            
+            is_licensed = license_manager.is_machine_licensed() or onetime_license_manager.is_machine_licensed()
+            
+            # Prefer one-time license info if available
+            license_info = onetime_info if onetime_info else mac_info
             
             return jsonify({
                 'success': True,
                 'is_licensed': is_licensed,
-                'license_info': info
+                'license_info': license_info
             })
         except Exception as e:
             logger.error(f"License status error: {str(e)}")
@@ -112,7 +125,9 @@ def create_app():
     @app.route('/api/deactivate-license', methods=['POST'])
     def deactivate_license():
         try:
+            # Deactivate both license systems
             license_manager.deactivate_license()
+            onetime_license_manager.deactivate_license()
             return jsonify({'success': True, 'message': 'License deactivated successfully'})
         except Exception as e:
             logger.error(f"License deactivation error: {str(e)}")
