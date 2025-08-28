@@ -496,12 +496,19 @@ endblock %} {% block content %}
     async function loadData() {
         try {
             showLoading();
+            console.log("Starting loadData...");
+            
+            // Load articles first to ensure they're available for display
+            await loadArticles();
+            
+            // Then load other data in parallel
             await Promise.all([
                 loadReceptions(),
-                loadArticles(),
                 loadSuppliers(),
                 loadRequestors(),
             ]);
+            
+            console.log("All data loaded, updating display...");
             updateReceptionsDisplay();
             updateSupplierFilter();
         } catch (error) {
@@ -571,10 +578,13 @@ endblock %} {% block content %}
 
     async function loadArticles() {
         try {
+            console.log("Loading articles with per_page=10000...");
             // Load all articles for reception display
             const response = await apiRequest("GET", "/api/articles?per_page=10000");
             // Handle paginated response - extract articles array
             articles = response.articles || response || [];
+            console.log(`Loaded ${articles.length} articles`);
+            console.log("First few article IDs:", articles.slice(0, 5).map(a => a.id));
         } catch (error) {
             console.error("Error loading articles:", error);
             articles = [];
