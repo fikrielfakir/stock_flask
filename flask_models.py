@@ -1,12 +1,80 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import uuid
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # This will be initialized in the app factory
 db = SQLAlchemy()
 
 def generate_uuid():
     return str(uuid.uuid4())
+
+# User Model for Authentication
+class User(db.Model):
+    __tablename__ = 'users'
+    
+    id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    full_name = db.Column(db.String(100))
+    email = db.Column(db.String(120))
+    is_active = db.Column(db.Boolean, default=True)
+    last_login = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'fullName': self.full_name,
+            'email': self.email,
+            'isActive': self.is_active,
+            'lastLogin': self.last_login.isoformat() if self.last_login else None,
+            'createdAt': self.created_at.isoformat() if self.created_at else None
+        }
+
+# Session Model for Token Management
+class UserSession(db.Model):
+    __tablename__ = 'user_sessions'
+    
+    id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    session_token = db.Column(db.String(255), unique=True, nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='sessions')
+    
+    @staticmethod
+    def create_session(user_id):
+        # 24-hour session duration
+        expires_at = datetime.utcnow() + timedelta(hours=24)
+        session_token = str(uuid.uuid4())
+        
+        session = UserSession(
+            user_id=user_id,
+            session_token=session_token,
+            expires_at=expires_at
+        )
+        return session
+    
+    def is_valid(self):
+        return datetime.utcnow() < self.expires_at
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'userId': self.user_id,
+            'sessionToken': self.session_token,
+            'expiresAt': self.expires_at.isoformat() if self.expires_at else None,
+            'createdAt': self.created_at.isoformat() if self.created_at else None
+        }
 
 # Articles (Spare Parts)
 class Article(db.Model):

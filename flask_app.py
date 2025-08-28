@@ -42,8 +42,30 @@ def create_app():
     logger = logging.getLogger(__name__)
 
     # Import models and routes after db initialization
-    from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound
+    from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound, User, UserSession
     from routes import register_routes
+    from functools import wraps
+    
+    # Authentication middleware
+    def require_auth(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            auth_header = request.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('Bearer '):
+                return redirect('/login')
+            
+            token = auth_header.split(' ')[1]
+            session = UserSession.query.filter_by(session_token=token).first()
+            
+            if not session or not session.is_valid():
+                return redirect('/login')
+            
+            # Update last activity
+            session.user.last_login = datetime.utcnow()
+            db.session.commit()
+            
+            return f(*args, **kwargs)
+        return decorated_function
 
     # Register all routes
     register_routes(app, db)
@@ -62,9 +84,15 @@ def create_app():
 
     # License and activation routes removed for Replit environment
 
+    # Login route
+    @app.route('/login')
+    def login_page():
+        return render_template('login.html')
+    
     # Flask template routes
     @app.route('/')
     def dashboard():
+        # Check for session in cookies or localStorage (handled by frontend)
         return render_template('dashboard.html')
     
     @app.route('/articles')

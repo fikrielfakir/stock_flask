@@ -9,7 +9,7 @@ import csv
 from werkzeug.utils import secure_filename
 
 def register_routes(app, db):
-    from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound, ActivityLog
+    from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound, ActivityLog, User, UserSession
     import logging
     import json
     logger = logging.getLogger(__name__)
@@ -62,6 +62,97 @@ def register_routes(app, db):
     
     # Load settings when routes are registered
     load_system_settings()
+    
+    # Authentication API endpoints
+    @app.route("/api/auth/login", methods=['POST'])
+    def login():
+        try:
+            data = request.get_json()
+            username = data.get('username')
+            password = data.get('password')
+            
+            if not username or not password:
+                return jsonify({'message': 'Nom d\'utilisateur et mot de passe requis'}), 400
+            
+            # Find user
+            user = User.query.filter_by(username=username).first()
+            
+            if not user or not user.check_password(password):
+                return jsonify({'message': 'Nom d\'utilisateur ou mot de passe incorrect'}), 401
+            
+            if not user.is_active:
+                return jsonify({'message': 'Compte désactivé'}), 401
+            
+            # Create new session (24-hour duration)
+            session = UserSession.create_session(user.id)
+            db.session.add(session)
+            
+            # Update last login
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+            
+            # Log login activity
+            log_activity('LOGIN', 'users', user.id, user.username)
+            
+            return jsonify({
+                'message': 'Connexion réussie',
+                'sessionToken': session.session_token,
+                'expiresAt': session.expires_at.isoformat(),
+                'user': user.to_dict()
+            })
+            
+        except Exception as e:
+            logger.error(f"Login error: {str(e)}")
+            return jsonify({'message': 'Erreur interne du serveur'}), 500
+    
+    @app.route("/api/auth/logout", methods=['POST'])
+    def logout():
+        try:
+            auth_header = request.headers.get('Authorization')
+            if auth_header and auth_header.startswith('Bearer '):
+                token = auth_header.split(' ')[1]
+                session = UserSession.query.filter_by(session_token=token).first()
+                
+                if session:
+                    # Log logout activity
+                    log_activity('LOGOUT', 'users', session.user_id, session.user.username)
+                    
+                    # Delete session
+                    db.session.delete(session)
+                    db.session.commit()
+            
+            return jsonify({'message': 'Déconnexion réussie'})
+            
+        except Exception as e:
+            logger.error(f"Logout error: {str(e)}")
+            return jsonify({'message': 'Erreur lors de la déconnexion'}), 500
+    
+    @app.route("/api/auth/verify", methods=['GET'])
+    def verify_session():
+        try:
+            auth_header = request.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('Bearer '):
+                return jsonify({'message': 'Token manquant'}), 401
+            
+            token = auth_header.split(' ')[1]
+            session = UserSession.query.filter_by(session_token=token).first()
+            
+            if not session or not session.is_valid():
+                return jsonify({'message': 'Session expirée'}), 401
+            
+            # Update last activity
+            session.user.last_login = datetime.utcnow()
+            db.session.commit()
+            
+            return jsonify({
+                'valid': True,
+                'user': session.user.to_dict(),
+                'expiresAt': session.expires_at.isoformat()
+            })
+            
+        except Exception as e:
+            logger.error(f"Session verification error: {str(e)}")
+            return jsonify({'message': 'Erreur de vérification'}), 500
     
     # Smart UX API endpoints
     @app.route("/api/notifications", methods=['GET'])
