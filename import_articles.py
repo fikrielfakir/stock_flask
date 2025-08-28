@@ -64,7 +64,7 @@ def import_articles_from_file():
     
     with app.app_context():
         # Read the data file
-        file_path = 'attached_assets/Pasted-DESIGNATION-REFERENCE-QUANTITE-PRIX-UNITAIRE-POMPE-FREIN-2559540302-2559540302-1-00-900-0000-SCOTC-1756304976142_1756304976144.txt'
+        file_path = 'attached_assets/Pasted-NOM-P-Designation-P-30X860-100X640-AXE-TAMBOUR-CYLINDRIQUE-30X860-100X640-2442100-V4046-AMPOULE-ST-1756417028698_1756417028701.txt'
         
         if not os.path.exists(file_path):
             print(f"Error: File {file_path} not found")
@@ -75,7 +75,7 @@ def import_articles_from_file():
         
         try:
             with open(file_path, 'r', encoding='utf-8') as file:
-                # Skip the header line
+                # Skip the header line (NOM_P   Designation_P)
                 next(file)
                 
                 for line_num, line in enumerate(file, 2):
@@ -83,61 +83,56 @@ def import_articles_from_file():
                     if not line.strip():
                         continue
                         
-                    # Split line by tabs
-                    parts = line.strip().split('\t')
+                    # Split line by tabs - expecting NOM_P and Designation_P
+                    parts = line.strip().split('\t', 1)  # Only split into 2 parts max
                     
-                    # Skip malformed lines
-                    if len(parts) < 4:
+                    # Skip malformed lines (need at least 2 parts)
+                    if len(parts) < 2:
                         print(f"Line {line_num}: Skipping malformed line: {line.strip()[:100]}")
                         skipped_count += 1
                         continue
                     
-                    designation = parts[0].strip()
-                    reference = parts[1].strip()
+                    code_article = parts[0].strip()  # NOM_P becomes the article code
+                    designation = parts[1].strip()   # Designation_P becomes the designation
                     
-                    # Skip if designation is empty
-                    if not designation:
+                    # Skip if either code or designation is empty
+                    if not code_article or not designation:
+                        print(f"Line {line_num}: Skipping empty code or designation: {line.strip()[:100]}")
                         skipped_count += 1
                         continue
-                    
-                    try:
-                        quantite = float(parts[2].replace(',', '.'))
-                        prix_unitaire = float(parts[3].replace(',', '.'))
-                    except (ValueError, IndexError):
-                        print(f"Line {line_num}: Invalid quantity or price: {line.strip()[:100]}")
-                        skipped_count += 1
-                        continue
-                    
-                    # Generate unique code_article
-                    code_article = generate_code_article(designation, reference)
                     
                     # Check if article already exists
                     existing = Article.query.filter_by(code_article=code_article).first()
                     if existing:
-                        # Update existing article stock and price
-                        existing.stock_actuel = int(quantite)
-                        existing.stock_initial = int(quantite)
-                        existing.prix_unitaire = Decimal(str(prix_unitaire))
-                        print(f"Updated existing article: {code_article}")
+                        # Update existing article designation if it's different
+                        if existing.designation != designation:
+                            existing.designation = designation
+                            print(f"Updated existing article: {code_article}")
+                        else:
+                            print(f"Skipped duplicate article: {code_article}")
+                        skipped_count += 1
                     else:
-                        # Create new article
+                        # Create new article with default values
                         article = Article(
                             code_article=code_article,
                             designation=designation,
                             categorie=determine_category(designation),
-                            reference=reference if reference != designation else None,
-                            stock_initial=int(quantite),
-                            stock_actuel=int(quantite),
-                            unite='pcs',
-                            prix_unitaire=Decimal(str(prix_unitaire)),
-                            seuil_minimum=max(1, int(quantite * 0.1))  # 10% of initial stock as minimum
+                            reference=None,  # No reference data in this file
+                            stock_initial=0,  # Default stock
+                            stock_actuel=0,   # Default stock
+                            unite='pcs',      # Default unit
+                            prix_unitaire=None,  # No price data in this file
+                            seuil_minimum=5   # Default minimum threshold
                         )
                         
                         db.session.add(article)
                         imported_count += 1
                         
-                    # Commit every 50 records to avoid memory issues
-                    if (imported_count + skipped_count) % 50 == 0:
+                        if imported_count % 100 == 0:
+                            print(f"Imported {imported_count} articles...")
+                        
+                    # Commit every 100 records to avoid memory issues
+                    if (imported_count + skipped_count) % 100 == 0:
                         db.session.commit()
                         print(f"Processed {imported_count + skipped_count} lines...")
                 
