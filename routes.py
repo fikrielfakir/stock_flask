@@ -507,9 +507,31 @@ def register_routes(app, db):
                 return jsonify({'message': 'Article non trouvé'}), 404
             
             data = request.get_json()
-            for key, value in data.items():
-                if hasattr(article, key.replace('C', '_c').replace('A', '_a').replace('I', '_i').replace('M', '_m').replace('S', '_s').replace('P', '_p').replace('F', '_f').lower()):
-                    setattr(article, key.replace('C', '_c').replace('A', '_a').replace('I', '_i').replace('M', '_m').replace('S', '_s').replace('P', '_p').replace('F', '_f').lower(), value)
+            
+            # Explicit field mapping for proper camelCase to snake_case conversion
+            field_mapping = {
+                'codeArticle': 'code_article',
+                'designation': 'designation',
+                'categorie': 'categorie',
+                'marque': 'marque',
+                'reference': 'reference',
+                'stockInitial': 'stock_initial',
+                'stockActuel': 'stock_actuel',
+                'unite': 'unite',
+                'prixUnitaire': 'prix_unitaire',
+                'seuilMinimum': 'seuil_minimum',
+                'fournisseurId': 'fournisseur_id'
+            }
+            
+            # Update article fields using proper mapping
+            for frontend_key, value in data.items():
+                if frontend_key in field_mapping:
+                    db_field = field_mapping[frontend_key]
+                    if hasattr(article, db_field):
+                        # Convert prixUnitaire to float if provided
+                        if frontend_key == 'prixUnitaire' and value is not None:
+                            value = float(value)
+                        setattr(article, db_field, value)
             
             db.session.commit()
             return jsonify(article.to_dict())
