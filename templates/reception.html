@@ -678,9 +678,12 @@ endblock %} {% block content %}
                     <div class="space-y-3">
                         ${group.articles
                             .map((article) => {
+                                console.log(`Looking for article ID: ${article.articleId}`);
+                                console.log(`Articles array length: ${articles.length}`);
                                 const articleData = articles.find(
                                     (a) => a.id === article.articleId,
                                 );
+                                console.log(`Found article:`, articleData);
                                 return `
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                                     <div class="flex items-center space-x-3">
