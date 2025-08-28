@@ -76,7 +76,7 @@
                         <div class="py-1">
 
                             <hr class="my-1">
-                            <a href="#" onclick="logout()" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                            <a href="#" onclick="showLogoutModal()" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                                 <i class="fas fa-sign-out-alt mr-3"></i>
                                 Déconnexion
                             </a>
@@ -130,6 +130,37 @@
         </div>
     </div>
 </nav>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 hidden">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-2xl rounded-2xl bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <i class="fas fa-sign-out-alt text-red-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Confirmation de déconnexion</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    Êtes-vous sûr de vouloir vous déconnecter?
+                </p>
+            </div>
+            <div class="flex justify-center space-x-3 px-4 py-3">
+                <button 
+                    onclick="hideLogoutModal()" 
+                    class="px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-lg shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200"
+                >
+                    Annuler
+                </button>
+                <button 
+                    onclick="confirmLogout()" 
+                    class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-lg shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
+                >
+                    Se déconnecter
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     // Global search functionality
@@ -189,11 +220,64 @@
         if (menu) menu.classList.toggle('hidden');
     }
 
-    function logout() {
-        if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
-            showToast('Déconnexion en cours...', 'info');
+    function showLogoutModal() {
+        document.getElementById('logoutModal').classList.remove('hidden');
+    }
+
+    function hideLogoutModal() {
+        document.getElementById('logoutModal').classList.add('hidden');
+    }
+
+    async function confirmLogout() {
+        try {
+            hideLogoutModal();
+            
+            // Show loading toast
+            if (typeof showToast === 'function') {
+                showToast('Déconnexion en cours...', 'info');
+            }
+
+            const sessionToken = localStorage.getItem('sessionToken');
+            
+            if (sessionToken) {
+                // Call logout API
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${sessionToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
+
+            // Clear local storage
+            localStorage.removeItem('sessionToken');
+            localStorage.removeItem('user');
+
+            // Show success message
+            if (typeof showToast === 'function') {
+                showToast('Déconnexion réussie', 'success');
+            }
+
+            // Redirect to login page
             setTimeout(() => {
-                window.location.href = '/';
+                window.location.href = '/login';
+            }, 1000);
+
+        } catch (error) {
+            console.error('Logout error:', error);
+            
+            // Clear local storage anyway
+            localStorage.removeItem('sessionToken');
+            localStorage.removeItem('user');
+            
+            if (typeof showToast === 'function') {
+                showToast('Déconnexion effectuée', 'info');
+            }
+            
+            // Redirect to login page
+            setTimeout(() => {
+                window.location.href = '/login';
             }, 1000);
         }
     }
