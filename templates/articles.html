@@ -1966,14 +1966,25 @@ StockCeramique{% endblock %} {% block content %}
 
             if (response.ok) {
                 const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `articles_export_${new Date().toISOString().slice(0, 10)}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
+                // Check if we're running in webview with download API
+                if (window.pywebview && window.pywebview.api && window.pywebview.api.download_file) {
+                    const filename = `articles_export_${new Date().toISOString().slice(0, 10)}.csv`;
+                    const result = await window.pywebview.api.download_file("/api/articles/export/csv", filename);
+                    if (!result.success) {
+                        showToast(`Erreur lors du téléchargement: ${result.message}`, "error");
+                        return;
+                    }
+                } else {
+                    // Standard browser download
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `articles_export_${new Date().toISOString().slice(0, 10)}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }
                 showToast("Export CSV terminé avec succès", "success");
             } else {
                 const error = await response.json();
@@ -2003,24 +2014,38 @@ StockCeramique{% endblock %} {% block content %}
 
     async function downloadTemplate() {
         try {
-            const response = await fetch("/api/articles/template");
-            if (response.ok) {
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "template_import_articles.xlsx";
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                showToast("Template téléchargé avec succès", "success");
+            // Check if we're running in webview with download API
+            if (window.pywebview && window.pywebview.api && window.pywebview.api.download_file) {
+                // Use webview download API
+                showToast("Téléchargement en cours...", "info");
+                const result = await window.pywebview.api.download_file("/api/articles/template", "template_import_articles.xlsx");
+                
+                if (result.success) {
+                    showToast("Template téléchargé avec succès", "success");
+                } else {
+                    showToast(`Erreur lors du téléchargement: ${result.message}`, "error");
+                }
             } else {
-                const error = await response.json();
-                showToast(
-                    `Erreur lors du téléchargement: ${error.message}`,
-                    "error",
-                );
+                // Fallback to standard browser download
+                const response = await fetch("/api/articles/template");
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "template_import_articles.xlsx";
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showToast("Template téléchargé avec succès", "success");
+                } else {
+                    const error = await response.json();
+                    showToast(
+                        `Erreur lors du téléchargement: ${error.message}`,
+                        "error",
+                    );
+                }
             }
         } catch (error) {
             console.error("Template download error:", error);
