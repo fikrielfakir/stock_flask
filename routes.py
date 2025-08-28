@@ -508,6 +508,10 @@ def register_routes(app, db):
             
             data = request.get_json()
             
+            # Debug logging
+            logger.info(f"Updating article {article_id}")
+            logger.info(f"Received data: {data}")
+            
             # Explicit field mapping for proper camelCase to snake_case conversion
             field_mapping = {
                 'codeArticle': 'code_article',
@@ -528,14 +532,22 @@ def register_routes(app, db):
                 if frontend_key in field_mapping:
                     db_field = field_mapping[frontend_key]
                     if hasattr(article, db_field):
-                        # Convert prixUnitaire to float if provided
-                        if frontend_key == 'prixUnitaire' and value is not None:
+                        # Convert numeric fields properly
+                        if frontend_key in ['stockInitial', 'stockActuel', 'seuilMinimum'] and value is not None:
+                            value = int(value)
+                        elif frontend_key == 'prixUnitaire' and value is not None and value != "":
                             value = float(value)
+                        elif frontend_key == 'prixUnitaire' and (value is None or value == ""):
+                            value = None
+                        
+                        logger.info(f"Setting {db_field} = {value} (type: {type(value)})")
                         setattr(article, db_field, value)
             
             db.session.commit()
+            logger.info(f"Article updated successfully: {article.to_dict()}")
             return jsonify(article.to_dict())
         except Exception as e:
+            logger.error(f"Error updating article: {str(e)}")
             db.session.rollback()
             return jsonify({'message': 'Erreur lors de la mise à jour', 'error': str(e)}), 400
 
