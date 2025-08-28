@@ -12,6 +12,18 @@ StockCeramique{% endblock %} {% block content %}
             </p>
         </div>
         <div class="flex space-x-3">
+            <!-- Bulk Actions for Requestors -->
+            <div id="bulk-actions-requestors" class="hidden">
+                <button
+                    onclick="confirmBulkDeleteRequestors()"
+                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-red-700"
+                >
+                    <i class="fas fa-trash mr-2"></i>
+                    Supprimer sélection
+                </button>
+                <span id="selected-count-requestors" class="text-sm text-gray-600 ml-3">0 sélectionné(s)</span>
+            </div>
+            
             <button
                 onclick="exportRequestors()"
                 class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
@@ -582,6 +594,9 @@ StockCeramique{% endblock %} {% block content %}
                 <table class="w-full">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">
+                                <input type="checkbox" id="select-all-requestors" onchange="toggleAllRequestors()" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </th>
                             <th class="text-left p-4 text-sm font-medium text-gray-700">Nom</th>
                             <th class="text-left p-4 text-sm font-medium text-gray-700">Prénom</th>
                             <th class="text-left p-4 text-sm font-medium text-gray-700">Département</th>
@@ -603,6 +618,9 @@ StockCeramique{% endblock %} {% block content %}
     function createRequestorRow(requestor) {
         return `
             <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4">
+                    <input type="checkbox" class="requestor-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-requestor-id="${requestor.id}" onchange="updateBulkActionsRequestors()">
+                </td>
                 <td class="p-4 text-sm font-medium text-gray-900">${requestor.nom}</td>
                 <td class="p-4 text-sm text-gray-700">${requestor.prenom}</td>
                 <td class="p-4 text-sm text-gray-500">${requestor.departement}</td>
@@ -894,6 +912,93 @@ StockCeramique{% endblock %} {% block content %}
             // Reset button
             importBtn.disabled = false;
             importBtn.innerHTML = '<i class="fas fa-upload"></i><span>Importer</span>';
+        }
+    }
+
+    // Bulk Actions Functions for Requestors
+    let selectedRequestorIds = [];
+
+    function toggleAllRequestors() {
+        const selectAll = document.getElementById('select-all-requestors');
+        const checkboxes = document.querySelectorAll('.requestor-checkbox');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAll.checked;
+        });
+        
+        updateBulkActionsRequestors();
+    }
+
+    function updateBulkActionsRequestors() {
+        const checkboxes = document.querySelectorAll('.requestor-checkbox:checked');
+        selectedRequestorIds = Array.from(checkboxes).map(cb => cb.dataset.requestorId);
+        
+        const bulkActions = document.getElementById('bulk-actions-requestors');
+        const selectedCount = document.getElementById('selected-count-requestors');
+        const selectAll = document.getElementById('select-all-requestors');
+        
+        if (selectedRequestorIds.length > 0) {
+            bulkActions.classList.remove('hidden');
+            selectedCount.textContent = `${selectedRequestorIds.length} sélectionné(s)`;
+        } else {
+            bulkActions.classList.add('hidden');
+        }
+        
+        // Update select all checkbox
+        const allCheckboxes = document.querySelectorAll('.requestor-checkbox');
+        const checkedCheckboxes = document.querySelectorAll('.requestor-checkbox:checked');
+        
+        if (checkedCheckboxes.length === 0) {
+            selectAll.indeterminate = false;
+            selectAll.checked = false;
+        } else if (checkedCheckboxes.length === allCheckboxes.length) {
+            selectAll.indeterminate = false;
+            selectAll.checked = true;
+        } else {
+            selectAll.indeterminate = true;
+        }
+    }
+
+    async function confirmBulkDeleteRequestors() {
+        if (selectedRequestorIds.length === 0) {
+            showToast('Aucun demandeur sélectionné', 'warning');
+            return;
+        }
+        
+        if (confirm(`Êtes-vous sûr de vouloir supprimer ${selectedRequestorIds.length} demandeur(s) sélectionné(s) ? Cette action est irréversible.`)) {
+            await bulkDeleteRequestors();
+        }
+    }
+
+    async function bulkDeleteRequestors() {
+        try {
+            showToast('Suppression en cours...', 'info');
+            
+            const response = await fetch('/api/requestors/bulk-delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('sessionToken')}`
+                },
+                body: JSON.stringify({ ids: selectedRequestorIds })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showToast(result.message, 'success');
+                selectedRequestorIds = [];
+                const bulkActions = document.getElementById('bulk-actions-requestors');
+                bulkActions.classList.add('hidden');
+                
+                // Reload requestors
+                await loadRequestors();
+            } else {
+                showToast(result.message || 'Erreur lors de la suppression', 'error');
+            }
+        } catch (error) {
+            console.error('Bulk delete error:', error);
+            showToast('Erreur lors de la suppression en masse', 'error');
         }
     }
 </script>

@@ -217,6 +217,18 @@ StockCeramique{% endblock %} {% block content %}
                 </div>
 
                 <div class="flex items-center space-x-2">
+                    <!-- Bulk Actions -->
+                    <div id="bulk-actions" class="hidden">
+                        <button
+                            onclick="confirmBulkDelete()"
+                            class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold shadow-lg hover:bg-red-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+                        >
+                            <i class="fas fa-trash mr-2"></i>
+                            Supprimer sélection
+                        </button>
+                        <span id="selected-count" class="text-sm text-gray-600 ml-3">0 sélectionné(s)</span>
+                    </div>
+                    
                     <!-- Column Visibility Control -->
                     <div class="relative">
                         <button
@@ -1333,6 +1345,9 @@ StockCeramique{% endblock %} {% block content %}
                 <table class="w-full border-collapse">
                     <thead class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b-2 border-indigo-100">
                         <tr>
+                            <th class="text-left px-4 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider">
+                                <input type="checkbox" id="select-all-articles" onchange="toggleAllArticles()" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            </th>
                             <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider column-header" data-column="code-article">Code Article</th>
                             <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider column-header" data-column="designation">Désignation</th>
                             <th class="text-left px-6 py-4 text-sm font-bold text-gray-800 uppercase tracking-wider column-header" data-column="categorie">Catégorie</th>
@@ -1358,6 +1373,9 @@ StockCeramique{% endblock %} {% block content %}
 
         return `
             <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
+                <td class="px-4 py-4 whitespace-nowrap">
+                    <input type="checkbox" class="article-checkbox rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" data-article-id="${article.id}" onchange="updateBulkActions()">
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap column-cell" data-column="code-article">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center">
@@ -2179,6 +2197,93 @@ StockCeramique{% endblock %} {% block content %}
         cells.forEach((cell) => {
             cell.style.display = isVisible ? "" : "none";
         });
+    }
+
+    // Bulk Actions Functions
+    let selectedArticleIds = [];
+
+    function toggleAllArticles() {
+        const selectAll = document.getElementById('select-all-articles');
+        const checkboxes = document.querySelectorAll('.article-checkbox');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAll.checked;
+        });
+        
+        updateBulkActions();
+    }
+
+    function updateBulkActions() {
+        const checkboxes = document.querySelectorAll('.article-checkbox:checked');
+        selectedArticleIds = Array.from(checkboxes).map(cb => cb.dataset.articleId);
+        
+        const bulkActions = document.getElementById('bulk-actions');
+        const selectedCount = document.getElementById('selected-count');
+        const selectAll = document.getElementById('select-all-articles');
+        
+        if (selectedArticleIds.length > 0) {
+            bulkActions.classList.remove('hidden');
+            selectedCount.textContent = `${selectedArticleIds.length} sélectionné(s)`;
+        } else {
+            bulkActions.classList.add('hidden');
+        }
+        
+        // Update select all checkbox
+        const allCheckboxes = document.querySelectorAll('.article-checkbox');
+        const checkedCheckboxes = document.querySelectorAll('.article-checkbox:checked');
+        
+        if (checkedCheckboxes.length === 0) {
+            selectAll.indeterminate = false;
+            selectAll.checked = false;
+        } else if (checkedCheckboxes.length === allCheckboxes.length) {
+            selectAll.indeterminate = false;
+            selectAll.checked = true;
+        } else {
+            selectAll.indeterminate = true;
+        }
+    }
+
+    async function confirmBulkDelete() {
+        if (selectedArticleIds.length === 0) {
+            showToast('Aucun article sélectionné', 'warning');
+            return;
+        }
+        
+        if (confirm(`Êtes-vous sûr de vouloir supprimer ${selectedArticleIds.length} article(s) sélectionné(s) ? Cette action est irréversible.`)) {
+            await bulkDeleteArticles();
+        }
+    }
+
+    async function bulkDeleteArticles() {
+        try {
+            showToast('Suppression en cours...', 'info');
+            
+            const response = await fetch('/api/articles/bulk-delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('sessionToken')}`
+                },
+                body: JSON.stringify({ ids: selectedArticleIds })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showToast(result.message, 'success');
+                selectedArticleIds = [];
+                const bulkActions = document.getElementById('bulk-actions');
+                bulkActions.classList.add('hidden');
+                
+                // Reload articles
+                await loadArticles();
+            } else {
+                showToast(result.message || 'Erreur lors de la suppression', 'error');
+            }
+        } catch (error) {
+            console.error('Bulk delete error:', error);
+            showToast('Erreur lors de la suppression en masse', 'error');
+        }
     }
 
     // Add event listeners for column toggles

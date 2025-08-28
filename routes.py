@@ -531,6 +531,43 @@ def register_routes(app, db):
             db.session.rollback()
             return jsonify({'message': 'Erreur lors de la suppression'}), 500
 
+    @app.route("/api/articles/bulk-delete", methods=['POST'])
+    def bulk_delete_articles():
+        try:
+            data = request.get_json()
+            article_ids = data.get('ids', [])
+            
+            if not article_ids:
+                return jsonify({'message': 'Aucun ID fourni'}), 400
+            
+            # Find articles to delete
+            articles = Article.query.filter(Article.id.in_(article_ids)).all()
+            deleted_count = len(articles)
+            
+            # Delete articles
+            for article in articles:
+                db.session.delete(article)
+            
+            db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='BULK_DELETE',
+                entity_type='articles',
+                entity_name=f'{deleted_count} articles',
+                old_values={'count': deleted_count, 'ids': article_ids}
+            )
+            
+            return jsonify({
+                'message': f'{deleted_count} articles supprimés avec succès',
+                'deletedCount': deleted_count
+            }), 200
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Bulk delete articles error: {str(e)}")
+            return jsonify({'message': 'Erreur lors de la suppression en masse'}), 500
+
     @app.route("/api/articles/low-stock", methods=['GET'])
     def get_low_stock_articles():
         try:
@@ -640,6 +677,43 @@ def register_routes(app, db):
             db.session.rollback()
             return jsonify({'message': 'Erreur lors de la suppression'}), 500
 
+    @app.route("/api/suppliers/bulk-delete", methods=['POST'])
+    def bulk_delete_suppliers():
+        try:
+            data = request.get_json()
+            supplier_ids = data.get('ids', [])
+            
+            if not supplier_ids:
+                return jsonify({'message': 'Aucun ID fourni'}), 400
+            
+            # Find suppliers to delete
+            suppliers = Supplier.query.filter(Supplier.id.in_(supplier_ids)).all()
+            deleted_count = len(suppliers)
+            
+            # Delete suppliers
+            for supplier in suppliers:
+                db.session.delete(supplier)
+            
+            db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='BULK_DELETE',
+                entity_type='suppliers',
+                entity_name=f'{deleted_count} fournisseurs',
+                old_values={'count': deleted_count, 'ids': supplier_ids}
+            )
+            
+            return jsonify({
+                'message': f'{deleted_count} fournisseurs supprimés avec succès',
+                'deletedCount': deleted_count
+            }), 200
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Bulk delete suppliers error: {str(e)}")
+            return jsonify({'message': 'Erreur lors de la suppression en masse'}), 500
+
     # Requestors routes
     @app.route("/api/requestors", methods=['GET'])
     def get_requestors():
@@ -738,6 +812,43 @@ def register_routes(app, db):
         except Exception as e:
             db.session.rollback()
             return jsonify({'message': 'Erreur lors de la suppression'}), 500
+
+    @app.route("/api/requestors/bulk-delete", methods=['POST'])
+    def bulk_delete_requestors():
+        try:
+            data = request.get_json()
+            requestor_ids = data.get('ids', [])
+            
+            if not requestor_ids:
+                return jsonify({'message': 'Aucun ID fourni'}), 400
+            
+            # Find requestors to delete
+            requestors = Requestor.query.filter(Requestor.id.in_(requestor_ids)).all()
+            deleted_count = len(requestors)
+            
+            # Delete requestors
+            for requestor in requestors:
+                db.session.delete(requestor)
+            
+            db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='BULK_DELETE',
+                entity_type='requestors',
+                entity_name=f'{deleted_count} demandeurs',
+                old_values={'count': deleted_count, 'ids': requestor_ids}
+            )
+            
+            return jsonify({
+                'message': f'{deleted_count} demandeurs supprimés avec succès',
+                'deletedCount': deleted_count
+            }), 200
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Bulk delete requestors error: {str(e)}")
+            return jsonify({'message': 'Erreur lors de la suppression en masse'}), 500
 
     # Suppliers Import/Export routes
     @app.route("/api/suppliers/export", methods=['GET'])

@@ -12,6 +12,18 @@ StockCeramique{% endblock %} {% block content %}
             </p>
         </div>
         <div class="flex space-x-3">
+            <!-- Bulk Actions for Suppliers -->
+            <div id="bulk-actions-suppliers" class="hidden">
+                <button
+                    onclick="confirmBulkDeleteSuppliers()"
+                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-red-700"
+                >
+                    <i class="fas fa-trash mr-2"></i>
+                    Supprimer sélection
+                </button>
+                <span id="selected-count-suppliers" class="text-sm text-gray-600 ml-3">0 sélectionné(s)</span>
+            </div>
+            
             <button
                 onclick="exportSuppliers()"
                 class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
@@ -589,6 +601,9 @@ StockCeramique{% endblock %} {% block content %}
                 <table class="w-full">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="text-left p-4 text-sm font-medium text-gray-700">
+                                <input type="checkbox" id="select-all-suppliers" onchange="toggleAllSuppliers()" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </th>
                             <th class="text-left p-4 text-sm font-medium text-gray-700">Nom</th>
                             <th class="text-left p-4 text-sm font-medium text-gray-700">Contact</th>
                             <th class="text-left p-4 text-sm font-medium text-gray-700">Téléphone</th>
@@ -610,6 +625,9 @@ StockCeramique{% endblock %} {% block content %}
     function createSupplierRow(supplier) {
         return `
             <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="p-4">
+                    <input type="checkbox" class="supplier-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-supplier-id="${supplier.id}" onchange="updateBulkActionsSuppliers()">
+                </td>
                 <td class="p-4 text-sm font-medium text-gray-900">${supplier.nom}</td>
                 <td class="p-4 text-sm text-gray-700">${supplier.contact || "-"}</td>
                 <td class="p-4 text-sm text-gray-500">${supplier.telephone || "-"}</td>
@@ -886,6 +904,93 @@ StockCeramique{% endblock %} {% block content %}
             // Reset button
             importBtn.disabled = false;
             importBtn.innerHTML = '<i class="fas fa-upload"></i><span>Importer</span>';
+        }
+    }
+
+    // Bulk Actions Functions for Suppliers
+    let selectedSupplierIds = [];
+
+    function toggleAllSuppliers() {
+        const selectAll = document.getElementById('select-all-suppliers');
+        const checkboxes = document.querySelectorAll('.supplier-checkbox');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAll.checked;
+        });
+        
+        updateBulkActionsSuppliers();
+    }
+
+    function updateBulkActionsSuppliers() {
+        const checkboxes = document.querySelectorAll('.supplier-checkbox:checked');
+        selectedSupplierIds = Array.from(checkboxes).map(cb => cb.dataset.supplierId);
+        
+        const bulkActions = document.getElementById('bulk-actions-suppliers');
+        const selectedCount = document.getElementById('selected-count-suppliers');
+        const selectAll = document.getElementById('select-all-suppliers');
+        
+        if (selectedSupplierIds.length > 0) {
+            bulkActions.classList.remove('hidden');
+            selectedCount.textContent = `${selectedSupplierIds.length} sélectionné(s)`;
+        } else {
+            bulkActions.classList.add('hidden');
+        }
+        
+        // Update select all checkbox
+        const allCheckboxes = document.querySelectorAll('.supplier-checkbox');
+        const checkedCheckboxes = document.querySelectorAll('.supplier-checkbox:checked');
+        
+        if (checkedCheckboxes.length === 0) {
+            selectAll.indeterminate = false;
+            selectAll.checked = false;
+        } else if (checkedCheckboxes.length === allCheckboxes.length) {
+            selectAll.indeterminate = false;
+            selectAll.checked = true;
+        } else {
+            selectAll.indeterminate = true;
+        }
+    }
+
+    async function confirmBulkDeleteSuppliers() {
+        if (selectedSupplierIds.length === 0) {
+            showToast('Aucun fournisseur sélectionné', 'warning');
+            return;
+        }
+        
+        if (confirm(`Êtes-vous sûr de vouloir supprimer ${selectedSupplierIds.length} fournisseur(s) sélectionné(s) ? Cette action est irréversible.`)) {
+            await bulkDeleteSuppliers();
+        }
+    }
+
+    async function bulkDeleteSuppliers() {
+        try {
+            showToast('Suppression en cours...', 'info');
+            
+            const response = await fetch('/api/suppliers/bulk-delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('sessionToken')}`
+                },
+                body: JSON.stringify({ ids: selectedSupplierIds })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showToast(result.message, 'success');
+                selectedSupplierIds = [];
+                const bulkActions = document.getElementById('bulk-actions-suppliers');
+                bulkActions.classList.add('hidden');
+                
+                // Reload suppliers
+                await loadSuppliers();
+            } else {
+                showToast(result.message || 'Erreur lors de la suppression', 'error');
+            }
+        } catch (error) {
+            console.error('Bulk delete error:', error);
+            showToast('Erreur lors de la suppression en masse', 'error');
         }
     }
 </script>
