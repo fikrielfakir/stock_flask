@@ -1,27 +1,43 @@
-{% extends "base.html" %}
-
-{% block title %}Gestion des Articles - StockCeramique{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Gestion des Articles -
+StockCeramique{% endblock %} {% block content %}
 <div class="space-y-6" data-testid="articles-page">
     <!-- Modern Header with Integrated Actions -->
     <div class="glass-card rounded-2xl shadow-xl mb-8 overflow-hidden">
-        <div class="px-8 py-6" style="background: linear-gradient(to right, var(--primary-color), var(--primary-light), var(--primary-dark));">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+        <div
+            class="px-8 py-6"
+            style="
+                background: linear-gradient(
+                    to right,
+                    var(--primary-color),
+                    var(--primary-light),
+                    var(--primary-dark)
+                );
+            "
+        >
+            <div
+                class="flex flex-col lg:flex-row lg:items-center justify-between"
+            >
                 <div class="flex items-center space-x-4 mb-4 lg:mb-0">
-                    <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center"
+                    >
                         <i class="fas fa-boxes text-white text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl lg:text-3xl font-bold text-white">Gestion des Articles</h1>
-                        <p class="text-blue-100 text-sm mt-1" id="articles-count">
+                        <h1 class="text-2xl lg:text-3xl font-bold text-white">
+                            Gestion des Articles
+                        </h1>
+                        <p
+                            class="text-blue-100 text-sm mt-1"
+                            id="articles-count"
+                        >
                             Chargement des articles...
                         </p>
                     </div>
                 </div>
-                
+
                 <div class="flex flex-wrap gap-3">
-                    <button 
+                    <button
                         onclick="toggleAnalytics()"
                         class="inline-flex items-center px-4 py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-sm font-semibold text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
                         id="analytics-toggle"
@@ -29,14 +45,14 @@
                         <i class="fas fa-chart-bar mr-2"></i>
                         Analytics
                     </button>
-                    <button 
+                    <button
                         onclick="openImportExport()"
                         class="inline-flex items-center px-4 py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-sm font-semibold text-white hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
                     >
                         <i class="fas fa-upload mr-2"></i>
                         Import/Export
                     </button>
-                    <button 
+                    <button
                         onclick="openArticleForm()"
                         class="inline-flex items-center px-6 py-2.5 bg-white text-indigo-600 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50"
                     >
@@ -51,25 +67,33 @@
         <div class="px-8 py-6 bg-white">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="group">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Rechercher</label>
+                    <label
+                        class="block text-sm font-semibold text-gray-700 mb-2"
+                        >Rechercher</label
+                    >
                     <div class="relative">
-                        <input 
-                            type="text" 
-                            placeholder="Code, désignation, marque..." 
+                        <input
+                            type="text"
+                            placeholder="Code, désignation, marque..."
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 pl-10"
                             id="search-input"
                             data-testid="input-search"
                             onkeyup="filterArticles()"
+                        />
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
                         >
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
                     </div>
                 </div>
                 <div class="group">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Catégorie</label>
+                    <label
+                        class="block text-sm font-semibold text-gray-700 mb-2"
+                        >Catégorie</label
+                    >
                     <div class="relative">
-                        <select 
+                        <select
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none"
                             id="category-filter"
                             data-testid="select-category"
@@ -77,15 +101,20 @@
                         >
                             <option value="all">Toutes les catégories</option>
                         </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <div
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                        >
                             <i class="fas fa-chevron-down text-gray-400"></i>
                         </div>
                     </div>
                 </div>
                 <div class="group">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Niveau de Stock</label>
+                    <label
+                        class="block text-sm font-semibold text-gray-700 mb-2"
+                        >Niveau de Stock</label
+                    >
                     <div class="relative">
-                        <select 
+                        <select
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none"
                             id="stock-filter"
                             data-testid="select-stock"
@@ -96,14 +125,19 @@
                             <option value="normal">Stock normal</option>
                             <option value="high">Stock élevé</option>
                         </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <div
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                        >
                             <i class="fas fa-chevron-down text-gray-400"></i>
                         </div>
                     </div>
                 </div>
                 <div class="group">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Actions</label>
-                    <button 
+                    <label
+                        class="block text-sm font-semibold text-gray-700 mb-2"
+                        >Actions</label
+                    >
+                    <button
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 hover:border-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         onclick="clearFilters()"
                         data-testid="button-clear-filters"
@@ -117,28 +151,41 @@
     </div>
 
     <!-- Enhanced Analytics Section -->
-    <div id="analytics-section" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+    <div
+        id="analytics-section"
+        class="hidden grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8"
+    >
         <div class="glass-card rounded-2xl shadow-xl overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
+            <div
+                class="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4"
+            >
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                    <div
+                        class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center"
+                    >
                         <i class="fas fa-chart-pie text-white text-sm"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-white">Articles par Catégorie</h3>
+                    <h3 class="text-lg font-bold text-white">
+                        Articles par Catégorie
+                    </h3>
                 </div>
             </div>
             <div class="p-6 bg-white">
                 <canvas id="category-chart" height="200"></canvas>
             </div>
         </div>
-        
+
         <div class="glass-card rounded-2xl shadow-xl overflow-hidden">
             <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-4">
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                    <div
+                        class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center"
+                    >
                         <i class="fas fa-chart-bar text-white text-sm"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-white">Niveaux de Stock</h3>
+                    <h3 class="text-lg font-bold text-white">
+                        Niveaux de Stock
+                    </h3>
                 </div>
             </div>
             <div class="p-6 bg-white">
@@ -149,22 +196,30 @@
 
     <!-- Streamlined Articles Table Card -->
     <div class="glass-card rounded-2xl shadow-xl overflow-hidden">
-        <div class="px-8 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+        <div
+            class="px-8 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200"
+        >
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                    <div
+                        class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center"
+                    >
                         <i class="fas fa-table text-indigo-600 text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-gray-900">Liste des Articles</h3>
-                        <p class="text-sm text-gray-600">Catalogue complet des pièces détachées</p>
+                        <h3 class="text-xl font-bold text-gray-900">
+                            Liste des Articles
+                        </h3>
+                        <p class="text-sm text-gray-600">
+                            Catalogue complet des pièces détachées
+                        </p>
                     </div>
                 </div>
-                
+
                 <div class="flex items-center space-x-2">
                     <!-- Column Visibility Control -->
                     <div class="relative">
-                        <button 
+                        <button
                             onclick="toggleColumnVisibility()"
                             class="inline-flex items-center px-4 py-2 text-white rounded-xl text-sm font-semibold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             style="background: var(--primary-color); hover:background: var(--primary-dark);"
@@ -173,72 +228,179 @@
                             <i class="fas fa-eye mr-2"></i>
                             Visibilité de la colonne
                         </button>
-                        <div id="column-visibility-dropdown" class="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-xl hidden z-50">
+                        <div
+                            id="column-visibility-dropdown"
+                            class="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-xl hidden z-50"
+                        >
                             <div class="p-4">
                                 <div class="mb-3">
-                                    <h4 class="text-sm font-bold text-gray-900 mb-2">Colonnes visibles</h4>
-                                    <p class="text-xs text-gray-600">Cochez les colonnes à afficher dans le tableau</p>
+                                    <h4
+                                        class="text-sm font-bold text-gray-900 mb-2"
+                                    >
+                                        Colonnes visibles
+                                    </h4>
+                                    <p class="text-xs text-gray-600">
+                                        Cochez les colonnes à afficher dans le
+                                        tableau
+                                    </p>
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="flex items-center space-x-3 cursor-pointer">
-                                        <input type="checkbox" checked class="column-toggle" data-column="code-article" 
-                                               style="accent-color: var(--primary-color);">
-                                        <span class="text-sm text-gray-700">Code Article</span>
+                                    <label
+                                        class="flex items-center space-x-3 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            class="column-toggle"
+                                            data-column="code-article"
+                                            style="
+                                                accent-color: var(
+                                                    --primary-color
+                                                );
+                                            "
+                                        />
+                                        <span class="text-sm text-gray-700"
+                                            >Code Article</span
+                                        >
                                     </label>
-                                    <label class="flex items-center space-x-3 cursor-pointer">
-                                        <input type="checkbox" checked class="column-toggle" data-column="designation" 
-                                               style="accent-color: var(--primary-color);">
-                                        <span class="text-sm text-gray-700">Désignation</span>
+                                    <label
+                                        class="flex items-center space-x-3 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            class="column-toggle"
+                                            data-column="designation"
+                                            style="
+                                                accent-color: var(
+                                                    --primary-color
+                                                );
+                                            "
+                                        />
+                                        <span class="text-sm text-gray-700"
+                                            >Désignation</span
+                                        >
                                     </label>
-                                    <label class="flex items-center space-x-3 cursor-pointer">
-                                        <input type="checkbox" checked class="column-toggle" data-column="categorie" 
-                                               style="accent-color: var(--primary-color);">
-                                        <span class="text-sm text-gray-700">Catégorie</span>
+                                    <label
+                                        class="flex items-center space-x-3 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            class="column-toggle"
+                                            data-column="categorie"
+                                            style="
+                                                accent-color: var(
+                                                    --primary-color
+                                                );
+                                            "
+                                        />
+                                        <span class="text-sm text-gray-700"
+                                            >Catégorie</span
+                                        >
                                     </label>
-                                    <label class="flex items-center space-x-3 cursor-pointer">
-                                        <input type="checkbox" checked class="column-toggle" data-column="stock" 
-                                               style="accent-color: var(--primary-color);">
-                                        <span class="text-sm text-gray-700">Stock</span>
+                                    <label
+                                        class="flex items-center space-x-3 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            class="column-toggle"
+                                            data-column="stock"
+                                            style="
+                                                accent-color: var(
+                                                    --primary-color
+                                                );
+                                            "
+                                        />
+                                        <span class="text-sm text-gray-700"
+                                            >Stock</span
+                                        >
                                     </label>
-                                    <label class="flex items-center space-x-3 cursor-pointer">
-                                        <input type="checkbox" checked class="column-toggle" data-column="prix" 
-                                               style="accent-color: var(--primary-color);">
-                                        <span class="text-sm text-gray-700">Prix Unitaire</span>
+                                    <label
+                                        class="flex items-center space-x-3 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            class="column-toggle"
+                                            data-column="prix"
+                                            style="
+                                                accent-color: var(
+                                                    --primary-color
+                                                );
+                                            "
+                                        />
+                                        <span class="text-sm text-gray-700"
+                                            >Prix Unitaire</span
+                                        >
                                     </label>
-                                    <label class="flex items-center space-x-3 cursor-pointer">
-                                        <input type="checkbox" checked class="column-toggle" data-column="fournisseur" 
-                                               style="accent-color: var(--primary-color);">
-                                        <span class="text-sm text-gray-700">Fournisseur</span>
+                                    <label
+                                        class="flex items-center space-x-3 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            class="column-toggle"
+                                            data-column="fournisseur"
+                                            style="
+                                                accent-color: var(
+                                                    --primary-color
+                                                );
+                                            "
+                                        />
+                                        <span class="text-sm text-gray-700"
+                                            >Fournisseur</span
+                                        >
                                     </label>
-                                    <label class="flex items-center space-x-3 cursor-pointer">
-                                        <input type="checkbox" checked class="column-toggle" data-column="actions" 
-                                               style="accent-color: var(--primary-color);">
-                                        <span class="text-sm text-gray-700">Actions</span>
+                                    <label
+                                        class="flex items-center space-x-3 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            class="column-toggle"
+                                            data-column="actions"
+                                            style="
+                                                accent-color: var(
+                                                    --primary-color
+                                                );
+                                            "
+                                        />
+                                        <span class="text-sm text-gray-700"
+                                            >Actions</span
+                                        >
                                     </label>
                                 </div>
-                                <div class="mt-4 pt-3 border-t border-gray-200 flex justify-between">
-                                    <button onclick="toggleAllColumns(false)" 
-                                            class="text-xs px-3 py-1 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:border-gray-400 transition-all duration-200">
+                                <div
+                                    class="mt-4 pt-3 border-t border-gray-200 flex justify-between"
+                                >
+                                    <button
+                                        onclick="toggleAllColumns(false)"
+                                        class="text-xs px-3 py-1 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:border-gray-400 transition-all duration-200"
+                                    >
                                         Tout masquer
                                     </button>
-                                    <button onclick="toggleAllColumns(true)" 
-                                            class="text-xs px-3 py-1 text-white rounded-lg transition-all duration-200"
-                                            style="background: var(--primary-color);">
+                                    <button
+                                        onclick="toggleAllColumns(true)"
+                                        class="text-xs px-3 py-1 text-white rounded-lg transition-all duration-200"
+                                        style="background: var(--primary-color)"
+                                    >
                                         Tout afficher
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <button 
+
+                    <button
                         onclick="exportData('pdf')"
                         class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-semibold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                         <i class="fas fa-file-pdf mr-2"></i>
                         Export PDF
                     </button>
-                    <button 
+                    <button
                         onclick="exportData('excel')"
                         class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
@@ -258,28 +420,40 @@
                         <div class="flex items-center space-x-4">
                             <div class="h-12 w-12 bg-gray-200 rounded-xl"></div>
                             <div class="flex-1 space-y-2">
-                                <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-                                <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                                <div
+                                    class="h-4 bg-gray-200 rounded w-3/4"
+                                ></div>
+                                <div
+                                    class="h-3 bg-gray-200 rounded w-1/2"
+                                ></div>
                             </div>
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="h-12 w-12 bg-gray-200 rounded-xl"></div>
                             <div class="flex-1 space-y-2">
-                                <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-                                <div class="h-3 bg-gray-200 rounded w-1/3"></div>
+                                <div
+                                    class="h-4 bg-gray-200 rounded w-2/3"
+                                ></div>
+                                <div
+                                    class="h-3 bg-gray-200 rounded w-1/3"
+                                ></div>
                             </div>
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="h-12 w-12 bg-gray-200 rounded-xl"></div>
                             <div class="flex-1 space-y-2">
-                                <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-                                <div class="h-3 bg-gray-200 rounded w-2/5"></div>
+                                <div
+                                    class="h-4 bg-gray-200 rounded w-5/6"
+                                ></div>
+                                <div
+                                    class="h-3 bg-gray-200 rounded w-2/5"
+                                ></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Pagination Controls -->
             <div id="pagination-controls" class="mt-6 px-6 pb-6"></div>
         </div>
@@ -287,162 +461,298 @@
 </div>
 
 <!-- Modern Article Form Modal -->
-<div id="article-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 animate-fade-in">
+<div
+    id="article-modal"
+    class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 animate-fade-in"
+>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 scale-95 hover:scale-100">
+        <div
+            class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 scale-95 hover:scale-100"
+        >
             <!-- Header with Gradient -->
-            <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-3xl px-8 py-6">
+            <div
+                class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-3xl px-8 py-6"
+            >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+                        >
                             <i class="fas fa-box text-white text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white" id="modal-title">Nouvel Article</h3>
-                            <p class="text-blue-100 text-sm">Ajouter un nouveau produit au stock</p>
+                            <h3
+                                class="text-xl font-bold text-white"
+                                id="modal-title"
+                            >
+                                Nouvel Article
+                            </h3>
+                            <p class="text-blue-100 text-sm">
+                                Ajouter un nouveau produit au stock
+                            </p>
                         </div>
                     </div>
-                    <button onclick="closeArticleForm()" 
-                            class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center">
+                    <button
+                        onclick="closeArticleForm()"
+                        class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center"
+                    >
                         <i class="fas fa-times text-lg"></i>
                     </button>
                 </div>
             </div>
-            
+
             <div class="p-8">
-                <form id="article-form" onsubmit="saveArticle(event)" class="space-y-6">
-                    <input type="hidden" id="article-id" name="id">
-                    
+                <form
+                    id="article-form"
+                    onsubmit="saveArticle(event)"
+                    class="space-y-6"
+                >
+                    <input type="hidden" id="article-id" name="id" />
+
                     <!-- Basic Information Section -->
                     <div class="space-y-6">
                         <div class="border-l-4 border-blue-500 pl-4">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Informations de base</h4>
+                            <h4
+                                class="text-lg font-semibold text-gray-900 mb-4"
+                            >
+                                Informations de base
+                            </h4>
                         </div>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Code Article *</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Code Article *</label
+                                >
                                 <div class="relative">
-                                    <input type="text" id="codeArticle" name="codeArticle" required
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                                           placeholder="Ex: ART-001">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-barcode text-gray-400"></i>
+                                    <input
+                                        type="text"
+                                        id="codeArticle"
+                                        name="codeArticle"
+                                        required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                        placeholder="Ex: ART-001"
+                                    />
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-barcode text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Catégorie *</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Catégorie *</label
+                                >
                                 <div class="relative">
-                                    <input type="text" id="categorie" name="categorie" required
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                                           placeholder="Ex: Céramique industrielle">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-tags text-gray-400"></i>
+                                    <input
+                                        type="text"
+                                        id="categorie"
+                                        name="categorie"
+                                        required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                        placeholder="Ex: Céramique industrielle"
+                                    />
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-tags text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="group">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Désignation *</label>
+                            <label
+                                class="block text-sm font-semibold text-gray-700 mb-2"
+                                >Désignation *</label
+                            >
                             <div class="relative">
-                                <input type="text" id="designation" name="designation" required
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                                       placeholder="Description détaillée du produit">
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-align-left text-gray-400"></i>
+                                <input
+                                    type="text"
+                                    id="designation"
+                                    name="designation"
+                                    required
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                    placeholder="Description détaillée du produit"
+                                />
+                                <div
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                >
+                                    <i
+                                        class="fas fa-align-left text-gray-400"
+                                    ></i>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Marque</label>
-                                <input type="text" id="marque" name="marque"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                                       placeholder="Marque du fabricant">
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Marque</label
+                                >
+                                <input
+                                    type="text"
+                                    id="marque"
+                                    name="marque"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                    placeholder="Marque du fabricant"
+                                />
                             </div>
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Référence</label>
-                                <input type="text" id="reference" name="reference"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                                       placeholder="Référence fabricant">
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Référence</label
+                                >
+                                <input
+                                    type="text"
+                                    id="reference"
+                                    name="reference"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                    placeholder="Référence fabricant"
+                                />
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Stock & Pricing Section -->
                     <div class="space-y-6">
                         <div class="border-l-4 border-green-500 pl-4">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4">Stock et tarification</h4>
+                            <h4
+                                class="text-lg font-semibold text-gray-900 mb-4"
+                            >
+                                Stock et tarification
+                            </h4>
                         </div>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Stock Initial *</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Stock Initial *</label
+                                >
                                 <div class="relative">
-                                    <input type="number" id="stockInitial" name="stockInitial" required min="0"
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                                           placeholder="0">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-cubes text-gray-400"></i>
+                                    <input
+                                        type="number"
+                                        id="stockInitial"
+                                        name="stockInitial"
+                                        required
+                                        min="0"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                        placeholder="0"
+                                    />
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-cubes text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Unité</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Unité</label
+                                >
                                 <div class="relative">
-                                    <select id="unite" name="unite"
-                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none">
+                                    <select
+                                        id="unite"
+                                        name="unite"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none"
+                                    >
                                         <option value="pcs">Pièces</option>
                                         <option value="kg">Kilogrammes</option>
                                         <option value="m">Mètres</option>
                                         <option value="l">Litres</option>
                                     </select>
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-chevron-down text-gray-400"></i>
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-chevron-down text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Seuil Minimum</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >Seuil Minimum</label
+                                >
                                 <div class="relative">
-                                    <input type="number" id="seuilMinimum" name="seuilMinimum" min="0" value="10"
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                                           placeholder="10">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-exclamation-triangle text-orange-400"></i>
+                                    <input
+                                        type="number"
+                                        id="seuilMinimum"
+                                        name="seuilMinimum"
+                                        min="0"
+                                        value="10"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                                        placeholder="10"
+                                    />
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-exclamation-triangle text-orange-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="group">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Prix Unitaire</label>
+                            <label
+                                class="block text-sm font-semibold text-gray-700 mb-2"
+                                >Prix Unitaire</label
+                            >
                             <div class="relative">
-                                <input type="number" id="prixUnitaire" name="prixUnitaire" step="0.01" min="0"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 pl-12"
-                                       placeholder="0.00">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 sm:text-sm">MAD</span>
+                                <input
+                                    type="number"
+                                    id="prixUnitaire"
+                                    name="prixUnitaire"
+                                    step="0.01"
+                                    min="0"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300 pl-12"
+                                    placeholder="0.00"
+                                />
+                                <div
+                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                                >
+                                    <span class="text-gray-500 sm:text-sm"
+                                        >MAD</span
+                                    >
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
-                        <button type="button" onclick="closeArticleForm()"
-                                class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                    <div
+                        class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100"
+                    >
+                        <button
+                            type="button"
+                            onclick="closeArticleForm()"
+                            class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2"
+                        >
                             <i class="fas fa-times"></i>
                             <span>Annuler</span>
                         </button>
-                        <button type="submit"
-                                class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2">
+                        <button
+                            type="submit"
+                            class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2"
+                        >
                             <i class="fas fa-save"></i>
                             <span>Enregistrer</span>
                         </button>
@@ -454,36 +764,80 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div id="delete-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-60 hidden">
+<div
+    id="delete-confirmation-modal"
+    class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-20 hidden"
+>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 hover:scale-100">
+        <div
+            class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 hover:scale-100"
+        >
             <!-- Modern Header -->
-            <div class="rounded-t-3xl px-8 py-6" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+            <div
+                class="rounded-t-3xl px-8 py-6"
+                style="
+                    background: linear-gradient(
+                        135deg,
+                        #dc2626 0%,
+                        #b91c1c 100%
+                    );
+                "
+            >
                 <div class="flex items-center justify-center">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg mr-4">
-                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                    <div
+                        class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg mr-4"
+                    >
+                        <i
+                            class="fas fa-exclamation-triangle text-white text-xl"
+                        ></i>
                     </div>
                     <div class="text-center">
-                        <h3 class="text-xl font-bold text-white tracking-tight">Confirmation de Suppression</h3>
+                        <h3 class="text-xl font-bold text-white tracking-tight">
+                            Confirmation de Suppression
+                        </h3>
                     </div>
                 </div>
             </div>
-            
+
             <div class="p-8 space-y-6">
                 <div class="text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                    <div
+                        class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center"
+                    >
                         <i class="fas fa-trash text-3xl text-red-600"></i>
                     </div>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Êtes-vous sûr de vouloir supprimer cet article ?</h4>
-                    <p class="text-gray-600">Cette action est irréversible et supprimera définitivement l'article de votre inventaire.</p>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                        Êtes-vous sûr de vouloir supprimer cet article ?
+                    </h4>
+                    <p class="text-gray-600">
+                        Cette action est irréversible et supprimera
+                        définitivement l'article de votre inventaire.
+                    </p>
                 </div>
-                
-                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
-                    <button type="button" onclick="closeDeleteConfirmation()" class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+
+                <div
+                    class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100"
+                >
+                    <button
+                        type="button"
+                        onclick="closeDeleteConfirmation()"
+                        class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
                         <i class="fas fa-times"></i>
                         <span>Annuler</span>
                     </button>
-                    <button type="button" onclick="confirmDeleteArticle()" class="px-6 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
+                    <button
+                        type="button"
+                        onclick="confirmDeleteArticle()"
+                        class="px-6 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white"
+                        style="
+                            background: linear-gradient(
+                                135deg,
+                                #dc2626 0%,
+                                #ef4444 100%
+                            );
+                        "
+                    >
                         <i class="fas fa-trash"></i>
                         <span>Supprimer</span>
                     </button>
@@ -494,11 +848,22 @@
 </div>
 
 <!-- Import/Export Modal -->
-<div id="import-export-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50" data-testid="import-export-modal">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+<div
+    id="import-export-modal"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50"
+    data-testid="import-export-modal"
+>
+    <div
+        class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white"
+    >
         <div class="flex items-center justify-between border-b pb-4">
-            <h3 class="text-lg font-medium text-gray-900">Import/Export Articles</h3>
-            <button onclick="closeImportExport()" class="text-gray-400 hover:text-gray-600">
+            <h3 class="text-lg font-medium text-gray-900">
+                Import/Export Articles
+            </h3>
+            <button
+                onclick="closeImportExport()"
+                class="text-gray-400 hover:text-gray-600"
+            >
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -507,52 +872,116 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Export Section -->
                 <div class="space-y-4">
-                    <h4 class="text-md font-semibold text-gray-900 mb-4 flex items-center">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);">
+                    <h4
+                        class="text-md font-semibold text-gray-900 mb-4 flex items-center"
+                    >
+                        <div
+                            class="w-8 h-8 rounded-lg flex items-center justify-center mr-3"
+                            style="
+                                background: linear-gradient(
+                                    135deg,
+                                    var(--primary-color) 0%,
+                                    var(--primary-light) 100%
+                                );
+                            "
+                        >
                             <i class="fas fa-download text-white text-sm"></i>
                         </div>
                         Exporter Articles
                     </h4>
-                    
-                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200">
+
+                    <div
+                        class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200"
+                    >
                         <p class="text-sm text-gray-600 mb-6">
-                            Téléchargez tous vos articles dans le format de votre choix avec des options personnalisées.
+                            Téléchargez tous vos articles dans le format de
+                            votre choix avec des options personnalisées.
                         </p>
-                        
+
                         <!-- Export Options -->
                         <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Options d'export</label>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-3"
+                                >Options d'export</label
+                            >
                             <div class="space-y-2">
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="include-stock" checked class="rounded border-gray-300 focus:ring-offset-0" style="color: var(--primary-color); --tw-ring-color: var(--primary-color);">
-                                    <span class="ml-2 text-sm text-gray-600">Inclure les données de stock</span>
+                                    <input
+                                        type="checkbox"
+                                        id="include-stock"
+                                        checked
+                                        class="rounded border-gray-300 focus:ring-offset-0"
+                                        style="
+                                            color: var(--primary-color);
+                                            --tw-ring-color: var(
+                                                --primary-color
+                                            );
+                                        "
+                                    />
+                                    <span class="ml-2 text-sm text-gray-600"
+                                        >Inclure les données de stock</span
+                                    >
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="include-prices" checked class="rounded border-gray-300 focus:ring-offset-0" style="color: var(--primary-color); --tw-ring-color: var(--primary-color);">
-                                    <span class="ml-2 text-sm text-gray-600">Inclure les prix</span>
+                                    <input
+                                        type="checkbox"
+                                        id="include-prices"
+                                        checked
+                                        class="rounded border-gray-300 focus:ring-offset-0"
+                                        style="
+                                            color: var(--primary-color);
+                                            --tw-ring-color: var(
+                                                --primary-color
+                                            );
+                                        "
+                                    />
+                                    <span class="ml-2 text-sm text-gray-600"
+                                        >Inclure les prix</span
+                                    >
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="include-suppliers" checked class="rounded border-gray-300 focus:ring-offset-0" style="color: var(--primary-color); --tw-ring-color: var(--primary-color);">
-                                    <span class="ml-2 text-sm text-gray-600">Inclure les fournisseurs</span>
+                                    <input
+                                        type="checkbox"
+                                        id="include-suppliers"
+                                        checked
+                                        class="rounded border-gray-300 focus:ring-offset-0"
+                                        style="
+                                            color: var(--primary-color);
+                                            --tw-ring-color: var(
+                                                --primary-color
+                                            );
+                                        "
+                                    />
+                                    <span class="ml-2 text-sm text-gray-600"
+                                        >Inclure les fournisseurs</span
+                                    >
                                 </label>
                             </div>
                         </div>
-                        
+
                         <!-- Export Buttons -->
                         <div class="grid grid-cols-1 gap-3">
                             <!-- PDF Export -->
-                            <button 
+                            <button
                                 onclick="exportToPDF()"
                                 class="group relative w-full flex items-center justify-between px-6 py-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
                                 data-testid="button-export-pdf"
                             >
-                                <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                ></div>
                                 <div class="relative flex items-center">
-                                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-red-200 transition-colors duration-300">
-                                        <i class="fas fa-file-pdf text-red-600 text-lg"></i>
+                                    <div
+                                        class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-red-200 transition-colors duration-300"
+                                    >
+                                        <i
+                                            class="fas fa-file-pdf text-red-600 text-lg"
+                                        ></i>
                                     </div>
                                     <div class="text-left">
-                                        <div class="font-semibold text-gray-900 group-hover:text-red-700 transition-colors duration-300">
+                                        <div
+                                            class="font-semibold text-gray-900 group-hover:text-red-700 transition-colors duration-300"
+                                        >
                                             Export PDF
                                         </div>
                                         <div class="text-sm text-gray-500">
@@ -561,48 +990,74 @@
                                     </div>
                                 </div>
                                 <div class="relative">
-                                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all duration-300"></i>
+                                    <i
+                                        class="fas fa-arrow-right text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all duration-300"
+                                    ></i>
                                 </div>
                             </button>
-                            
+
                             <!-- Excel Export -->
-                            <button 
+                            <button
                                 onclick="exportToExcel()"
                                 class="group relative w-full flex items-center justify-between px-6 py-4 bg-white rounded-xl border-2 border-gray-200 hover:border-green-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
                                 data-testid="button-export-excel"
                             >
-                                <div class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-green-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-green-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                ></div>
                                 <div class="relative flex items-center">
-                                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors duration-300">
-                                        <i class="fas fa-file-excel text-green-600 text-lg"></i>
+                                    <div
+                                        class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors duration-300"
+                                    >
+                                        <i
+                                            class="fas fa-file-excel text-green-600 text-lg"
+                                        ></i>
                                     </div>
                                     <div class="text-left">
-                                        <div class="font-semibold text-gray-900 group-hover:text-green-700 transition-colors duration-300">
+                                        <div
+                                            class="font-semibold text-gray-900 group-hover:text-green-700 transition-colors duration-300"
+                                        >
                                             Export Excel
                                         </div>
                                         <div class="text-sm text-gray-500">
-                                            Feuille de calcul avec données filtrables
+                                            Feuille de calcul avec données
+                                            filtrables
                                         </div>
                                     </div>
                                 </div>
                                 <div class="relative">
-                                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all duration-300"></i>
+                                    <i
+                                        class="fas fa-arrow-right text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all duration-300"
+                                    ></i>
                                 </div>
                             </button>
-                            
+
                             <!-- CSV Export -->
-                            <button 
+                            <button
                                 onclick="exportToCSV()"
                                 class="group relative w-full flex items-center justify-between px-6 py-4 bg-white rounded-xl border-2 border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden"
                                 data-testid="button-export-csv"
-                                style="border-color: var(--primary-color); background: rgba(0, 61, 157, 0.02);"
+                                style="
+                                    border-color: var(--primary-color);
+                                    background: rgba(0, 61, 157, 0.02);
+                                "
                             >
                                 <div class="relative flex items-center">
-                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center mr-4 transition-colors duration-300" style="background: rgba(0, 61, 157, 0.1);">
-                                        <i class="fas fa-file-csv text-lg" style="color: var(--primary-color);"></i>
+                                    <div
+                                        class="w-12 h-12 rounded-lg flex items-center justify-center mr-4 transition-colors duration-300"
+                                        style="
+                                            background: rgba(0, 61, 157, 0.1);
+                                        "
+                                    >
+                                        <i
+                                            class="fas fa-file-csv text-lg"
+                                            style="color: var(--primary-color)"
+                                        ></i>
                                     </div>
                                     <div class="text-left">
-                                        <div class="font-semibold text-gray-900 transition-colors duration-300">
+                                        <div
+                                            class="font-semibold text-gray-900 transition-colors duration-300"
+                                        >
                                             Export CSV
                                         </div>
                                         <div class="text-sm text-gray-500">
@@ -611,21 +1066,38 @@
                                     </div>
                                 </div>
                                 <div class="relative">
-                                    <i class="fas fa-arrow-right text-gray-400 group-hover:translate-x-1 transition-all duration-300" style="color: var(--primary-color);"></i>
+                                    <i
+                                        class="fas fa-arrow-right text-gray-400 group-hover:translate-x-1 transition-all duration-300"
+                                        style="color: var(--primary-color)"
+                                    ></i>
                                 </div>
                             </button>
                         </div>
-                        
+
                         <!-- Export Progress -->
                         <div id="export-progress" class="hidden mt-4">
-                            <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <div
+                                class="bg-white rounded-lg p-4 border border-gray-200"
+                            >
                                 <div class="flex items-center">
-                                    <div class="w-6 h-6 rounded-full mr-3" style="background: var(--primary-color);">
-                                        <div class="w-full h-full rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                                    <div
+                                        class="w-6 h-6 rounded-full mr-3"
+                                        style="background: var(--primary-color)"
+                                    >
+                                        <div
+                                            class="w-full h-full rounded-full border-2 border-white border-t-transparent animate-spin"
+                                        ></div>
                                     </div>
                                     <div>
-                                        <div class="text-sm font-medium text-gray-900">Génération en cours...</div>
-                                        <div class="text-xs text-gray-500">Préparation de votre fichier d'export</div>
+                                        <div
+                                            class="text-sm font-medium text-gray-900"
+                                        >
+                                            Génération en cours...
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            Préparation de votre fichier
+                                            d'export
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -636,17 +1108,19 @@
                 <!-- Import Section -->
                 <div class="space-y-4">
                     <h4 class="text-md font-semibold text-gray-900 mb-4">
-                        <i class="fas fa-upload mr-2 text-green-600"></i>Importer Articles
+                        <i class="fas fa-upload mr-2 text-green-600"></i
+                        >Importer Articles
                     </h4>
-                    
+
                     <div class="bg-gray-50 rounded-lg p-4">
                         <p class="text-sm text-gray-600 mb-4">
-                            Importez vos articles depuis un fichier CSV ou Excel. 
-                            Téléchargez d'abord le template pour voir le format requis.
+                            Importez vos articles depuis un fichier CSV ou
+                            Excel. Téléchargez d'abord le template pour voir le
+                            format requis.
                         </p>
-                        
+
                         <div class="space-y-3">
-                            <button 
+                            <button
                                 onclick="downloadTemplate()"
                                 class="w-full flex items-center justify-center px-4 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
                                 data-testid="button-download-template"
@@ -654,21 +1128,25 @@
                                 <i class="fas fa-download mr-2"></i>
                                 Télécharger Template
                             </button>
-                            
-                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                                <input 
-                                    type="file" 
-                                    id="import-file-input" 
-                                    accept=".csv,.xlsx,.xls" 
+
+                            <div
+                                class="border-2 border-dashed border-gray-300 rounded-lg p-4"
+                            >
+                                <input
+                                    type="file"
+                                    id="import-file-input"
+                                    accept=".csv,.xlsx,.xls"
                                     onchange="onFileSelected()"
                                     class="hidden"
                                     data-testid="input-import-file"
-                                >
-                                <label 
-                                    for="import-file-input" 
+                                />
+                                <label
+                                    for="import-file-input"
                                     class="cursor-pointer block text-center"
                                 >
-                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <i
+                                        class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"
+                                    ></i>
                                     <p class="text-sm text-gray-600">
                                         Cliquez pour sélectionner un fichier
                                     </p>
@@ -677,12 +1155,15 @@
                                     </p>
                                 </label>
                             </div>
-                            
-                            <p id="file-name" class="text-sm text-gray-600 text-center">
+
+                            <p
+                                id="file-name"
+                                class="text-sm text-gray-600 text-center"
+                            >
                                 Aucun fichier sélectionné
                             </p>
-                            
-                            <button 
+
+                            <button
                                 id="import-btn"
                                 onclick="importArticles()"
                                 disabled
@@ -698,16 +1179,32 @@
             </div>
 
             <!-- Important Notes -->
-            <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-md p-4">
+            <div
+                class="mt-6 bg-yellow-50 border border-yellow-200 rounded-md p-4"
+            >
                 <div class="flex">
-                    <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-1"></i>
+                    <i
+                        class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-1"
+                    ></i>
                     <div>
-                        <h4 class="text-sm font-medium text-yellow-800">Important</h4>
+                        <h4 class="text-sm font-medium text-yellow-800">
+                            Important
+                        </h4>
                         <div class="mt-2 text-sm text-yellow-700">
                             <ul class="list-disc list-inside space-y-1">
-                                <li>Les colonnes <strong>Code Article</strong>, <strong>Désignation</strong> et <strong>Catégorie</strong> sont obligatoires</li>
-                                <li>Si un article avec le même code existe, il sera mis à jour</li>
-                                <li>Les nouveaux articles seront créés automatiquement</li>
+                                <li>
+                                    Les colonnes <strong>Code Article</strong>,
+                                    <strong>Désignation</strong> et
+                                    <strong>Catégorie</strong> sont obligatoires
+                                </li>
+                                <li>
+                                    Si un article avec le même code existe, il
+                                    sera mis à jour
+                                </li>
+                                <li>
+                                    Les nouveaux articles seront créés
+                                    automatiquement
+                                </li>
                                 <li>Formats supportés: CSV, XLSX, XLS</li>
                             </ul>
                         </div>
@@ -717,7 +1214,7 @@
         </div>
 
         <div class="flex justify-end mt-6">
-            <button 
+            <button
                 onclick="closeImportExport()"
                 class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
                 data-testid="button-close-import-export"
@@ -727,9 +1224,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script>
     let articles = [];
     let filteredArticles = [];
@@ -742,27 +1237,30 @@
     let pagination = null;
 
     // Load data when page loads
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function () {
         loadArticles();
         loadSuppliers();
     });
 
     async function loadArticles(page = 1) {
         try {
-            const searchValue = document.getElementById('search-input')?.value || '';
-            const categoryValue = document.getElementById('category-filter')?.value || 'all';
-            const stockValue = document.getElementById('stock-filter')?.value || 'all';
-            
+            const searchValue =
+                document.getElementById("search-input")?.value || "";
+            const categoryValue =
+                document.getElementById("category-filter")?.value || "all";
+            const stockValue =
+                document.getElementById("stock-filter")?.value || "all";
+
             const params = new URLSearchParams({
                 page: page,
                 per_page: 20,
                 search: searchValue,
                 category: categoryValue,
-                stock_filter: stockValue
+                stock_filter: stockValue,
             });
-            
-            const response = await apiRequest('GET', `/api/articles?${params}`);
-            
+
+            const response = await apiRequest("GET", `/api/articles?${params}`);
+
             if (response.articles) {
                 // Paginated response
                 articles = response.articles;
@@ -776,28 +1274,28 @@
                 filteredArticles = [...articles];
                 pagination = null;
             }
-            
+
             updateArticlesTable();
             updateFilters();
             updateAnalytics();
             updatePaginationControls();
         } catch (error) {
-            console.error('Error loading articles:', error);
+            console.error("Error loading articles:", error);
         }
     }
 
     async function loadSuppliers() {
         try {
-            suppliers = await apiRequest('GET', '/api/suppliers');
+            suppliers = await apiRequest("GET", "/api/suppliers");
         } catch (error) {
-            console.error('Error loading suppliers:', error);
+            console.error("Error loading suppliers:", error);
         }
     }
 
     function updateArticlesTable() {
-        const container = document.getElementById('articles-table-container');
-        const countElement = document.getElementById('articles-count');
-        
+        const container = document.getElementById("articles-table-container");
+        const countElement = document.getElementById("articles-count");
+
         if (pagination) {
             countElement.textContent = `${pagination.total} article(s) trouvé(s)`;
         } else {
@@ -845,19 +1343,19 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
-                        ${filteredArticles.map(article => createArticleRow(article)).join('')}
+                        ${filteredArticles.map((article) => createArticleRow(article)).join("")}
                     </tbody>
                 </table>
             </div>
         `;
-        
+
         container.innerHTML = tableHTML;
     }
 
     function createArticleRow(article) {
         const stockStatus = getStockStatus(article);
         const supplierName = getSupplierName(article.fournisseurId);
-        
+
         return `
             <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-200 group">
                 <td class="px-6 py-4 whitespace-nowrap column-cell" data-column="code-article">
@@ -873,7 +1371,7 @@
                 <td class="px-6 py-4 column-cell" data-column="designation">
                     <div class="max-w-xs">
                         <p class="text-sm font-semibold text-gray-900 truncate">${article.designation}</p>
-                        <p class="text-xs text-gray-500 mt-1">${article.marque || 'Marque non définie'}</p>
+                        <p class="text-xs text-gray-500 mt-1">${article.marque || "Marque non définie"}</p>
                     </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap column-cell" data-column="categorie">
@@ -883,7 +1381,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap column-cell" data-column="stock">
                     <div class="flex items-center space-x-2">
-                        <div class="w-2 h-2 rounded-full ${stockStatus.color === 'text-red-600' ? 'bg-red-500' : 'bg-green-500'}"></div>
+                        <div class="w-2 h-2 rounded-full ${stockStatus.color === "text-red-600" ? "bg-red-500" : "bg-green-500"}"></div>
                         <span class="text-sm font-bold ${stockStatus.color}">
                             ${article.stockActuel}
                         </span>
@@ -895,7 +1393,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap column-cell" data-column="prix">
                     <div class="text-sm font-bold text-gray-900">
-                        ${article.prixUnitaire ? `${parseFloat(article.prixUnitaire).toFixed(2)} MAD` : '-'}
+                        ${article.prixUnitaire ? `${parseFloat(article.prixUnitaire).toFixed(2)} MAD` : "-"}
                     </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap column-cell" data-column="fournisseur">
@@ -931,26 +1429,30 @@
 
     function getStockStatus(article) {
         if (article.stockActuel <= (article.seuilMinimum || 10)) {
-            return { color: "text-red-600", icon: "fas fa-exclamation-triangle" };
+            return {
+                color: "text-red-600",
+                icon: "fas fa-exclamation-triangle",
+            };
         }
         return { color: "text-green-600", icon: "fas fa-check-circle" };
     }
 
     function getSupplierName(supplierId) {
         if (!supplierId) return "Non défini";
-        const supplier = suppliers.find(s => s.id === supplierId);
+        const supplier = suppliers.find((s) => s.id === supplierId);
         return supplier?.nom || "Inconnu";
     }
 
     function updateFilters() {
-        const categories = [...new Set(articles.map(a => a.categorie))];
-        const categoryFilter = document.getElementById('category-filter');
-        
+        const categories = [...new Set(articles.map((a) => a.categorie))];
+        const categoryFilter = document.getElementById("category-filter");
+
         // Clear existing options except "all"
-        categoryFilter.innerHTML = '<option value="all">Toutes les catégories</option>';
-        
-        categories.forEach(category => {
-            const option = document.createElement('option');
+        categoryFilter.innerHTML =
+            '<option value="all">Toutes les catégories</option>';
+
+        categories.forEach((category) => {
+            const option = document.createElement("option");
             option.value = category;
             option.textContent = category;
             categoryFilter.appendChild(option);
@@ -964,34 +1466,39 @@
     }
 
     function clearFilters() {
-        document.getElementById('search-input').value = '';
-        document.getElementById('category-filter').value = 'all';
-        document.getElementById('stock-filter').value = 'all';
+        document.getElementById("search-input").value = "";
+        document.getElementById("category-filter").value = "all";
+        document.getElementById("stock-filter").value = "all";
         filterArticles();
     }
 
     function toggleAnalytics() {
-        const section = document.getElementById('analytics-section');
-        const toggle = document.getElementById('analytics-toggle');
-        
-        if (section.classList.contains('hidden')) {
-            section.classList.remove('hidden');
-            toggle.classList.add('bg-blue-600', 'text-white');
-            toggle.classList.remove('bg-white', 'text-gray-700');
+        const section = document.getElementById("analytics-section");
+        const toggle = document.getElementById("analytics-toggle");
+
+        if (section.classList.contains("hidden")) {
+            section.classList.remove("hidden");
+            toggle.classList.add("bg-blue-600", "text-white");
+            toggle.classList.remove("bg-white", "text-gray-700");
             updateAnalytics();
         } else {
-            section.classList.add('hidden');
-            toggle.classList.remove('bg-blue-600', 'text-white');
-            toggle.classList.add('bg-white', 'text-gray-700');
+            section.classList.add("hidden");
+            toggle.classList.remove("bg-blue-600", "text-white");
+            toggle.classList.add("bg-white", "text-gray-700");
         }
     }
 
     function updateAnalytics() {
-        if (document.getElementById('analytics-section').classList.contains('hidden')) return;
+        if (
+            document
+                .getElementById("analytics-section")
+                .classList.contains("hidden")
+        )
+            return;
 
         // Category chart data
         const categoryData = filteredArticles.reduce((acc, article) => {
-            const cat = article.categorie || 'Non catégorisé';
+            const cat = article.categorie || "Non catégorisé";
             if (!acc[cat]) acc[cat] = 0;
             acc[cat]++;
             return acc;
@@ -1000,11 +1507,11 @@
         // Stock level data
         const stockLevelData = filteredArticles.reduce((acc, article) => {
             const seuil = article.seuilMinimum || 10;
-            let level = 'Normal';
-            if (article.stockActuel <= seuil * 0.5) level = 'Critique';
-            else if (article.stockActuel <= seuil) level = 'Bas';
-            else if (article.stockActuel > seuil * 2) level = 'Élevé';
-            
+            let level = "Normal";
+            if (article.stockActuel <= seuil * 0.5) level = "Critique";
+            else if (article.stockActuel <= seuil) level = "Bas";
+            else if (article.stockActuel > seuil * 2) level = "Élevé";
+
             if (!acc[level]) acc[level] = 0;
             acc[level]++;
             return acc;
@@ -1016,78 +1523,89 @@
     }
 
     function updateCategoryChart(data) {
-        const ctx = document.getElementById('category-chart').getContext('2d');
-        
+        const ctx = document.getElementById("category-chart").getContext("2d");
+
         if (categoryChart) {
             categoryChart.destroy();
         }
 
         categoryChart = new Chart(ctx, {
-            type: 'bar',
+            type: "bar",
             data: {
                 labels: Object.keys(data),
-                datasets: [{
-                    label: 'Nombre d\'articles',
-                    data: Object.values(data),
-                    backgroundColor: '#3B82F6',
-                }]
+                datasets: [
+                    {
+                        label: "Nombre d'articles",
+                        data: Object.values(data),
+                        backgroundColor: "#3B82F6",
+                    },
+                ],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
-                    }
-                }
-            }
+                        display: false,
+                    },
+                },
+            },
         });
     }
 
     function updateStockChart(data) {
-        const ctx = document.getElementById('stock-level-chart').getContext('2d');
-        
+        const ctx = document
+            .getElementById("stock-level-chart")
+            .getContext("2d");
+
         if (stockChart) {
             stockChart.destroy();
         }
 
         stockChart = new Chart(ctx, {
-            type: 'doughnut',
+            type: "doughnut",
             data: {
                 labels: Object.keys(data),
-                datasets: [{
-                    data: Object.values(data),
-                    backgroundColor: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6'],
-                }]
+                datasets: [
+                    {
+                        data: Object.values(data),
+                        backgroundColor: [
+                            "#EF4444",
+                            "#F59E0B",
+                            "#10B981",
+                            "#3B82F6",
+                        ],
+                    },
+                ],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
+                        position: "bottom",
+                    },
+                },
+            },
         });
     }
 
     function updatePaginationControls() {
-        const container = document.getElementById('pagination-controls');
-        
+        const container = document.getElementById("pagination-controls");
+
         if (!pagination || pagination.pages <= 1) {
-            container.innerHTML = '';
+            container.innerHTML = "";
             return;
         }
-        
+
         const pageNum = pagination.page;
         const totalPages = pagination.pages;
         const totalItems = pagination.total;
         const perPage = pagination.per_page;
-        
-        const startItem = ((pageNum - 1) * perPage) + 1;
+
+        const startItem = (pageNum - 1) * perPage + 1;
         const endItem = Math.min(pageNum * perPage, totalItems);
-        
+
         const paginationHTML = `
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <div class="text-sm text-gray-700">
@@ -1099,7 +1617,7 @@
                     <!-- Previous Button -->
                     <button 
                         onclick="changePage(${pageNum - 1})" 
-                        ${!pagination.has_prev ? 'disabled' : ''} 
+                        ${!pagination.has_prev ? "disabled" : ""} 
                         class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         data-testid="button-prev-page"
                     >
@@ -1115,7 +1633,7 @@
                     <!-- Next Button -->
                     <button 
                         onclick="changePage(${pageNum + 1})" 
-                        ${!pagination.has_next ? 'disabled' : ''} 
+                        ${!pagination.has_next ? "disabled" : ""} 
                         class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         data-testid="button-next-page"
                     >
@@ -1125,22 +1643,25 @@
                 </div>
             </div>
         `;
-        
+
         container.innerHTML = paginationHTML;
     }
 
     function generatePageNumbers(pageNumber, totalPages) {
         const pages = [];
         const maxVisiblePages = 5;
-        
-        let startPage = Math.max(1, pageNumber - Math.floor(maxVisiblePages / 2));
+
+        let startPage = Math.max(
+            1,
+            pageNumber - Math.floor(maxVisiblePages / 2),
+        );
         let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-        
+
         // Adjust start page if we're near the end
         if (endPage - startPage + 1 < maxVisiblePages) {
             startPage = Math.max(1, endPage - maxVisiblePages + 1);
         }
-        
+
         // First page
         if (startPage > 1) {
             pages.push(`
@@ -1151,21 +1672,23 @@
                     1
                 </button>
             `);
-            
+
             if (startPage > 2) {
                 pages.push('<span class="px-2 py-2 text-gray-500">...</span>');
             }
         }
-        
+
         // Visible page numbers
         for (let i = startPage; i <= endPage; i++) {
             const isActive = i === pageNumber;
             pages.push(`
                 <button 
                     onclick="changePage(${i})" 
-                    class="px-3 py-2 text-sm font-medium ${isActive 
-                        ? 'text-white bg-indigo-600 border-indigo-600' 
-                        : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'} 
+                    class="px-3 py-2 text-sm font-medium ${
+                        isActive
+                            ? "text-white bg-indigo-600 border-indigo-600"
+                            : "text-gray-700 bg-white border-gray-300 hover:bg-gray-50"
+                    } 
                     border rounded-lg transition-all duration-200"
                     data-testid="button-page-${i}"
                 >
@@ -1173,13 +1696,13 @@
                 </button>
             `);
         }
-        
+
         // Last page
         if (endPage < totalPages) {
             if (endPage < totalPages - 1) {
                 pages.push('<span class="px-2 py-2 text-gray-500">...</span>');
             }
-            
+
             pages.push(`
                 <button 
                     onclick="changePage(${totalPages})" 
@@ -1189,8 +1712,8 @@
                 </button>
             `);
         }
-        
-        return pages.join('');
+
+        return pages.join("");
     }
 
     function changePage(page) {
@@ -1201,66 +1724,78 @@
 
     // Modal functions
     function openArticleForm(articleId = null) {
-        editingArticle = articleId ? articles.find(a => a.id === articleId) : null;
-        const modal = document.getElementById('article-modal');
-        const title = document.getElementById('modal-title');
-        const form = document.getElementById('article-form');
-        
-        title.textContent = editingArticle ? 'Modifier Article' : 'Nouvel Article';
-        
+        editingArticle = articleId
+            ? articles.find((a) => a.id === articleId)
+            : null;
+        const modal = document.getElementById("article-modal");
+        const title = document.getElementById("modal-title");
+        const form = document.getElementById("article-form");
+
+        title.textContent = editingArticle
+            ? "Modifier Article"
+            : "Nouvel Article";
+
         if (editingArticle) {
             populateForm(editingArticle);
         } else {
             form.reset();
-            document.getElementById('article-id').value = '';
+            document.getElementById("article-id").value = "";
         }
-        
-        modal.classList.remove('hidden');
+
+        modal.classList.remove("hidden");
     }
 
     function closeArticleForm() {
-        document.getElementById('article-modal').classList.add('hidden');
+        document.getElementById("article-modal").classList.add("hidden");
         editingArticle = null;
     }
 
     function populateForm(article) {
-        document.getElementById('article-id').value = article.id;
-        document.getElementById('codeArticle').value = article.codeArticle;
-        document.getElementById('designation').value = article.designation;
-        document.getElementById('categorie').value = article.categorie;
-        document.getElementById('marque').value = article.marque || '';
-        document.getElementById('reference').value = article.reference || '';
-        document.getElementById('stockInitial').value = article.stockInitial;
-        document.getElementById('unite').value = article.unite;
-        document.getElementById('prixUnitaire').value = article.prixUnitaire || '';
-        document.getElementById('seuilMinimum').value = article.seuilMinimum || 10;
+        document.getElementById("article-id").value = article.id;
+        document.getElementById("codeArticle").value = article.codeArticle;
+        document.getElementById("designation").value = article.designation;
+        document.getElementById("categorie").value = article.categorie;
+        document.getElementById("marque").value = article.marque || "";
+        document.getElementById("reference").value = article.reference || "";
+        document.getElementById("stockInitial").value = article.stockInitial;
+        document.getElementById("unite").value = article.unite;
+        document.getElementById("prixUnitaire").value =
+            article.prixUnitaire || "";
+        document.getElementById("seuilMinimum").value =
+            article.seuilMinimum || 10;
     }
 
     async function saveArticle(event) {
         event.preventDefault();
-        
+
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
-        
+
         // Convert numeric fields
         data.stockInitial = parseInt(data.stockInitial);
-        data.prixUnitaire = data.prixUnitaire ? parseFloat(data.prixUnitaire) : null;
+        data.prixUnitaire = data.prixUnitaire
+            ? parseFloat(data.prixUnitaire)
+            : null;
         data.seuilMinimum = parseInt(data.seuilMinimum);
 
         try {
             if (editingArticle) {
-                await apiRequest('PUT', `/api/articles/${editingArticle.id}`, data);
-                showToast('Article modifié avec succès', 'success');
+                await apiRequest(
+                    "PUT",
+                    `/api/articles/${editingArticle.id}`,
+                    data,
+                );
+                showToast("Article modifié avec succès", "success");
             } else {
-                await apiRequest('POST', '/api/articles', data);
-                showToast('Article créé avec succès', 'success');
+                await apiRequest("POST", "/api/articles", data);
+                showToast("Article créé avec succès", "success");
             }
-            
+
             closeArticleForm();
             // Auto-refresh data without page reload
             await loadArticles();
         } catch (error) {
-            console.error('Error saving article:', error);
+            console.error("Error saving article:", error);
         }
     }
 
@@ -1272,96 +1807,106 @@
 
     function deleteArticle(id) {
         pendingDeleteId = id;
-        document.getElementById('delete-confirmation-modal').classList.remove('hidden');
+        document
+            .getElementById("delete-confirmation-modal")
+            .classList.remove("hidden");
     }
 
     function closeDeleteConfirmation() {
         pendingDeleteId = null;
-        document.getElementById('delete-confirmation-modal').classList.add('hidden');
+        document
+            .getElementById("delete-confirmation-modal")
+            .classList.add("hidden");
     }
 
     async function confirmDeleteArticle() {
         if (!pendingDeleteId) return;
-        
+
         try {
-            await apiRequest('DELETE', `/api/articles/${pendingDeleteId}`);
-            showToast('Article supprimé avec succès', 'success');
+            await apiRequest("DELETE", `/api/articles/${pendingDeleteId}`);
+            showToast("Article supprimé avec succès", "success");
             closeDeleteConfirmation();
             // Auto-refresh data without page reload
             await loadArticles();
         } catch (error) {
-            console.error('Error deleting article:', error);
+            console.error("Error deleting article:", error);
             closeDeleteConfirmation();
         }
     }
 
     function generateQR(id) {
-        const article = articles.find(a => a.id === id);
+        const article = articles.find((a) => a.id === id);
         if (article) {
-            showToast(`QR Code généré pour ${article.designation}`, 'info');
+            showToast(`QR Code généré pour ${article.designation}`, "info");
             // Here you would integrate QR code generation
         }
     }
 
     function openImportExport() {
-        document.getElementById('import-export-modal').classList.remove('hidden');
+        document
+            .getElementById("import-export-modal")
+            .classList.remove("hidden");
     }
 
     function closeImportExport() {
-        document.getElementById('import-export-modal').classList.add('hidden');
+        document.getElementById("import-export-modal").classList.add("hidden");
         // Reset file input
-        const fileInput = document.getElementById('import-file-input');
-        if (fileInput) fileInput.value = '';
+        const fileInput = document.getElementById("import-file-input");
+        if (fileInput) fileInput.value = "";
     }
 
     // Modern export functions with progress and options
     function getExportOptions() {
         return {
-            includeStock: document.getElementById('include-stock').checked,
-            includePrices: document.getElementById('include-prices').checked,
-            includeSuppliers: document.getElementById('include-suppliers').checked
+            includeStock: document.getElementById("include-stock").checked,
+            includePrices: document.getElementById("include-prices").checked,
+            includeSuppliers:
+                document.getElementById("include-suppliers").checked,
         };
     }
 
     function showExportProgress() {
-        document.getElementById('export-progress').classList.remove('hidden');
+        document.getElementById("export-progress").classList.remove("hidden");
     }
 
     function hideExportProgress() {
-        document.getElementById('export-progress').classList.add('hidden');
+        document.getElementById("export-progress").classList.add("hidden");
     }
 
     async function exportToPDF() {
         try {
             showExportProgress();
             const options = getExportOptions();
-            
-            const response = await fetch('/api/articles/export/pdf', {
-                method: 'POST',
+
+            const response = await fetch("/api/articles/export/pdf", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(options)
+                body: JSON.stringify(options),
             });
 
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
+                const a = document.createElement("a");
                 a.href = url;
-                a.download = `articles_export_${new Date().toISOString().slice(0,10)}.pdf`;
+                a.download = `articles_export_${new Date().toISOString().slice(0, 10)}.pdf`;
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
-                showToast('Export PDF terminé avec succès', 'success');
+                showToast("Export PDF terminé avec succès", "success");
             } else {
                 const error = await response.json();
-                showToast(`Erreur lors de l'export PDF: ${error.message}`, 'error');
+                showToast(
+                    `Erreur lors de l'export PDF: ${error.message}`,
+                    "error",
+                );
             }
         } catch (error) {
-            console.error('PDF export error:', error);
-            showToast('Erreur lors de l\'export PDF', 'error');
+            console.error("PDF export error:", error);
+            showToast("Erreur lors de l'export PDF", "error");
         } finally {
             hideExportProgress();
         }
@@ -1371,33 +1916,36 @@
         try {
             showExportProgress();
             const options = getExportOptions();
-            
-            const response = await fetch('/api/articles/export/excel', {
-                method: 'POST',
+
+            const response = await fetch("/api/articles/export/excel", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(options)
+                body: JSON.stringify(options),
             });
 
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
+                const a = document.createElement("a");
                 a.href = url;
-                a.download = `articles_export_${new Date().toISOString().slice(0,10)}.xlsx`;
+                a.download = `articles_export_${new Date().toISOString().slice(0, 10)}.xlsx`;
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
-                showToast('Export Excel terminé avec succès', 'success');
+                showToast("Export Excel terminé avec succès", "success");
             } else {
                 const error = await response.json();
-                showToast(`Erreur lors de l'export Excel: ${error.message}`, 'error');
+                showToast(
+                    `Erreur lors de l'export Excel: ${error.message}`,
+                    "error",
+                );
             }
         } catch (error) {
-            console.error('Excel export error:', error);
-            showToast('Erreur lors de l\'export Excel', 'error');
+            console.error("Excel export error:", error);
+            showToast("Erreur lors de l'export Excel", "error");
         } finally {
             hideExportProgress();
         }
@@ -1407,43 +1955,46 @@
         try {
             showExportProgress();
             const options = getExportOptions();
-            
-            const response = await fetch('/api/articles/export/csv', {
-                method: 'POST',
+
+            const response = await fetch("/api/articles/export/csv", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(options)
+                body: JSON.stringify(options),
             });
 
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
+                const a = document.createElement("a");
                 a.href = url;
-                a.download = `articles_export_${new Date().toISOString().slice(0,10)}.csv`;
+                a.download = `articles_export_${new Date().toISOString().slice(0, 10)}.csv`;
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
-                showToast('Export CSV terminé avec succès', 'success');
+                showToast("Export CSV terminé avec succès", "success");
             } else {
                 const error = await response.json();
-                showToast(`Erreur lors de l'export CSV: ${error.message}`, 'error');
+                showToast(
+                    `Erreur lors de l'export CSV: ${error.message}`,
+                    "error",
+                );
             }
         } catch (error) {
-            console.error('CSV export error:', error);
-            showToast('Erreur lors de l\'export CSV', 'error');
+            console.error("CSV export error:", error);
+            showToast("Erreur lors de l'export CSV", "error");
         } finally {
             hideExportProgress();
         }
     }
 
     // Legacy export function (keeping for backward compatibility)
-    async function exportData(format = 'csv') {
-        if (format === 'pdf') {
+    async function exportData(format = "csv") {
+        if (format === "pdf") {
             return exportToPDF();
-        } else if (format === 'excel') {
+        } else if (format === "excel") {
             return exportToExcel();
         } else {
             return exportToCSV();
@@ -1452,150 +2003,165 @@
 
     async function downloadTemplate() {
         try {
-            const response = await fetch('/api/articles/template');
+            const response = await fetch("/api/articles/template");
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
+                const a = document.createElement("a");
                 a.href = url;
-                a.download = 'template_import_articles.xlsx';
+                a.download = "template_import_articles.xlsx";
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
-                showToast('Template téléchargé avec succès', 'success');
+                showToast("Template téléchargé avec succès", "success");
             } else {
                 const error = await response.json();
-                showToast(`Erreur lors du téléchargement: ${error.message}`, 'error');
+                showToast(
+                    `Erreur lors du téléchargement: ${error.message}`,
+                    "error",
+                );
             }
         } catch (error) {
-            console.error('Template download error:', error);
-            showToast('Erreur lors du téléchargement du template', 'error');
+            console.error("Template download error:", error);
+            showToast("Erreur lors du téléchargement du template", "error");
         }
     }
 
     async function importArticles() {
-        const fileInput = document.getElementById('import-file-input');
+        const fileInput = document.getElementById("import-file-input");
         const file = fileInput.files[0];
-        
+
         if (!file) {
-            showToast('Veuillez sélectionner un fichier', 'warning');
+            showToast("Veuillez sélectionner un fichier", "warning");
             return;
         }
 
         // Validate file extension
-        const allowedExtensions = ['.csv', '.xlsx', '.xls'];
-        const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-        
+        const allowedExtensions = [".csv", ".xlsx", ".xls"];
+        const fileExtension = file.name
+            .toLowerCase()
+            .substring(file.name.lastIndexOf("."));
+
         if (!allowedExtensions.includes(fileExtension)) {
-            showToast('Format de fichier non supporté. Utilisez CSV ou Excel.', 'error');
+            showToast(
+                "Format de fichier non supporté. Utilisez CSV ou Excel.",
+                "error",
+            );
             return;
         }
 
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
         try {
             // Show loading state
-            const importBtn = document.getElementById('import-btn');
+            const importBtn = document.getElementById("import-btn");
             const originalText = importBtn.innerHTML;
-            importBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Import en cours...';
+            importBtn.innerHTML =
+                '<i class="fas fa-spinner fa-spin mr-2"></i>Import en cours...';
             importBtn.disabled = true;
 
-            const response = await fetch('/api/articles/import', {
-                method: 'POST',
-                body: formData
+            const response = await fetch("/api/articles/import", {
+                method: "POST",
+                body: formData,
             });
 
             const result = await response.json();
-            
+
             if (response.ok) {
-                showToast(result.message, 'success');
+                showToast(result.message, "success");
                 closeImportExport();
                 // Auto-refresh data without page reload
                 await loadArticles(); // Reload articles to show new data
-                
+
                 // Show detailed results if available
                 if (result.errors && result.errors.length > 0) {
-                    console.warn('Import errors:', result.errors);
+                    console.warn("Import errors:", result.errors);
                 }
             } else {
-                showToast(`Erreur d'import: ${result.message}`, 'error');
+                showToast(`Erreur d'import: ${result.message}`, "error");
             }
 
             // Reset button state
             importBtn.innerHTML = originalText;
             importBtn.disabled = false;
-            
         } catch (error) {
-            console.error('Import error:', error);
-            showToast('Erreur lors de l\'import des données', 'error');
-            
+            console.error("Import error:", error);
+            showToast("Erreur lors de l'import des données", "error");
+
             // Reset button state
-            const importBtn = document.getElementById('import-btn');
+            const importBtn = document.getElementById("import-btn");
             importBtn.innerHTML = '<i class="fas fa-upload mr-2"></i>Importer';
             importBtn.disabled = false;
         }
     }
 
     function onFileSelected() {
-        const fileInput = document.getElementById('import-file-input');
-        const fileName = document.getElementById('file-name');
-        const importBtn = document.getElementById('import-btn');
-        
+        const fileInput = document.getElementById("import-file-input");
+        const fileName = document.getElementById("file-name");
+        const importBtn = document.getElementById("import-btn");
+
         if (fileInput.files.length > 0) {
             fileName.textContent = fileInput.files[0].name;
             importBtn.disabled = false;
         } else {
-            fileName.textContent = 'Aucun fichier sélectionné';
+            fileName.textContent = "Aucun fichier sélectionné";
             importBtn.disabled = true;
         }
     }
 
     // Column Visibility Functions
     function toggleColumnVisibility() {
-        const dropdown = document.getElementById('column-visibility-dropdown');
-        dropdown.classList.toggle('hidden');
-        
+        const dropdown = document.getElementById("column-visibility-dropdown");
+        dropdown.classList.toggle("hidden");
+
         // Close dropdown when clicking outside
-        if (!dropdown.classList.contains('hidden')) {
-            document.addEventListener('click', function closeDropdown(e) {
-                if (!e.target.closest('#column-visibility-dropdown') && !e.target.closest('#column-visibility-btn')) {
-                    dropdown.classList.add('hidden');
-                    document.removeEventListener('click', closeDropdown);
+        if (!dropdown.classList.contains("hidden")) {
+            document.addEventListener("click", function closeDropdown(e) {
+                if (
+                    !e.target.closest("#column-visibility-dropdown") &&
+                    !e.target.closest("#column-visibility-btn")
+                ) {
+                    dropdown.classList.add("hidden");
+                    document.removeEventListener("click", closeDropdown);
                 }
             });
         }
     }
 
     function toggleAllColumns(show) {
-        const checkboxes = document.querySelectorAll('.column-toggle');
-        checkboxes.forEach(checkbox => {
+        const checkboxes = document.querySelectorAll(".column-toggle");
+        checkboxes.forEach((checkbox) => {
             checkbox.checked = show;
-            updateColumnVisibility(checkbox.getAttribute('data-column'), show);
+            updateColumnVisibility(checkbox.getAttribute("data-column"), show);
         });
     }
 
     function updateColumnVisibility(columnName, isVisible) {
         // Toggle header visibility
-        const headers = document.querySelectorAll(`.column-header[data-column="${columnName}"]`);
-        headers.forEach(header => {
-            header.style.display = isVisible ? '' : 'none';
+        const headers = document.querySelectorAll(
+            `.column-header[data-column="${columnName}"]`,
+        );
+        headers.forEach((header) => {
+            header.style.display = isVisible ? "" : "none";
         });
-        
+
         // Toggle cell visibility
-        const cells = document.querySelectorAll(`.column-cell[data-column="${columnName}"]`);
-        cells.forEach(cell => {
-            cell.style.display = isVisible ? '' : 'none';
+        const cells = document.querySelectorAll(
+            `.column-cell[data-column="${columnName}"]`,
+        );
+        cells.forEach((cell) => {
+            cell.style.display = isVisible ? "" : "none";
         });
     }
 
     // Add event listeners for column toggles
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function () {
         // Add event listeners for column visibility checkboxes
-        document.addEventListener('change', function(e) {
-            if (e.target.classList.contains('column-toggle')) {
-                const columnName = e.target.getAttribute('data-column');
+        document.addEventListener("change", function (e) {
+            if (e.target.classList.contains("column-toggle")) {
+                const columnName = e.target.getAttribute("data-column");
                 const isVisible = e.target.checked;
                 updateColumnVisibility(columnName, isVisible);
             }

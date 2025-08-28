@@ -1,27 +1,51 @@
-{% extends "base.html" %}
-
-{% block title %}Réceptions - StockCéramique{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Réceptions - StockCéramique{%
+endblock %} {% block content %}
 <div class="space-y-8">
     <!-- Modern Header -->
     <div class="glass-card rounded-2xl p-6 border border-blue-100">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                <div
+                    class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
+                    style="
+                        background: linear-gradient(
+                            135deg,
+                            #003d9d 0%,
+                            #1a4fb3 100%
+                        );
+                    "
+                >
                     <i class="fas fa-shipping-fast text-white text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Réceptions de Stock</h1>
-                    <p class="text-gray-600 font-medium">Gestion des livraisons et mise à jour automatique des stocks</p>
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
+                        Réceptions de Stock
+                    </h1>
+                    <p class="text-gray-600 font-medium">
+                        Gestion des livraisons et mise à jour automatique des
+                        stocks
+                    </p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="refreshReceptions()" class="inline-flex items-center px-4 py-2 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                <button
+                    onclick="refreshReceptions()"
+                    class="inline-flex items-center px-4 py-2 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+                >
                     <i class="fas fa-sync-alt mr-2"></i>
                     Actualiser
                 </button>
-                <button onclick="openReceptionForm()" class="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white transition-all duration-200 hover:shadow-xl hover:transform hover:-translate-y-1" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                <button
+                    onclick="openReceptionForm()"
+                    class="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white transition-all duration-200 hover:shadow-xl hover:transform hover:-translate-y-1"
+                    style="
+                        background: linear-gradient(
+                            135deg,
+                            #003d9d 0%,
+                            #1a4fb3 100%
+                        );
+                    "
+                >
                     <i class="fas fa-plus mr-2"></i>
                     Nouvelle Réception
                 </button>
@@ -32,37 +56,72 @@
     <!-- Advanced Filters Section -->
     <div class="glass-card rounded-2xl p-6 border border-gray-200">
         <div class="flex items-center mb-6">
-            <div class="w-8 h-8 rounded-xl flex items-center justify-center mr-3" style="background: #003d9d;">
+            <div
+                class="w-8 h-8 rounded-xl flex items-center justify-center mr-3"
+                style="background: #003d9d"
+            >
                 <i class="fas fa-filter text-white text-sm"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Filtres de Recherche</h3>
+            <h3 class="text-xl font-bold text-gray-900">
+                Filtres de Recherche
+            </h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div class="group">
-                <label class="block text-sm font-semibold text-gray-700 mb-3">Recherche Globale</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-3"
+                    >Recherche Globale</label
+                >
                 <div class="relative">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" placeholder="Article, fournisseur, bon de livraison..." class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" id="search-input" onkeyup="filterReceptions()">
+                    <i
+                        class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    ></i>
+                    <input
+                        type="text"
+                        placeholder="Article, fournisseur, bon de livraison..."
+                        class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300"
+                        id="search-input"
+                        onkeyup="filterReceptions()"
+                    />
                 </div>
             </div>
             <div class="group">
-                <label class="block text-sm font-semibold text-gray-700 mb-3">Date de Réception</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-3"
+                    >Date de Réception</label
+                >
                 <div class="relative">
-                    <i class="fas fa-calendar absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="date" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" id="date-filter" onchange="filterReceptions()">
+                    <i
+                        class="fas fa-calendar absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    ></i>
+                    <input
+                        type="date"
+                        class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300"
+                        id="date-filter"
+                        onchange="filterReceptions()"
+                    />
                 </div>
             </div>
             <div class="group">
-                <label class="block text-sm font-semibold text-gray-700 mb-3">Fournisseur</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-3"
+                    >Fournisseur</label
+                >
                 <div class="relative">
-                    <i class="fas fa-building absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <select class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300 appearance-none" id="supplier-filter" onchange="filterReceptions()">
+                    <i
+                        class="fas fa-building absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    ></i>
+                    <select
+                        class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300 appearance-none"
+                        id="supplier-filter"
+                        onchange="filterReceptions()"
+                    >
                         <option value="">Tous les fournisseurs</option>
                     </select>
                 </div>
             </div>
             <div class="flex items-end">
-                <button class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200" onclick="clearFilters()">
+                <button
+                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+                    onclick="clearFilters()"
+                >
                     <i class="fas fa-times mr-2"></i>
                     Effacer Filtres
                 </button>
@@ -74,93 +133,188 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background: #003d9d;">
+                <div
+                    class="w-8 h-8 rounded-xl flex items-center justify-center"
+                    style="background: #003d9d"
+                >
                     <i class="fas fa-list text-white text-sm"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900">Historique des Réceptions</h3>
-                <div id="reception-count-badge" class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">0 réception(s)</div>
+                <h3 class="text-xl font-bold text-gray-900">
+                    Historique des Réceptions
+                </h3>
+                <div
+                    id="reception-count-badge"
+                    class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold"
+                >
+                    0 réception(s)
+                </div>
             </div>
             <div class="flex items-center space-x-2">
-                <button onclick="toggleViewMode('group')" id="group-view-btn" class="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200" style="background: #003d9d; color: white;">
+                <button
+                    onclick="toggleViewMode('group')"
+                    id="group-view-btn"
+                    class="px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                    style="background: #003d9d; color: white"
+                >
                     <i class="fas fa-layer-group mr-1"></i> Groupé
                 </button>
-                <button onclick="toggleViewMode('list')" id="list-view-btn" class="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors duration-200">
+                <button
+                    onclick="toggleViewMode('list')"
+                    id="list-view-btn"
+                    class="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors duration-200"
+                >
                     <i class="fas fa-list mr-1"></i> Liste
                 </button>
             </div>
         </div>
-        
+
         <div id="receptions-container">
             <div class="flex justify-center items-center py-12">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2" style="border-color: #003d9d;"></div>
-                <span class="ml-3 text-gray-600">Chargement des réceptions...</span>
+                <div
+                    class="animate-spin rounded-full h-8 w-8 border-b-2"
+                    style="border-color: #003d9d"
+                ></div>
+                <span class="ml-3 text-gray-600"
+                    >Chargement des réceptions...</span
+                >
             </div>
         </div>
     </div>
 </div>
 
 <!-- Modern Reception Form Modal -->
-<div id="reception-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50">
+<div
+    id="reception-modal"
+    class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50"
+>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto transform transition-all duration-300 scale-95 hover:scale-100">
+        <div
+            class="relative bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto transform transition-all duration-300 scale-95 hover:scale-100"
+        >
             <!-- Modern Header -->
-            <div class="rounded-t-3xl px-8 py-6 sticky top-0 z-10" style="background: linear-gradient(135deg, #003d9d 0%, #002875 100%);">
+            <div
+                class="rounded-t-3xl px-8 py-6 sticky top-0 z-10"
+                style="
+                    background: linear-gradient(
+                        135deg,
+                        #003d9d 0%,
+                        #002875 100%
+                    );
+                "
+            >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg">
+                        <div
+                            class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg"
+                        >
                             <i class="fas fa-truck text-white text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-2xl font-bold text-white tracking-tight">Nouvelle Réception</h3>
-                            <p class="text-white/80 text-sm font-medium">Enregistrer une nouvelle livraison de marchandises</p>
+                            <h3
+                                class="text-2xl font-bold text-white tracking-tight"
+                            >
+                                Nouvelle Réception
+                            </h3>
+                            <p class="text-white/80 text-sm font-medium">
+                                Enregistrer une nouvelle livraison de
+                                marchandises
+                            </p>
                         </div>
                     </div>
-                    <button onclick="closeReceptionForm()" class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center group">
-                        <i class="fas fa-times text-lg group-hover:rotate-90 transition-transform duration-200"></i>
+                    <button
+                        onclick="closeReceptionForm()"
+                        class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center group"
+                    >
+                        <i
+                            class="fas fa-times text-lg group-hover:rotate-90 transition-transform duration-200"
+                        ></i>
                     </button>
                 </div>
             </div>
-            
+
             <div class="p-8 space-y-8">
                 <form id="reception-form" onsubmit="saveReception(event)">
                     <!-- Reception Details -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                    <div
+                        class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100"
+                    >
                         <div class="flex items-center mb-6">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background: #003d9d;">
-                                <i class="fas fa-info-circle text-white text-sm"></i>
+                            <div
+                                class="w-8 h-8 rounded-full flex items-center justify-center mr-3"
+                                style="background: #003d9d"
+                            >
+                                <i
+                                    class="fas fa-info-circle text-white text-sm"
+                                ></i>
                             </div>
-                            <h4 class="text-xl font-bold text-gray-900">Détails de la Réception</h4>
+                            <h4 class="text-xl font-bold text-gray-900">
+                                Détails de la Réception
+                            </h4>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Date de Réception *</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-3"
+                                    >Date de Réception *</label
+                                >
                                 <div class="relative">
-                                    <input type="date" id="date-reception" name="dateReception" required 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-calendar text-gray-400"></i>
+                                    <input
+                                        type="date"
+                                        id="date-reception"
+                                        name="dateReception"
+                                        required
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300"
+                                    />
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-calendar text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">N° Bon de Livraison</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-3"
+                                    >N° Bon de Livraison</label
+                                >
                                 <div class="relative">
-                                    <input type="text" id="numero-bon-livraison" name="numeroBonLivraison" 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
-                                           placeholder="BL-2025-001">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-receipt text-gray-400"></i>
+                                    <input
+                                        type="text"
+                                        id="numero-bon-livraison"
+                                        name="numeroBonLivraison"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300"
+                                        placeholder="BL-2025-001"
+                                    />
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-receipt text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Observations</label>
+                                <label
+                                    class="block text-sm font-semibold text-gray-700 mb-3"
+                                    >Observations</label
+                                >
                                 <div class="relative">
-                                    <input type="text" id="reception-observations" name="receptionObservations" 
-                                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300" 
-                                           placeholder="Observations sur la réception...">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-comment-alt text-gray-400"></i>
+                                    <input
+                                        type="text"
+                                        id="reception-observations"
+                                        name="receptionObservations"
+                                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 transition-colors duration-200 bg-white group-hover:border-gray-300"
+                                        placeholder="Observations sur la réception..."
+                                    />
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                                    >
+                                        <i
+                                            class="fas fa-comment-alt text-gray-400"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
@@ -168,61 +322,152 @@
                     </div>
 
                     <!-- Articles Section -->
-                    <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200">
+                    <div
+                        class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200"
+                    >
                         <div class="flex items-center justify-between mb-6">
                             <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3" style="background: #1a4fb3;">
-                                    <i class="fas fa-boxes text-white text-sm"></i>
+                                <div
+                                    class="w-8 h-8 rounded-full flex items-center justify-center mr-3"
+                                    style="background: #1a4fb3"
+                                >
+                                    <i
+                                        class="fas fa-boxes text-white text-sm"
+                                    ></i>
                                 </div>
-                                <h4 class="text-xl font-bold text-gray-900">Articles à Réceptionner</h4>
+                                <h4 class="text-xl font-bold text-gray-900">
+                                    Articles à Réceptionner
+                                </h4>
                             </div>
-                            <button type="button" onclick="addArticleToReception()" 
-                                    class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2" style="background: linear-gradient(135deg, #1a4fb3 0%, #003d9d 100%);">
+                            <button
+                                type="button"
+                                onclick="addArticleToReception()"
+                                class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2"
+                                style="
+                                    background: linear-gradient(
+                                        135deg,
+                                        #1a4fb3 0%,
+                                        #003d9d 100%
+                                    );
+                                "
+                            >
                                 <i class="fas fa-plus"></i>
                                 <span>Ajouter Article</span>
                             </button>
                         </div>
-                        
-                        <div class="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-sm">
+
+                        <div
+                            class="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden shadow-sm"
+                        >
                             <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                                <table
+                                    class="min-w-full divide-y divide-gray-200"
+                                >
+                                    <thead
+                                        class="bg-gradient-to-r from-gray-50 to-blue-50"
+                                    >
                                         <tr>
-                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">N°</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Article</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Quantité</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">PU (MAD)</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Fournisseur</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Total</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="color: #003d9d;">Action</th>
+                                            <th
+                                                class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider"
+                                                style="color: #003d9d"
+                                            >
+                                                N°
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider"
+                                                style="color: #003d9d"
+                                            >
+                                                Article
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider"
+                                                style="color: #003d9d"
+                                            >
+                                                Quantité
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider"
+                                                style="color: #003d9d"
+                                            >
+                                                PU (MAD)
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider"
+                                                style="color: #003d9d"
+                                            >
+                                                Fournisseur
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider"
+                                                style="color: #003d9d"
+                                            >
+                                                Total
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider"
+                                                style="color: #003d9d"
+                                            >
+                                                Action
+                                            </th>
                                         </tr>
                                     </thead>
-                                    <tbody id="reception-articles-tbody" class="bg-white divide-y divide-gray-100">
+                                    <tbody
+                                        id="reception-articles-tbody"
+                                        class="bg-white divide-y divide-gray-100"
+                                    >
                                         <!-- Content populated by JavaScript -->
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                             <!-- Empty State -->
-                            <div id="articles-empty-state" class="p-12 text-center text-gray-500">
-                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-boxes text-2xl text-gray-400"></i>
+                            <div
+                                id="articles-empty-state"
+                                class="p-12 text-center text-gray-500"
+                            >
+                                <div
+                                    class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center"
+                                >
+                                    <i
+                                        class="fas fa-boxes text-2xl text-gray-400"
+                                    ></i>
                                 </div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun article ajouté</h3>
-                                <p class="text-sm text-gray-600">Cliquez sur "Ajouter Article" pour commencer</p>
+                                <h3
+                                    class="text-lg font-semibold text-gray-900 mb-2"
+                                >
+                                    Aucun article ajouté
+                                </h3>
+                                <p class="text-sm text-gray-600">
+                                    Cliquez sur "Ajouter Article" pour commencer
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Form Actions -->
-                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
-                        <button type="button" onclick="closeReceptionForm()" 
-                                class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+                    <div
+                        class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100"
+                    >
+                        <button
+                            type="button"
+                            onclick="closeReceptionForm()"
+                            class="px-8 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2"
+                        >
                             <i class="fas fa-times"></i>
                             <span>Annuler</span>
                         </button>
-                        <button type="submit" id="save-reception-btn" 
-                                class="px-8 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white" style="background: linear-gradient(135deg, #003d9d 0%, #1a4fb3 100%);">
+                        <button
+                            type="submit"
+                            id="save-reception-btn"
+                            class="px-8 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white"
+                            style="
+                                background: linear-gradient(
+                                    135deg,
+                                    #003d9d 0%,
+                                    #1a4fb3 100%
+                                );
+                            "
+                        >
                             <i class="fas fa-save"></i>
                             <span>Enregistrer Réception</span>
                         </button>
@@ -232,22 +477,20 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script>
     let receptions = [];
     let filteredReceptions = [];
     let articles = [];
     let suppliers = [];
     let requestors = [];
-    let currentViewMode = 'group';
+    let currentViewMode = "group";
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function () {
         loadData();
         // Set today's date as default
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date-reception').value = today;
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("date-reception").value = today;
     });
 
     async function loadData() {
@@ -257,13 +500,13 @@
                 loadReceptions(),
                 loadArticles(),
                 loadSuppliers(),
-                loadRequestors()
+                loadRequestors(),
             ]);
             updateReceptionsDisplay();
             updateSupplierFilter();
         } catch (error) {
-            console.error('Error loading data:', error);
-            showToast('Erreur lors du chargement des données', 'error');
+            console.error("Error loading data:", error);
+            showToast("Erreur lors du chargement des données", "error");
         } finally {
             hideLoading();
         }
@@ -271,16 +514,21 @@
 
     async function loadReceptions() {
         try {
-            const receptionsData = await apiRequest('GET', '/api/receptions');
-            
+            const receptionsData = await apiRequest("GET", "/api/receptions");
+
             // Group receptions by reference (bon de livraison) and date
-            const groupedReceptions = groupReceptionsByReference(receptionsData);
+            const groupedReceptions =
+                groupReceptionsByReference(receptionsData);
             receptions = groupedReceptions;
             filteredReceptions = [...receptions];
-            
-            console.log('Receptions loaded and grouped:', receptions.length, 'groups');
+
+            console.log(
+                "Receptions loaded and grouped:",
+                receptions.length,
+                "groups",
+            );
         } catch (error) {
-            console.error('Error loading receptions:', error);
+            console.error("Error loading receptions:", error);
             receptions = [];
             filteredReceptions = [];
         }
@@ -288,10 +536,10 @@
 
     function groupReceptionsByReference(receptionsData) {
         const groups = {};
-        
-        receptionsData.forEach(reception => {
-            const key = `${reception.dateReception}_${reception.numeroBonLivraison || 'sans_bl'}_${reception.supplierId || 'sans_fournisseur'}`;
-            
+
+        receptionsData.forEach((reception) => {
+            const key = `${reception.dateReception}_${reception.numeroBonLivraison || "sans_bl"}_${reception.supplierId || "sans_fournisseur"}`;
+
             if (!groups[key]) {
                 groups[key] = {
                     id: key,
@@ -301,58 +549,61 @@
                     observations: reception.observations,
                     articles: [],
                     totalQuantity: 0,
-                    totalValue: 0
+                    totalValue: 0,
                 };
             }
-            
+
             groups[key].articles.push({
                 id: reception.id,
                 articleId: reception.articleId,
                 quantiteRecue: reception.quantiteRecue,
                 prixUnitaire: reception.prixUnitaire,
-                sousTotal: reception.quantiteRecue * reception.prixUnitaire
+                sousTotal: reception.quantiteRecue * reception.prixUnitaire,
             });
-            
+
             groups[key].totalQuantity += reception.quantiteRecue;
-            groups[key].totalValue += reception.quantiteRecue * reception.prixUnitaire;
+            groups[key].totalValue +=
+                reception.quantiteRecue * reception.prixUnitaire;
         });
-        
+
         return Object.values(groups);
     }
 
     async function loadArticles() {
         try {
-            articles = await apiRequest('GET', '/api/articles');
+            const response = await apiRequest("GET", "/api/articles");
+            // Handle paginated response - extract articles array
+            articles = response.articles || response || [];
         } catch (error) {
-            console.error('Error loading articles:', error);
+            console.error("Error loading articles:", error);
             articles = [];
         }
     }
 
     async function loadSuppliers() {
         try {
-            suppliers = await apiRequest('GET', '/api/suppliers');
+            suppliers = await apiRequest("GET", "/api/suppliers");
         } catch (error) {
-            console.error('Error loading suppliers:', error);
+            console.error("Error loading suppliers:", error);
             suppliers = [];
         }
     }
 
     async function loadRequestors() {
         try {
-            requestors = await apiRequest('GET', '/api/requestors');
+            requestors = await apiRequest("GET", "/api/requestors");
         } catch (error) {
-            console.error('Error loading requestors:', error);
+            console.error("Error loading requestors:", error);
             requestors = [];
         }
     }
 
     function updateSupplierFilter() {
-        const select = document.getElementById('supplier-filter');
+        const select = document.getElementById("supplier-filter");
         select.innerHTML = '<option value="">Tous les fournisseurs</option>';
-        
-        suppliers.forEach(supplier => {
-            const option = document.createElement('option');
+
+        suppliers.forEach((supplier) => {
+            const option = document.createElement("option");
             option.value = supplier.id;
             option.textContent = supplier.nom;
             select.appendChild(option);
@@ -360,9 +611,9 @@
     }
 
     function updateReceptionsDisplay() {
-        const container = document.getElementById('receptions-container');
-        const badge = document.getElementById('reception-count-badge');
-        
+        const container = document.getElementById("receptions-container");
+        const badge = document.getElementById("reception-count-badge");
+
         badge.textContent = `${filteredReceptions.length} réception(s)`;
 
         if (filteredReceptions.length === 0) {
@@ -383,7 +634,7 @@
             return;
         }
 
-        if (currentViewMode === 'group') {
+        if (currentViewMode === "group") {
             displayGroupedReceptions(container);
         } else {
             displayListReceptions(container);
@@ -391,11 +642,14 @@
     }
 
     function displayGroupedReceptions(container) {
-        const receptionGroups = filteredReceptions.map((group, index) => {
-            const supplier = suppliers.find(s => s.id === group.supplierId);
-            const receptionNumber = `#RA-2025-${String(index + 1).padStart(4, '0')}`;
-            
-            return `
+        const receptionGroups = filteredReceptions
+            .map((group, index) => {
+                const supplier = suppliers.find(
+                    (s) => s.id === group.supplierId,
+                );
+                const receptionNumber = `#RA-2025-${String(index + 1).padStart(4, "0")}`;
+
+                return `
                 <div class="glass-card rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all duration-200">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center space-x-4">
@@ -407,10 +661,10 @@
                                     <h3 class="text-lg font-bold text-gray-900">${receptionNumber}</h3>
                                     <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">Réception</span>
                                 </div>
-                                <div class="text-sm text-gray-500 mb-2">${group.numeroBonLivraison || 'Sans bon de livraison'}</div>
+                                <div class="text-sm text-gray-500 mb-2">${group.numeroBonLivraison || "Sans bon de livraison"}</div>
                                 <div class="flex items-center space-x-4 text-sm text-gray-600">
-                                    <span><i class="fas fa-calendar mr-1"></i>${new Date(group.dateReception).toLocaleDateString('fr-FR')}</span>
-                                    <span><i class="fas fa-building mr-1"></i>${supplier ? supplier.nom : 'Fournisseur non spécifié'}</span>
+                                    <span><i class="fas fa-calendar mr-1"></i>${new Date(group.dateReception).toLocaleDateString("fr-FR")}</span>
+                                    <span><i class="fas fa-building mr-1"></i>${supplier ? supplier.nom : "Fournisseur non spécifié"}</span>
                                 </div>
                             </div>
                         </div>
@@ -421,17 +675,20 @@
                     </div>
                     
                     <div class="space-y-3">
-                        ${group.articles.map(article => {
-                            const articleData = articles.find(a => a.id === article.articleId);
-                            return `
+                        ${group.articles
+                            .map((article) => {
+                                const articleData = articles.find(
+                                    (a) => a.id === article.articleId,
+                                );
+                                return `
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: #1a4fb3;">
                                             <i class="fas fa-cube text-white text-xs"></i>
                                         </div>
                                         <div>
-                                            <div class="font-semibold text-gray-900">${articleData ? articleData.designation : 'Article supprimé'}</div>
-                                            <div class="text-xs text-gray-500">${articleData ? articleData.reference || 'Ref. non définie' : ''}</div>
+                                            <div class="font-semibold text-gray-900">${articleData ? articleData.designation : "Article supprimé"}</div>
+                                            <div class="text-xs text-gray-500">${articleData ? articleData.reference || "Ref. non définie" : ""}</div>
                                         </div>
                                     </div>
                                     <div class="text-right">
@@ -440,17 +697,22 @@
                                     </div>
                                 </div>
                             `;
-                        }).join('')}
+                            })
+                            .join("")}
                     </div>
                     
-                    ${group.observations ? `
+                    ${
+                        group.observations
+                            ? `
                         <div class="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-200">
                             <div class="text-sm text-gray-700">
                                 <i class="fas fa-comment text-blue-600 mr-2"></i>
                                 ${group.observations}
                             </div>
                         </div>
-                    ` : ''}
+                    `
+                            : ""
+                    }
                     
                     <div class="mt-4 flex justify-end space-x-2">
                         <button onclick="viewReceptionGroup('${group.id}')" class="px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200">
@@ -462,7 +724,8 @@
                     </div>
                 </div>
             `;
-        }).join('');
+            })
+            .join("");
 
         container.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">${receptionGroups}</div>`;
     }
@@ -483,11 +746,14 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
-                            ${filteredReceptions.map((group, index) => {
-                                const supplier = suppliers.find(s => s.id === group.supplierId);
-                                const receptionNumber = `#RA-2025-${String(index + 1).padStart(4, '0')}`;
-                                
-                                return `
+                            ${filteredReceptions
+                                .map((group, index) => {
+                                    const supplier = suppliers.find(
+                                        (s) => s.id === group.supplierId,
+                                    );
+                                    const receptionNumber = `#RA-2025-${String(index + 1).padStart(4, "0")}`;
+
+                                    return `
                                     <tr class="hover:bg-blue-50 transition-colors duration-150">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center space-x-2">
@@ -496,12 +762,12 @@
                                                 </div>
                                                 <div>
                                                     <div class="text-sm font-bold text-gray-900">${receptionNumber}</div>
-                                                    <div class="text-xs text-gray-500">${group.numeroBonLivraison || 'Sans BL'}</div>
+                                                    <div class="text-xs text-gray-500">${group.numeroBonLivraison || "Sans BL"}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <div class="text-sm font-semibold text-gray-900">${supplier ? supplier.nom : 'Non spécifié'}</div>
+                                            <div class="text-sm font-semibold text-gray-900">${supplier ? supplier.nom : "Non spécifié"}</div>
                                             <div class="text-xs text-gray-500">Fournisseur</div>
                                         </td>
                                         <td class="px-6 py-4">
@@ -517,7 +783,7 @@
                                             <div class="text-xs text-gray-500">Valeur totale</div>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <div class="text-sm font-medium text-gray-900">${new Date(group.dateReception).toLocaleDateString('fr-FR')}</div>
+                                            <div class="text-sm font-medium text-gray-900">${new Date(group.dateReception).toLocaleDateString("fr-FR")}</div>
                                             <div class="text-xs text-gray-500">Date de réception</div>
                                         </td>
                                         <td class="px-6 py-4">
@@ -532,7 +798,8 @@
                                         </td>
                                     </tr>
                                 `;
-                            }).join('')}
+                                })
+                                .join("")}
                         </tbody>
                     </table>
                 </div>
@@ -544,47 +811,61 @@
 
     function toggleViewMode(mode) {
         currentViewMode = mode;
-        
+
         // Update button styles
-        const groupBtn = document.getElementById('group-view-btn');
-        const listBtn = document.getElementById('list-view-btn');
-        
-        if (mode === 'group') {
-            groupBtn.style.background = '#003d9d';
-            groupBtn.style.color = 'white';
-            listBtn.style.background = '#f3f4f6';
-            listBtn.style.color = '#6b7280';
+        const groupBtn = document.getElementById("group-view-btn");
+        const listBtn = document.getElementById("list-view-btn");
+
+        if (mode === "group") {
+            groupBtn.style.background = "#003d9d";
+            groupBtn.style.color = "white";
+            listBtn.style.background = "#f3f4f6";
+            listBtn.style.color = "#6b7280";
         } else {
-            listBtn.style.background = '#003d9d';
-            listBtn.style.color = 'white';
-            groupBtn.style.background = '#f3f4f6';
-            groupBtn.style.color = '#6b7280';
+            listBtn.style.background = "#003d9d";
+            listBtn.style.color = "white";
+            groupBtn.style.background = "#f3f4f6";
+            groupBtn.style.color = "#6b7280";
         }
-        
+
         updateReceptionsDisplay();
     }
 
     function filterReceptions() {
-        const search = document.getElementById('search-input').value.toLowerCase();
-        const dateFilter = document.getElementById('date-filter').value;
-        const supplierFilter = document.getElementById('supplier-filter').value;
+        const search = document
+            .getElementById("search-input")
+            .value.toLowerCase();
+        const dateFilter = document.getElementById("date-filter").value;
+        const supplierFilter = document.getElementById("supplier-filter").value;
 
-        filteredReceptions = receptions.filter(group => {
-            const supplier = suppliers.find(s => s.id === group.supplierId);
-            
-            const matchesSearch = !search || 
-                (group.numeroBonLivraison && group.numeroBonLivraison.toLowerCase().includes(search)) ||
+        filteredReceptions = receptions.filter((group) => {
+            const supplier = suppliers.find((s) => s.id === group.supplierId);
+
+            const matchesSearch =
+                !search ||
+                (group.numeroBonLivraison &&
+                    group.numeroBonLivraison.toLowerCase().includes(search)) ||
                 (supplier && supplier.nom.toLowerCase().includes(search)) ||
-                group.articles.some(article => {
-                    const articleData = articles.find(a => a.id === article.articleId);
-                    return articleData && (
-                        articleData.designation.toLowerCase().includes(search) ||
-                        (articleData.reference && articleData.reference.toLowerCase().includes(search))
+                group.articles.some((article) => {
+                    const articleData = articles.find(
+                        (a) => a.id === article.articleId,
+                    );
+                    return (
+                        articleData &&
+                        (articleData.designation
+                            .toLowerCase()
+                            .includes(search) ||
+                            (articleData.reference &&
+                                articleData.reference
+                                    .toLowerCase()
+                                    .includes(search)))
                     );
                 });
 
-            const matchesDate = !dateFilter || group.dateReception.startsWith(dateFilter);
-            const matchesSupplier = !supplierFilter || group.supplierId === supplierFilter;
+            const matchesDate =
+                !dateFilter || group.dateReception.startsWith(dateFilter);
+            const matchesSupplier =
+                !supplierFilter || group.supplierId === supplierFilter;
 
             return matchesSearch && matchesDate && matchesSupplier;
         });
@@ -593,16 +874,16 @@
     }
 
     function clearFilters() {
-        document.getElementById('search-input').value = '';
-        document.getElementById('date-filter').value = '';
-        document.getElementById('supplier-filter').value = '';
+        document.getElementById("search-input").value = "";
+        document.getElementById("date-filter").value = "";
+        document.getElementById("supplier-filter").value = "";
         filteredReceptions = [...receptions];
         updateReceptionsDisplay();
     }
 
     function refreshReceptions() {
         loadData();
-        showToast('Données actualisées', 'success');
+        showToast("Données actualisées", "success");
     }
 
     // Reception form management
@@ -610,24 +891,24 @@
     let articleCounter = 0;
 
     function openReceptionForm() {
-        const modal = document.getElementById('reception-modal');
-        const form = document.getElementById('reception-form');
-        
+        const modal = document.getElementById("reception-modal");
+        const form = document.getElementById("reception-form");
+
         form.reset();
         receptionArticles = [];
         articleCounter = 0;
-        
+
         // Set default date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date-reception').value = today;
-        
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("date-reception").value = today;
+
         updateReceptionArticlesTable();
-        modal.classList.remove('hidden');
+        modal.classList.remove("hidden");
     }
 
     function closeReceptionForm() {
-        const modal = document.getElementById('reception-modal');
-        modal.classList.add('hidden');
+        const modal = document.getElementById("reception-modal");
+        modal.classList.add("hidden");
         receptionArticles = [];
         articleCounter = 0;
     }
@@ -635,39 +916,40 @@
     function addArticleToReception() {
         articleCounter++;
         const newArticle = {
-            id: 'art_' + articleCounter,
-            articleId: '',
+            id: "art_" + articleCounter,
+            articleId: "",
             quantite: 1,
             prixUnitaire: 0,
-            supplierId: ''
+            supplierId: "",
         };
-        
+
         receptionArticles.push(newArticle);
         updateReceptionArticlesTable();
     }
 
     function updateReceptionArticlesTable() {
-        const tbody = document.getElementById('reception-articles-tbody');
-        const emptyState = document.getElementById('articles-empty-state');
-        
+        const tbody = document.getElementById("reception-articles-tbody");
+        const emptyState = document.getElementById("articles-empty-state");
+
         if (receptionArticles.length === 0) {
-            tbody.style.display = 'none';
-            emptyState.style.display = 'block';
+            tbody.style.display = "none";
+            emptyState.style.display = "block";
             return;
         }
-        
-        tbody.style.display = '';
-        emptyState.style.display = 'none';
-        
-        tbody.innerHTML = receptionArticles.map((article, index) => {
-            return `
+
+        tbody.style.display = "";
+        emptyState.style.display = "none";
+
+        tbody.innerHTML = receptionArticles
+            .map((article, index) => {
+                return `
                 <tr class="hover:bg-blue-50 transition-colors duration-150">
                     <td class="px-6 py-4 text-sm font-medium text-gray-500">${index + 1}</td>
                     <td class="px-6 py-4">
                         <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
                                 onchange="updateArticleSelection('${article.id}', this.value)" data-article-id="${article.id}">
                             <option value="">Sélectionner un article</option>
-                            ${articles.map(a => `<option value="${a.id}" ${a.id === article.articleId ? 'selected' : ''}>${a.designation} (${a.reference || 'Ref. non définie'})</option>`).join('')}
+                            ${articles.map((a) => `<option value="${a.id}" ${a.id === article.articleId ? "selected" : ""}>${a.designation} (${a.reference || "Ref. non définie"})</option>`).join("")}
                         </select>
                     </td>
                     <td class="px-6 py-4">
@@ -687,7 +969,7 @@
                         <select class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium focus:border-blue-500 focus:ring-0 transition-colors duration-200" 
                                 onchange="updateArticleSupplier('${article.id}', this.value)">
                             <option value="">Sélectionner fournisseur</option>
-                            ${suppliers.map(s => `<option value="${s.id}" ${s.id === article.supplierId ? 'selected' : ''}>${s.nom}</option>`).join('')}
+                            ${suppliers.map((s) => `<option value="${s.id}" ${s.id === article.supplierId ? "selected" : ""}>${s.nom}</option>`).join("")}
                         </select>
                     </td>
                     <td class="px-6 py-4">
@@ -701,11 +983,12 @@
                     </td>
                 </tr>
             `;
-        }).join('');
+            })
+            .join("");
     }
 
     function updateArticleSelection(articleId, selectedArticleId) {
-        const article = receptionArticles.find(a => a.id === articleId);
+        const article = receptionArticles.find((a) => a.id === articleId);
         if (article) {
             article.articleId = selectedArticleId;
             updateReceptionArticlesTable();
@@ -713,7 +996,7 @@
     }
 
     function updateArticleQuantity(articleId, quantity) {
-        const article = receptionArticles.find(a => a.id === articleId);
+        const article = receptionArticles.find((a) => a.id === articleId);
         if (article) {
             article.quantite = parseInt(quantity) || 1;
             updateReceptionArticlesTable();
@@ -721,7 +1004,7 @@
     }
 
     function updateArticlePrice(articleId, price) {
-        const article = receptionArticles.find(a => a.id === articleId);
+        const article = receptionArticles.find((a) => a.id === articleId);
         if (article) {
             article.prixUnitaire = parseFloat(price) || 0;
             updateReceptionArticlesTable();
@@ -729,80 +1012,90 @@
     }
 
     function updateArticleSupplier(articleId, supplierId) {
-        const article = receptionArticles.find(a => a.id === articleId);
+        const article = receptionArticles.find((a) => a.id === articleId);
         if (article) {
             article.supplierId = supplierId;
         }
     }
 
     function removeReceptionArticle(articleId) {
-        receptionArticles = receptionArticles.filter(a => a.id !== articleId);
+        receptionArticles = receptionArticles.filter((a) => a.id !== articleId);
         updateReceptionArticlesTable();
     }
 
     async function saveReception(event) {
         event.preventDefault();
-        
+
         const formData = new FormData(event.target);
-        const dateReception = formData.get('dateReception');
-        const numeroBonLivraison = formData.get('numeroBonLivraison');
-        const observations = formData.get('receptionObservations');
-        
+        const dateReception = formData.get("dateReception");
+        const numeroBonLivraison = formData.get("numeroBonLivraison");
+        const observations = formData.get("receptionObservations");
+
         if (!dateReception) {
-            showToast('Veuillez sélectionner une date de réception', 'error');
+            showToast("Veuillez sélectionner une date de réception", "error");
             return;
         }
-        
+
         if (receptionArticles.length === 0) {
-            showToast('Veuillez ajouter au moins un article', 'error');
+            showToast("Veuillez ajouter au moins un article", "error");
             return;
         }
-        
+
         // Validate articles
-        const invalidArticles = receptionArticles.filter(a => !a.articleId || a.quantite <= 0);
+        const invalidArticles = receptionArticles.filter(
+            (a) => !a.articleId || a.quantite <= 0,
+        );
         if (invalidArticles.length > 0) {
-            showToast('Veuillez compléter tous les articles (article et quantité)', 'error');
+            showToast(
+                "Veuillez compléter tous les articles (article et quantité)",
+                "error",
+            );
             return;
         }
-        
+
         try {
             showLoading();
-            
+
             // Create receptions for each article
-            const receptionPromises = receptionArticles.map(article => {
-                return apiRequest('POST', '/api/receptions', {
+            const receptionPromises = receptionArticles.map((article) => {
+                return apiRequest("POST", "/api/receptions", {
                     dateReception: dateReception,
                     articleId: article.articleId,
                     quantiteRecue: article.quantite,
                     prixUnitaire: article.prixUnitaire,
                     supplierId: article.supplierId || null,
                     numeroBonLivraison: numeroBonLivraison || null,
-                    observations: observations || null
+                    observations: observations || null,
                 });
             });
-            
+
             await Promise.all(receptionPromises);
-            
-            showToast(`Réception enregistrée avec succès - ${receptionArticles.length} article(s)`, 'success');
+
+            showToast(
+                `Réception enregistrée avec succès - ${receptionArticles.length} article(s)`,
+                "success",
+            );
             closeReceptionForm();
-            
+
             // Refresh data
             await loadData();
-            
         } catch (error) {
-            console.error('Error saving reception:', error);
-            showToast('Erreur lors de l\'enregistrement de la réception', 'error');
+            console.error("Error saving reception:", error);
+            showToast(
+                "Erreur lors de l'enregistrement de la réception",
+                "error",
+            );
         } finally {
             hideLoading();
         }
     }
 
     function viewReceptionGroup(groupId) {
-        const group = filteredReceptions.find(g => g.id === groupId);
+        const group = filteredReceptions.find((g) => g.id === groupId);
         if (!group) return;
-        
-        const supplier = suppliers.find(s => s.id === group.supplierId);
-        
+
+        const supplier = suppliers.find((s) => s.id === group.supplierId);
+
         let detailsHTML = `
             <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-50" id="reception-details-modal">
                 <div class="relative min-h-screen flex items-center justify-center p-4">
@@ -815,7 +1108,7 @@
                                     </div>
                                     <div>
                                         <h3 class="text-2xl font-bold text-white">Détails de la Réception</h3>
-                                        <p class="text-white/80 text-sm">${group.numeroBonLivraison || 'Sans bon de livraison'}</p>
+                                        <p class="text-white/80 text-sm">${group.numeroBonLivraison || "Sans bon de livraison"}</p>
                                     </div>
                                 </div>
                                 <button onclick="closeReceptionDetails()" class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center">
@@ -830,43 +1123,51 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <span class="text-sm text-gray-600">Date de réception:</span>
-                                        <div class="font-semibold">${new Date(group.dateReception).toLocaleDateString('fr-FR')}</div>
+                                        <div class="font-semibold">${new Date(group.dateReception).toLocaleDateString("fr-FR")}</div>
                                     </div>
                                     <div>
                                         <span class="text-sm text-gray-600">Fournisseur:</span>
-                                        <div class="font-semibold">${supplier ? supplier.nom : 'Non spécifié'}</div>
+                                        <div class="font-semibold">${supplier ? supplier.nom : "Non spécifié"}</div>
                                     </div>
                                     <div>
                                         <span class="text-sm text-gray-600">Bon de livraison:</span>
-                                        <div class="font-semibold">${group.numeroBonLivraison || 'Non spécifié'}</div>
+                                        <div class="font-semibold">${group.numeroBonLivraison || "Non spécifié"}</div>
                                     </div>
                                     <div>
                                         <span class="text-sm text-gray-600">Valeur totale:</span>
                                         <div class="font-semibold text-lg" style="color: #003d9d;">${group.totalValue.toFixed(2)} MAD</div>
                                     </div>
                                 </div>
-                                ${group.observations ? `
+                                ${
+                                    group.observations
+                                        ? `
                                     <div class="mt-4">
                                         <span class="text-sm text-gray-600">Observations:</span>
                                         <div class="font-semibold">${group.observations}</div>
                                     </div>
-                                ` : ''}
+                                `
+                                        : ""
+                                }
                             </div>
                             
                             <div>
                                 <h4 class="text-lg font-bold text-gray-900 mb-4">Articles Réceptionnés</h4>
                                 <div class="space-y-3">
-                                    ${group.articles.map(article => {
-                                        const articleData = articles.find(a => a.id === article.articleId);
-                                        return `
+                                    ${group.articles
+                                        .map((article) => {
+                                            const articleData = articles.find(
+                                                (a) =>
+                                                    a.id === article.articleId,
+                                            );
+                                            return `
                                             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                                                 <div class="flex items-center space-x-3">
                                                     <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #003d9d;">
                                                         <i class="fas fa-cube text-white"></i>
                                                     </div>
                                                     <div>
-                                                        <div class="font-semibold text-gray-900">${articleData ? articleData.designation : 'Article supprimé'}</div>
-                                                        <div class="text-sm text-gray-500">${articleData ? articleData.reference || 'Ref. non définie' : ''}</div>
+                                                        <div class="font-semibold text-gray-900">${articleData ? articleData.designation : "Article supprimé"}</div>
+                                                        <div class="text-sm text-gray-500">${articleData ? articleData.reference || "Ref. non définie" : ""}</div>
                                                     </div>
                                                 </div>
                                                 <div class="text-right">
@@ -875,7 +1176,8 @@
                                                 </div>
                                             </div>
                                         `;
-                                    }).join('')}
+                                        })
+                                        .join("")}
                                 </div>
                             </div>
                             
@@ -889,12 +1191,12 @@
                 </div>
             </div>
         `;
-        
-        document.body.insertAdjacentHTML('beforeend', detailsHTML);
+
+        document.body.insertAdjacentHTML("beforeend", detailsHTML);
     }
 
     function closeReceptionDetails() {
-        const modal = document.getElementById('reception-details-modal');
+        const modal = document.getElementById("reception-details-modal");
         if (modal) {
             modal.remove();
         }
@@ -903,47 +1205,52 @@
     let pendingDeleteGroup = null;
 
     function deleteReceptionGroup(groupId) {
-        const group = filteredReceptions.find(g => g.id === groupId);
+        const group = filteredReceptions.find((g) => g.id === groupId);
         if (!group) return;
-        
+
         pendingDeleteGroup = group;
-        
+
         // Update modal with dynamic content
-        const modalTitle = document.getElementById('reception-delete-title');
-        const modalContent = document.getElementById('reception-delete-content');
+        const modalTitle = document.getElementById("reception-delete-title");
+        const modalContent = document.getElementById(
+            "reception-delete-content",
+        );
         modalTitle.textContent = `Êtes-vous sûr de vouloir supprimer cette réception avec ${group.articles.length} article(s) ?`;
         modalContent.textContent = `Cette action supprimera définitivement la réception et tous les articles associés.`;
-        
-        document.getElementById('delete-confirmation-modal').classList.remove('hidden');
+
+        document
+            .getElementById("delete-confirmation-modal")
+            .classList.remove("hidden");
     }
 
     function closeDeleteConfirmation() {
         pendingDeleteGroup = null;
-        document.getElementById('delete-confirmation-modal').classList.add('hidden');
+        document
+            .getElementById("delete-confirmation-modal")
+            .classList.add("hidden");
     }
 
     async function confirmDeleteReception() {
         if (!pendingDeleteGroup) return;
-        
+
         try {
             showLoading();
-            
+
             // Delete all articles in the group
-            const deletePromises = pendingDeleteGroup.articles.map(article => 
-                apiRequest('DELETE', `/api/receptions/${article.id}`)
+            const deletePromises = pendingDeleteGroup.articles.map((article) =>
+                apiRequest("DELETE", `/api/receptions/${article.id}`),
             );
-            
+
             await Promise.all(deletePromises);
-            
-            showToast('Réception supprimée avec succès', 'success');
+
+            showToast("Réception supprimée avec succès", "success");
             closeDeleteConfirmation();
-            
+
             // Refresh data
             await loadData();
-            
         } catch (error) {
-            console.error('Error deleting reception group:', error);
-            showToast('Erreur lors de la suppression de la réception', 'error');
+            console.error("Error deleting reception group:", error);
+            showToast("Erreur lors de la suppression de la réception", "error");
             closeDeleteConfirmation();
         } finally {
             hideLoading();
@@ -952,36 +1259,83 @@
 </script>
 
 <!-- Delete Confirmation Modal -->
-<div id="delete-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-60 hidden">
+<div
+    id="delete-confirmation-modal"
+    class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-20 hidden"
+>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 hover:scale-100">
+        <div
+            class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 hover:scale-100"
+        >
             <!-- Modern Header -->
-            <div class="rounded-t-3xl px-8 py-6" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+            <div
+                class="rounded-t-3xl px-8 py-6"
+                style="
+                    background: linear-gradient(
+                        135deg,
+                        #dc2626 0%,
+                        #b91c1c 100%
+                    );
+                "
+            >
                 <div class="flex items-center justify-center">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg mr-4">
-                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                    <div
+                        class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg mr-4"
+                    >
+                        <i
+                            class="fas fa-exclamation-triangle text-white text-xl"
+                        ></i>
                     </div>
                     <div class="text-center">
-                        <h3 class="text-xl font-bold text-white tracking-tight">Confirmation de Suppression</h3>
+                        <h3 class="text-xl font-bold text-white tracking-tight">
+                            Confirmation de Suppression
+                        </h3>
                     </div>
                 </div>
             </div>
-            
+
             <div class="p-8 space-y-6">
                 <div class="text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                    <div
+                        class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center"
+                    >
                         <i class="fas fa-trash text-3xl text-red-600"></i>
                     </div>
-                    <h4 id="reception-delete-title" class="text-lg font-semibold text-gray-900 mb-2">Êtes-vous sûr de vouloir supprimer cette réception ?</h4>
-                    <p id="reception-delete-content" class="text-gray-600">Cette action supprimera définitivement la réception et tous les articles associés.</p>
+                    <h4
+                        id="reception-delete-title"
+                        class="text-lg font-semibold text-gray-900 mb-2"
+                    >
+                        Êtes-vous sûr de vouloir supprimer cette réception ?
+                    </h4>
+                    <p id="reception-delete-content" class="text-gray-600">
+                        Cette action supprimera définitivement la réception et
+                        tous les articles associés.
+                    </p>
                 </div>
-                
-                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
-                    <button type="button" onclick="closeDeleteConfirmation()" class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2">
+
+                <div
+                    class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100"
+                >
+                    <button
+                        type="button"
+                        onclick="closeDeleteConfirmation()"
+                        class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
                         <i class="fas fa-times"></i>
                         <span>Annuler</span>
                     </button>
-                    <button type="button" onclick="confirmDeleteReception()" class="px-6 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
+                    <button
+                        type="button"
+                        onclick="confirmDeleteReception()"
+                        class="px-6 py-3 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 text-white"
+                        style="
+                            background: linear-gradient(
+                                135deg,
+                                #dc2626 0%,
+                                #ef4444 100%
+                            );
+                        "
+                    >
                         <i class="fas fa-trash"></i>
                         <span>Supprimer</span>
                     </button>
