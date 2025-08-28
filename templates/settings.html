@@ -47,6 +47,9 @@
                 <button onclick="switchTab('customization')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="customization">
                     Personnalisation
                 </button>
+                <button onclick="switchTab('license')" class="settings-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium" data-tab="license">
+                    Licence
+                </button>
             </nav>
         </div>
 
@@ -763,6 +766,53 @@
                 </div>
             </div>
         </div>
+
+        <!-- License Settings -->
+        <div id="license-tab" class="settings-content p-6 hidden">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Information de Licence</h3>
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <div id="license-status" class="space-y-4">
+                            <!-- License status will be loaded here -->
+                            <div class="flex items-center justify-center h-20">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Actions de Licence</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="refreshLicenseStatus()" 
+                                class="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            <i class="fas fa-sync-alt mr-2"></i>
+                            Actualiser le statut
+                        </button>
+                        
+                        <button onclick="deactivateLicense()" 
+                                class="flex items-center justify-center px-4 py-3 border border-red-300 rounded-md shadow-sm bg-red-50 text-sm font-medium text-red-700 hover:bg-red-100">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            Désactiver la licence
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 class="text-blue-800 font-semibold mb-2">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        À propos des licences
+                    </h4>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• Votre licence est liée à cet ordinateur spécifique</li>
+                        <li>• Une licence est valide pour un seul appareil à la fois</li>
+                        <li>• Contactez le support pour transférer votre licence</li>
+                        <li>• La désactivation permettra l'activation sur un autre appareil</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -796,6 +846,11 @@
         const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
         activeTab.classList.add('active', 'border-blue-500', 'text-blue-600');
         activeTab.classList.remove('border-transparent', 'text-gray-500');
+        
+        // Load license status when license tab is opened
+        if (tabName === 'license') {
+            loadLicenseStatus();
+        }
     }
 
     async function loadSettings() {
@@ -1253,6 +1308,107 @@
             
             applySettings();
             showToast('Dashboard réinitialisé', 'success');
+        }
+    }
+
+    // License management functions
+    async function loadLicenseStatus() {
+        try {
+            const response = await fetch('/api/license-status');
+            const result = await response.json();
+            
+            const statusContainer = document.getElementById('license-status');
+            
+            if (result.success && result.is_licensed) {
+                const info = result.license_info;
+                statusContainer.innerHTML = `
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-lg font-semibold text-green-800">Licence Active</h4>
+                            <p class="text-sm text-gray-600 mb-3">Votre logiciel est correctement activé</p>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <strong class="text-gray-700">Machine:</strong>
+                                        <span class="text-gray-600">${info.machine_name || 'Non spécifié'}</span>
+                                    </div>
+                                    <div>
+                                        <strong class="text-gray-700">Date d'activation:</strong>
+                                        <span class="text-gray-600">${new Date(info.activation_date).toLocaleDateString('fr-FR')}</span>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <strong class="text-gray-700">Identifiant Machine:</strong>
+                                        <span class="text-gray-600 font-mono text-xs">${info.mac_address}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                statusContainer.innerHTML = `
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-lg font-semibold text-red-800">Licence Non Active</h4>
+                            <p class="text-sm text-gray-600 mb-3">Ce logiciel nécessite une activation</p>
+                            
+                            <button onclick="window.location.href='/activation'" 
+                                    class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md">
+                                <i class="fas fa-key mr-2"></i>
+                                Activer maintenant
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            document.getElementById('license-status').innerHTML = `
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold text-yellow-800">Erreur de vérification</h4>
+                        <p class="text-sm text-gray-600">Impossible de vérifier le statut de la licence</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function refreshLicenseStatus() {
+        showToast('Actualisation du statut de licence...', 'info');
+        loadLicenseStatus();
+    }
+
+    async function deactivateLicense() {
+        if (confirm('Êtes-vous sûr de vouloir désactiver la licence ? Vous devrez la réactiver pour utiliser le logiciel.')) {
+            try {
+                const response = await fetch('/api/deactivate-license', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Licence désactivée avec succès', 'success');
+                    loadLicenseStatus();
+                } else {
+                    showToast('Erreur lors de la désactivation: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Erreur de réseau lors de la désactivation', 'error');
+            }
         }
     }
 
