@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 # Get base path for PyInstaller and set up database path
 if getattr(sys, 'frozen', False):
     # Running as compiled executable
-    BASE_PATH = sys._MEIPASS
+    BASE_PATH = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     # Use user's AppData directory for database
     DB_DIR = os.path.join(os.path.expanduser("~"), "StockCeramique")
     os.makedirs(DB_DIR, exist_ok=True)
@@ -94,7 +94,6 @@ class DownloadAPI:
             file_path = filedialog.asksaveasfilename(
                 title="Save file as...",
                 initialdir=self.downloads_dir,
-                initialfilename=suggested_filename,
                 defaultextension=file_ext,
                 filetypes=filetypes
             )
@@ -164,12 +163,8 @@ def run_flask(port):
             db.create_all()
             logger.info("✅ Database tables created successfully")
             
-            # Initialize with sample data if database is empty
-            from flask_models import Supplier
-            if Supplier.query.count() == 0:
-                logger.info("🔄 Initializing database with sample data...")
-                from initialize_desktop_database import initialize_database_with_sample_data
-                initialize_database_with_sample_data()
+            # Database tables are now ready for use
+            logger.info("📦 Database initialized and ready")
 
         app.run(host='127.0.0.1', port=port, debug=False, use_reloader=False, threaded=True)
     except Exception as e:
@@ -198,7 +193,7 @@ def safe_splash_operation(operation, *args, **kwargs):
     """Safely perform splash screen operations"""
     try:
         import pyi_splash
-        if hasattr(pyi_splash, '_initialized') and not pyi_splash._initialized:
+        if hasattr(pyi_splash, 'is_alive') and not pyi_splash.is_alive():
             return False
         return getattr(pyi_splash, operation)(*args, **kwargs)
     except (ImportError, RuntimeError, AttributeError) as e:

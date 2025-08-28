@@ -6,7 +6,17 @@ StockCéramique is a comprehensive inventory management system for ceramic spare
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (August 27, 2025)
+## Recent Changes (August 28, 2025)
+**Desktop App Cleanup & Windows 10 Support**: Optimized desktop application setup for Windows 10 compatibility:
+- Removed obsolete files: `initialize_desktop_database.py` and `desktop_main_old.py`
+- Fixed PyInstaller configuration and removed broken import dependencies
+- Updated splash screen and application icon assets
+- Created Windows-specific requirements file for better compatibility
+- Added automated build script (`build-windows.bat`) for easy Windows compilation
+- Enhanced error handling and PyInstaller integration for Windows 10
+- Desktop app now properly handles database initialization without sample data dependencies
+
+## Previous Changes (August 27, 2025)
 **Project Migration & Data Import Completed**: Successfully migrated the StockCéramique application from Replit Agent to standard Replit environment. Key accomplishments:
 - Complete Flask application now running smoothly in Replit environment
 - All Python dependencies (Flask, SQLAlchemy, etc.) properly installed

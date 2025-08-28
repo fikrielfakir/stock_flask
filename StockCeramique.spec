@@ -9,7 +9,6 @@ a = Analysis(
         'flask_models',
         'routes',
         'flask_app',
-        'initialize_desktop_database',
         'sqlalchemy.dialects.sqlite',
         'sqlalchemy.pool'
     ],
