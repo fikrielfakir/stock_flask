@@ -6,8 +6,7 @@ import os
 from datetime import datetime
 import uuid
 import logging
-from license_manager import license_manager
-from onetime_license_manager import onetime_license_manager
+# License managers removed for Replit environment
 
 # Initialize extensions
 migrate = Migrate()
@@ -16,10 +15,10 @@ def create_app():
     # Initialize Flask app
     app = Flask(__name__, static_folder='dist', static_url_path='')
 
-    # Configuration - Local SQLite Database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///stockceramique.db'
+    # Configuration - PostgreSQL Database
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 
     # Import db from models and initialize
     from flask_models import db
@@ -48,90 +47,9 @@ def create_app():
         db.session.rollback()
         return jsonify({'message': 'Internal server error'}), 500
 
-    # License checking middleware
-    def check_license():
-        """Check if the application is licensed before allowing access"""
-        # Skip license check for activation routes
-        if request.endpoint in ['activation', 'activate_license']:
-            return None
-            
-        # Check both old MAC-based and new one-time license systems
-        if not (license_manager.is_machine_licensed() or onetime_license_manager.is_machine_licensed()):
-            return redirect(url_for('activation'))
-        return None
+    # License checking removed for Replit environment
 
-    @app.before_request
-    def before_request():
-        license_check = check_license()
-        if license_check:
-            return license_check
-
-    # Activation routes
-    @app.route('/activation')
-    def activation():
-        machine_name = license_manager.get_machine_name()
-        machine_id = license_manager.get_machine_identifier()
-        return render_template('activation.html', 
-                             machine_name=machine_name, 
-                             machine_id=machine_id)
-
-    @app.route('/api/activate', methods=['POST'])
-    def activate_license():
-        try:
-            data = request.get_json()
-            license_key = data.get('license_key', '').strip()
-            
-            if not license_key:
-                return jsonify({'success': False, 'message': 'License key is required'}), 400
-            
-            # Try one-time license first
-            success, message = onetime_license_manager.activate_license_key(license_key)
-            
-            # If one-time license fails, try MAC-based license (backward compatibility)
-            if not success:
-                success, message = license_manager.activate_license(license_key)
-            
-            if success:
-                return jsonify({'success': True, 'message': message})
-            else:
-                return jsonify({'success': False, 'message': message}), 400
-                
-        except Exception as e:
-            logger.error(f"Activation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Activation failed due to server error'}), 500
-
-
-    @app.route('/api/license-status')
-    def license_status():
-        try:
-            # Check both license systems
-            mac_info = license_manager.get_license_info()
-            onetime_info = onetime_license_manager.get_machine_license_info()
-            
-            is_licensed = license_manager.is_machine_licensed() or onetime_license_manager.is_machine_licensed()
-            
-            # Prefer one-time license info if available
-            license_info = onetime_info if onetime_info else mac_info
-            
-            return jsonify({
-                'success': True,
-                'is_licensed': is_licensed,
-                'license_info': license_info
-            })
-        except Exception as e:
-            logger.error(f"License status error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Failed to check license status'}), 500
-
-    @app.route('/api/deactivate-license', methods=['POST'])
-    def deactivate_license():
-        try:
-            # Deactivate both license systems
-            license_manager.deactivate_license()
-            onetime_license_manager.deactivate_license()
-            return jsonify({'success': True, 'message': 'License deactivated successfully'})
-        except Exception as e:
-            logger.error(f"License deactivation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Failed to deactivate license'}), 500
+    # License and activation routes removed for Replit environment
 
     # Flask template routes
     @app.route('/')
