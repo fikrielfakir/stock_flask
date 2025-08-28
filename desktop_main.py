@@ -295,11 +295,13 @@ def main():
                 else:
                     logger.error("❌ Both webview and browser failed!")
                     logger.info(f"📋 Try manually opening: {url}")
-                    input("Both webview and browser failed. Press any key to exit...")
+                    # Wait a bit before exiting to allow user to see the message
+                    time.sleep(3)
         else:
             logger.error("❌ Flask server failed to start")
             safe_splash_operation('close')
-            input("Flask server failed to start. Press any key to exit...")
+            # Wait a bit before exiting to allow user to see the message
+            time.sleep(3)
 
     except Exception as e:
         logger.error(f"❌ Application failed to start: {e}")
@@ -309,7 +311,8 @@ def main():
         # Try to close splash screen
         safe_splash_operation('close')
 
-        input("Application failed to start. Press any key to exit...")
+        # Wait a bit before exiting to allow user to see the message
+        time.sleep(3)
         sys.exit(1)
 
 if __name__ == '__main__':
