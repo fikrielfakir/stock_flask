@@ -474,6 +474,218 @@ def register_routes(app, db):
             db.session.rollback()
             return jsonify({'message': 'Erreur lors de la suppression'}), 500
 
+    # Suppliers Import/Export routes
+    @app.route("/api/suppliers/export", methods=['GET'])
+    def export_suppliers():
+        try:
+            suppliers = Supplier.query.all()
+            
+            # Create DataFrame with supplier data
+            data = []
+            for supplier in suppliers:
+                data.append({
+                    'Nom': supplier.nom,
+                    'Contact': supplier.contact or '',
+                    'Téléphone': supplier.telephone or '',
+                    'Email': supplier.email or '',
+                    'Adresse': supplier.adresse or '',
+                    'Conditions de paiement': supplier.conditions_paiement or '',
+                    'Délai de livraison (jours)': supplier.delai_livraison or ''
+                })
+            
+            df = pd.DataFrame(data)
+            
+            # Create Excel file in memory
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, sheet_name='Fournisseurs', index=False)
+            
+            output.seek(0)
+            
+            # Create response
+            filename = f"fournisseurs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            response = make_response(output.getvalue())
+            response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+            return response
+            
+        except Exception as e:
+            logger.error(f"Suppliers export error: {str(e)}")
+            return jsonify({'message': f'Erreur lors de l\'export: {str(e)}'}), 500
+
+    @app.route("/api/suppliers/import", methods=['POST'])
+    def import_suppliers():
+        try:
+            if 'file' not in request.files:
+                return jsonify({'message': 'Aucun fichier fourni'}), 400
+            
+            file = request.files['file']
+            if file.filename == '' or not file.filename.endswith(('.xlsx', '.xls')):
+                return jsonify({'message': 'Fichier Excel requis (.xlsx ou .xls)'}), 400
+            
+            # Read Excel file
+            df = pd.read_excel(file)
+            
+            # Expected columns
+            expected_columns = ['Nom', 'Contact', 'Téléphone', 'Email', 'Adresse', 'Conditions de paiement', 'Délai de livraison (jours)']
+            
+            # Check if required column exists
+            if 'Nom' not in df.columns:
+                return jsonify({'message': 'Colonne "Nom" requise dans le fichier Excel'}), 400
+            
+            imported_count = 0
+            errors = []
+            
+            for index, row in df.iterrows():
+                try:
+                    # Check if supplier name is provided
+                    if pd.isna(row.get('Nom')) or str(row.get('Nom')).strip() == '':
+                        errors.append(f"Ligne {index + 2}: Nom requis")
+                        continue
+                    
+                    # Check if supplier already exists
+                    existing = Supplier.query.filter_by(nom=str(row['Nom']).strip()).first()
+                    if existing:
+                        errors.append(f"Ligne {index + 2}: Fournisseur '{row['Nom']}' existe déjà")
+                        continue
+                    
+                    # Create new supplier
+                    supplier = Supplier(
+                        nom=str(row['Nom']).strip(),
+                        contact=str(row.get('Contact', '')).strip() if not pd.isna(row.get('Contact')) else None,
+                        telephone=str(row.get('Téléphone', '')).strip() if not pd.isna(row.get('Téléphone')) else None,
+                        email=str(row.get('Email', '')).strip() if not pd.isna(row.get('Email')) else None,
+                        adresse=str(row.get('Adresse', '')).strip() if not pd.isna(row.get('Adresse')) else None,
+                        conditions_paiement=str(row.get('Conditions de paiement', '')).strip() if not pd.isna(row.get('Conditions de paiement')) else None,
+                        delai_livraison=int(row.get('Délai de livraison (jours)', 0)) if not pd.isna(row.get('Délai de livraison (jours)')) and str(row.get('Délai de livraison (jours)')).strip() != '' else None
+                    )
+                    
+                    db.session.add(supplier)
+                    imported_count += 1
+                    
+                except Exception as e:
+                    errors.append(f"Ligne {index + 2}: {str(e)}")
+            
+            db.session.commit()
+            
+            return jsonify({
+                'message': f'{imported_count} fournisseur(s) importé(s) avec succès',
+                'imported': imported_count,
+                'errors': errors
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Suppliers import error: {str(e)}")
+            return jsonify({'message': f'Erreur lors de l\'import: {str(e)}'}), 500
+
+    # Requestors Import/Export routes
+    @app.route("/api/requestors/export", methods=['GET'])
+    def export_requestors():
+        try:
+            requestors = Requestor.query.all()
+            
+            # Create DataFrame with requestor data
+            data = []
+            for requestor in requestors:
+                data.append({
+                    'Prénom': requestor.prenom,
+                    'Nom': requestor.nom,
+                    'Département': requestor.departement,
+                    'Poste': requestor.poste or '',
+                    'Email': requestor.email or '',
+                    'Téléphone': requestor.telephone or ''
+                })
+            
+            df = pd.DataFrame(data)
+            
+            # Create Excel file in memory
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, sheet_name='Demandeurs', index=False)
+            
+            output.seek(0)
+            
+            # Create response
+            filename = f"demandeurs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            response = make_response(output.getvalue())
+            response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+            return response
+            
+        except Exception as e:
+            logger.error(f"Requestors export error: {str(e)}")
+            return jsonify({'message': f'Erreur lors de l\'export: {str(e)}'}), 500
+
+    @app.route("/api/requestors/import", methods=['POST'])
+    def import_requestors():
+        try:
+            if 'file' not in request.files:
+                return jsonify({'message': 'Aucun fichier fourni'}), 400
+            
+            file = request.files['file']
+            if file.filename == '' or not file.filename.endswith(('.xlsx', '.xls')):
+                return jsonify({'message': 'Fichier Excel requis (.xlsx ou .xls)'}), 400
+            
+            # Read Excel file
+            df = pd.read_excel(file)
+            
+            # Check required columns
+            required_columns = ['Prénom', 'Nom', 'Département']
+            missing_columns = [col for col in required_columns if col not in df.columns]
+            
+            if missing_columns:
+                return jsonify({'message': f'Colonnes requises manquantes: {", ".join(missing_columns)}'}), 400
+            
+            imported_count = 0
+            errors = []
+            
+            for index, row in df.iterrows():
+                try:
+                    # Check required fields
+                    prenom = str(row.get('Prénom', '')).strip() if not pd.isna(row.get('Prénom')) else ''
+                    nom = str(row.get('Nom', '')).strip() if not pd.isna(row.get('Nom')) else ''
+                    departement = str(row.get('Département', '')).strip() if not pd.isna(row.get('Département')) else ''
+                    
+                    if not prenom or not nom or not departement:
+                        errors.append(f"Ligne {index + 2}: Prénom, Nom et Département requis")
+                        continue
+                    
+                    # Check if requestor already exists
+                    existing = Requestor.query.filter_by(nom=nom, prenom=prenom, departement=departement).first()
+                    if existing:
+                        errors.append(f"Ligne {index + 2}: Demandeur '{prenom} {nom}' du département '{departement}' existe déjà")
+                        continue
+                    
+                    # Create new requestor
+                    requestor = Requestor(
+                        prenom=prenom,
+                        nom=nom,
+                        departement=departement,
+                        poste=str(row.get('Poste', '')).strip() if not pd.isna(row.get('Poste')) else None,
+                        email=str(row.get('Email', '')).strip() if not pd.isna(row.get('Email')) else None,
+                        telephone=str(row.get('Téléphone', '')).strip() if not pd.isna(row.get('Téléphone')) else None
+                    )
+                    
+                    db.session.add(requestor)
+                    imported_count += 1
+                    
+                except Exception as e:
+                    errors.append(f"Ligne {index + 2}: {str(e)}")
+            
+            db.session.commit()
+            
+            return jsonify({
+                'message': f'{imported_count} demandeur(s) importé(s) avec succès',
+                'imported': imported_count,
+                'errors': errors
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Requestors import error: {str(e)}")
+            return jsonify({'message': f'Erreur lors de l\'import: {str(e)}'}), 500
+
     # Purchase Requests routes
     @app.route("/api/purchase-requests", methods=['GET'])
     def get_purchase_requests():

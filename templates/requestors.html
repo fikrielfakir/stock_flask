@@ -13,6 +13,20 @@ StockCeramique{% endblock %} {% block content %}
         </div>
         <div class="flex space-x-3">
             <button
+                onclick="exportRequestors()"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            >
+                <i class="fas fa-download mr-2"></i>
+                Exporter
+            </button>
+            <button
+                onclick="openImportModal()"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            >
+                <i class="fas fa-upload mr-2"></i>
+                Importer
+            </button>
+            <button
                 onclick="openRequestorForm()"
                 class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
@@ -422,6 +436,105 @@ StockCeramique{% endblock %} {% block content %}
         </div>
     </div>
 </div>
+
+<!-- Import Modal -->
+<div
+    id="import-modal"
+    class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-20 hidden"
+>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div
+            class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg transform transition-all duration-300 scale-95 hover:scale-100"
+        >
+            <!-- Header -->
+            <div
+                class="bg-gradient-to-r from-purple-600 to-purple-800 rounded-t-3xl px-8 py-6"
+            >
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+                        >
+                            <i class="fas fa-upload text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">
+                                Importer des demandeurs
+                            </h3>
+                            <p class="text-purple-100 text-sm">
+                                Charger depuis un fichier Excel
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onclick="closeImportModal()"
+                        class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-all duration-200 flex items-center justify-center"
+                    >
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-8">
+                <form id="import-form" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">
+                            Fichier Excel (.xlsx ou .xls)
+                        </label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-purple-400 transition-colors">
+                            <div class="space-y-1 text-center">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                                <div class="flex text-sm text-gray-600">
+                                    <label for="import-file" class="relative cursor-pointer bg-white rounded-md font-medium text-purple-600 hover:text-purple-500 focus-within:outline-none">
+                                        <span>Choisir un fichier</span>
+                                        <input id="import-file" name="import-file" type="file" accept=".xlsx,.xls" class="sr-only" onchange="handleFileSelect(this)">
+                                    </label>
+                                    <p class="pl-1">ou glisser-déposer</p>
+                                </div>
+                                <p class="text-xs text-gray-500">
+                                    Fichiers Excel jusqu'à 10MB
+                                </p>
+                            </div>
+                        </div>
+                        <div id="file-info" class="mt-3 text-sm text-gray-600 hidden"></div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <div class="flex">
+                            <i class="fas fa-info-circle text-blue-400 mr-3 mt-1"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-blue-800">Format attendu</h4>
+                                <p class="text-sm text-blue-700 mt-1">
+                                    Le fichier doit contenir les colonnes : <strong>Prénom, Nom, Département</strong> (requis), Poste, Email, Téléphone
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
+                        <button
+                            type="button"
+                            onclick="closeImportModal()"
+                            class="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200"
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            type="button"
+                            onclick="importRequestors()"
+                            id="import-btn"
+                            disabled
+                            class="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                        >
+                            <i class="fas fa-upload"></i>
+                            <span>Importer</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %} {% block scripts %}
 <script>
     let requestors = [];
@@ -658,6 +771,129 @@ StockCeramique{% endblock %} {% block content %}
         } catch (error) {
             console.error("Error deleting requestor:", error);
             closeDeleteConfirmation();
+        }
+    }
+
+    // Import/Export functions
+    function openImportModal() {
+        document.getElementById('import-modal').classList.remove('hidden');
+    }
+
+    function closeImportModal() {
+        document.getElementById('import-modal').classList.add('hidden');
+        document.getElementById('import-file').value = '';
+        document.getElementById('file-info').classList.add('hidden');
+        document.getElementById('import-btn').disabled = true;
+    }
+
+    function handleFileSelect(input) {
+        const fileInfo = document.getElementById('file-info');
+        const importBtn = document.getElementById('import-btn');
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            fileInfo.textContent = `Fichier sélectionné: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            fileInfo.classList.remove('hidden');
+            importBtn.disabled = false;
+        } else {
+            fileInfo.classList.add('hidden');
+            importBtn.disabled = true;
+        }
+    }
+
+    async function exportRequestors() {
+        try {
+            showToast('Préparation de l\'export...', 'info');
+            
+            const response = await fetch('/api/requestors/export', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de l\'export');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            
+            // Get filename from response headers or use default
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = 'demandeurs_export.xlsx';
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename=(.+)/);
+                if (filenameMatch) {
+                    filename = filenameMatch[1];
+                }
+            }
+            
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showToast('Export terminé avec succès', 'success');
+        } catch (error) {
+            console.error('Export error:', error);
+            showToast('Erreur lors de l\'export', 'error');
+        }
+    }
+
+    async function importRequestors() {
+        const fileInput = document.getElementById('import-file');
+        const importBtn = document.getElementById('import-btn');
+        
+        if (!fileInput.files || !fileInput.files[0]) {
+            showToast('Veuillez sélectionner un fichier', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        
+        // Disable button and show loading
+        importBtn.disabled = true;
+        importBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Import en cours...';
+
+        try {
+            const response = await fetch('/api/requestors/import', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                let message = result.message;
+                if (result.errors && result.errors.length > 0) {
+                    message += `\n\nErreurs rencontrées:\n${result.errors.slice(0, 5).join('\n')}`;
+                    if (result.errors.length > 5) {
+                        message += `\n... et ${result.errors.length - 5} autres erreurs`;
+                    }
+                    showToast(message, 'warning');
+                } else {
+                    showToast(message, 'success');
+                }
+                
+                // Refresh the requestors list
+                await loadRequestors();
+                closeImportModal();
+            } else {
+                throw new Error(result.message || 'Erreur lors de l\'import');
+            }
+        } catch (error) {
+            console.error('Import error:', error);
+            showToast(error.message || 'Erreur lors de l\'import', 'error');
+        } finally {
+            // Reset button
+            importBtn.disabled = false;
+            importBtn.innerHTML = '<i class="fas fa-upload"></i><span>Importer</span>';
         }
     }
 </script>
