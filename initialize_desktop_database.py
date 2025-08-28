@@ -30,21 +30,21 @@ def initialize_database_with_sample_data():
         sample_suppliers = [
             {
                 'nom': 'ACME Industrial Supply',
-                'contact_personne': 'Jean Dupont',
+                'contact': 'Jean Dupont',
                 'telephone': '+212-123-456-789',
                 'email': 'contact@acme-supply.ma',
                 'adresse': '123 Zone Industrielle, Casablanca'
             },
             {
                 'nom': 'TechParts Morocco',
-                'contact_personne': 'Sarah Martin',
+                'contact': 'Sarah Martin',
                 'telephone': '+212-987-654-321',
                 'email': 'orders@techparts.ma',
                 'adresse': '456 Avenue Hassan II, Rabat'
             },
             {
                 'nom': 'MecanoDistrib',
-                'contact_personne': 'Ahmed Ben Ali',
+                'contact': 'Ahmed Ben Ali',
                 'telephone': '+212-555-123-456',
                 'email': 'sales@mecanodistrib.ma',
                 'adresse': '789 Quartier Industriel, Fès'
