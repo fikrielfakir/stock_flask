@@ -64,7 +64,7 @@ def import_articles_from_file():
     
     with app.app_context():
         # Read the data file
-        file_path = 'attached_assets/Pasted-NOM-P-Designation-P-30X860-100X640-AXE-TAMBOUR-CYLINDRIQUE-30X860-100X640-2442100-V4046-AMPOULE-ST-1756417028698_1756417028701.txt'
+        file_path = 'attached_assets/da_1756417109268.txt'
         
         if not os.path.exists(file_path):
             print(f"Error: File {file_path} not found")
