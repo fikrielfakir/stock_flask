@@ -11,11 +11,18 @@ import os
 from datetime import datetime, timedelta
 import psutil
 import json
+import base64
 
 class LicenseManager:
-    def __init__(self, db_path='instance/license.db'):
-        self.db_path = db_path
+    def __init__(self, db_path=None):
+        # Use hidden/obfuscated database path
+        if db_path is None:
+            # Create hidden database in system directory with obfuscated name
+            self.db_path = os.path.join(os.path.expanduser('~'), '.sys', 'cfg', 'app.dat')
+        else:
+            self.db_path = db_path
         self.ensure_db_exists()
+        self.max_licenses = 1  # Limit to 1 license per installation
     
     def ensure_db_exists(self):
         """Create license database and table if it doesn't exist"""
@@ -28,11 +35,12 @@ class LicenseManager:
             CREATE TABLE IF NOT EXISTS licenses (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 mac_address TEXT UNIQUE NOT NULL,
-                license_key TEXT NOT NULL,
+                license_data TEXT NOT NULL,
                 activation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 is_active BOOLEAN DEFAULT TRUE,
                 machine_name TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                checksum TEXT
             )
         ''')
         
@@ -69,6 +77,26 @@ class LicenseManager:
         except:
             return 'Unknown'
     
+    def _encrypt_data(self, data):
+        """Simple encryption for license data"""
+        encoded = base64.b64encode(data.encode()).decode()
+        # Add additional obfuscation
+        obfuscated = ''.join(chr(ord(c) + 3) for c in encoded)
+        return base64.b64encode(obfuscated.encode()).decode()
+    
+    def _decrypt_data(self, encrypted_data):
+        """Decrypt license data"""
+        try:
+            decoded = base64.b64decode(encrypted_data.encode()).decode()
+            deobfuscated = ''.join(chr(ord(c) - 3) for c in decoded)
+            return base64.b64decode(deobfuscated.encode()).decode()
+        except:
+            return None
+    
+    def _create_checksum(self, data):
+        """Create checksum for data integrity"""
+        return hashlib.sha256(data.encode()).hexdigest()[:16]
+
     def generate_license_key(self, mac_address, secret_seed="StockCeramique2025"):
         """Generate a license key based on MAC address"""
         # Create a hash using MAC address and secret
@@ -85,6 +113,17 @@ class LicenseManager:
         expected_key = self.generate_license_key(mac_address)
         return license_key.strip().upper() == expected_key
     
+    def check_license_limit(self):
+        """Check if license limit has been reached"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT COUNT(*) FROM licenses WHERE is_active = TRUE')
+        active_count = cursor.fetchone()[0]
+        
+        conn.close()
+        return active_count < self.max_licenses
+
     def is_machine_licensed(self):
         """Check if the current machine is licensed"""
         current_mac = self.get_mac_address()
@@ -93,14 +132,21 @@ class LicenseManager:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT license_key, is_active FROM licenses 
+            SELECT license_data, is_active, checksum FROM licenses 
             WHERE mac_address = ? AND is_active = TRUE
         ''', (current_mac,))
         
         result = cursor.fetchone()
         conn.close()
         
-        return result is not None
+        if result:
+            license_data, is_active, checksum = result
+            # Verify data integrity
+            decrypted_key = self._decrypt_data(license_data)
+            if decrypted_key and self._create_checksum(decrypted_key) == checksum:
+                return True
+        
+        return False
     
     def activate_license(self, license_key):
         """Activate license for current machine"""
@@ -111,9 +157,17 @@ class LicenseManager:
         if not self.validate_license_key(license_key, current_mac):
             return False, "Invalid license key for this machine"
         
+        # Check license limits
+        if not self.check_license_limit():
+            return False, "License limit reached. Maximum activations exceeded."
+        
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
+            
+            # Encrypt license data
+            encrypted_key = self._encrypt_data(license_key)
+            checksum = self._create_checksum(license_key)
             
             # Check if this MAC is already licensed
             cursor.execute('SELECT id FROM licenses WHERE mac_address = ?', (current_mac,))
@@ -123,15 +177,16 @@ class LicenseManager:
                 # Update existing license
                 cursor.execute('''
                     UPDATE licenses 
-                    SET license_key = ?, is_active = TRUE, activation_date = CURRENT_TIMESTAMP, machine_name = ?
+                    SET license_data = ?, is_active = TRUE, activation_date = CURRENT_TIMESTAMP, 
+                        machine_name = ?, checksum = ?
                     WHERE mac_address = ?
-                ''', (license_key, machine_name, current_mac))
+                ''', (encrypted_key, machine_name, checksum, current_mac))
             else:
                 # Insert new license
                 cursor.execute('''
-                    INSERT INTO licenses (mac_address, license_key, machine_name)
-                    VALUES (?, ?, ?)
-                ''', (current_mac, license_key, machine_name))
+                    INSERT INTO licenses (mac_address, license_data, machine_name, checksum)
+                    VALUES (?, ?, ?, ?)
+                ''', (current_mac, encrypted_key, machine_name, checksum))
             
             conn.commit()
             conn.close()
@@ -163,7 +218,7 @@ class LicenseManager:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT license_key, activation_date, machine_name, is_active
+            SELECT license_data, activation_date, machine_name, is_active, checksum
             FROM licenses WHERE mac_address = ?
         ''', (current_mac,))
         
@@ -171,13 +226,18 @@ class LicenseManager:
         conn.close()
         
         if result:
-            return {
-                'mac_address': current_mac,
-                'license_key': result[0],
-                'activation_date': result[1],
-                'machine_name': result[2],
-                'is_active': bool(result[3])
-            }
+            license_data, activation_date, machine_name, is_active, checksum = result
+            decrypted_key = self._decrypt_data(license_data)
+            
+            # Verify integrity
+            if decrypted_key and self._create_checksum(decrypted_key) == checksum:
+                return {
+                    'mac_address': current_mac,
+                    'license_key': decrypted_key[:8] + '****',  # Partially mask the key
+                    'activation_date': activation_date,
+                    'machine_name': machine_name,
+                    'is_active': bool(is_active)
+                }
         return None
     
     def get_machine_identifier(self):

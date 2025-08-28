@@ -112,14 +112,6 @@
                             Activate License
                         </button>
 
-                        <button
-                            type="button"
-                            onclick="generateLicenseKey()"
-                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors"
-                        >
-                            <i class="fas fa-cog mr-2"></i>
-                            Generate License Key for This Machine
-                        </button>
                     </div>
                 </form>
 
@@ -206,25 +198,6 @@
                 }
             });
 
-            // Generate license key for current machine
-            async function generateLicenseKey() {
-                try {
-                    const response = await fetch('/api/generate-license');
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        // Auto-fill the license key
-                        document.getElementById('license-key').value = result.license_key;
-                        
-                        // Show info message
-                        alert(`License Key Generated: ${result.license_key}\n\nThis key is specifically for your machine: ${result.machine_id}`);
-                    } else {
-                        alert('Error generating license key: ' + result.message);
-                    }
-                } catch (error) {
-                    alert('Error generating license key. Please try again.');
-                }
-            }
         </script>
     </body>
 </html>

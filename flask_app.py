@@ -51,7 +51,7 @@ def create_app():
     def check_license():
         """Check if the application is licensed before allowing access"""
         # Skip license check for activation routes
-        if request.endpoint in ['activation', 'activate_license', 'generate_license']:
+        if request.endpoint in ['activation', 'activate_license']:
             return None
             
         if not license_manager.is_machine_licensed():
@@ -93,21 +93,6 @@ def create_app():
             logger.error(f"Activation error: {str(e)}")
             return jsonify({'success': False, 'message': 'Activation failed due to server error'}), 500
 
-    @app.route('/api/generate-license')
-    def generate_license():
-        try:
-            mac_address = license_manager.get_mac_address()
-            license_key = license_manager.generate_license_key(mac_address)
-            machine_id = license_manager.get_machine_identifier()
-            
-            return jsonify({
-                'success': True,
-                'license_key': license_key,
-                'machine_id': machine_id
-            })
-        except Exception as e:
-            logger.error(f"License generation error: {str(e)}")
-            return jsonify({'success': False, 'message': 'Failed to generate license key'}), 500
 
     @app.route('/api/license-status')
     def license_status():
