@@ -1741,21 +1741,32 @@ StockCeramique{% endblock %} {% block content %}
     }
 
     // Modal functions
-    function openArticleForm(articleId = null) {
-        editingArticle = articleId
-            ? articles.find((a) => a.id === articleId)
-            : null;
+    async function openArticleForm(articleId = null) {
         const modal = document.getElementById("article-modal");
         const title = document.getElementById("modal-title");
         const form = document.getElementById("article-form");
 
-        title.textContent = editingArticle
-            ? "Modifier Article"
-            : "Nouvel Article";
-
-        if (editingArticle) {
-            populateForm(editingArticle);
+        if (articleId) {
+            // Fetch fresh data from server when editing
+            try {
+                const response = await fetch(`/api/articles/${articleId}`);
+                if (response.ok) {
+                    editingArticle = await response.json();
+                    title.textContent = "Modifier Article";
+                    populateForm(editingArticle);
+                } else {
+                    showToast("Erreur lors du chargement de l'article", "error");
+                    return;
+                }
+            } catch (error) {
+                console.error("Error fetching article:", error);
+                showToast("Erreur lors du chargement de l'article", "error");
+                return;
+            }
         } else {
+            // Creating new article
+            editingArticle = null;
+            title.textContent = "Nouvel Article";
             form.reset();
             document.getElementById("article-id").value = "";
         }
