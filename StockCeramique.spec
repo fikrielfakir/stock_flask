@@ -1,17 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+
 a = Analysis(
     ['desktop_main.py'],
     pathex=[],
     binaries=[],
     datas=[('templates', 'templates')],
-    hiddenimports=[
-        'flask_models',
-        'routes',
-        'flask_app',
-        'sqlalchemy.dialects.sqlite',
-        'sqlalchemy.pool'
-    ],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -19,9 +14,7 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
-
 pyz = PYZ(a.pure)
-
 splash = Splash(
     'splash.png',
     binaries=a.binaries,
@@ -53,5 +46,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='icon.ico',
+    icon=['icon.ico'],
 )
