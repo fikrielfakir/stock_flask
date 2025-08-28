@@ -9,9 +9,43 @@ import csv
 from werkzeug.utils import secure_filename
 
 def register_routes(app, db):
-    from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound
+    from flask_models import Article, Supplier, Requestor, PurchaseRequest, PurchaseRequestItem, Reception, Outbound, ActivityLog
     import logging
+    import json
     logger = logging.getLogger(__name__)
+    
+    # Activity logging helper functions
+    def log_activity(action, entity_type, entity_id=None, entity_name=None, old_values=None, new_values=None):
+        """Log user activity to the database"""
+        try:
+            activity_log = ActivityLog(
+                action=action,
+                entity_type=entity_type,
+                entity_id=entity_id,
+                entity_name=entity_name,
+                old_values=json.dumps(old_values) if old_values else None,
+                new_values=json.dumps(new_values) if new_values else None,
+                ip_address=request.remote_addr if request else None,
+                user_agent=request.headers.get('User-Agent') if request else None
+            )
+            db.session.add(activity_log)
+            db.session.commit()
+        except Exception as e:
+            logger.error(f"Failed to log activity: {str(e)}")
+            # Don't fail the main operation if logging fails
+            pass
+    
+    def get_entity_name(entity_type, entity_data):
+        """Generate a human-readable name for the entity"""
+        if entity_type == 'suppliers':
+            return entity_data.get('nom', 'Fournisseur inconnu')
+        elif entity_type == 'requestors':
+            prenom = entity_data.get('prenom', '')
+            nom = entity_data.get('nom', '')
+            return f"{prenom} {nom}".strip() or 'Demandeur inconnu'
+        elif entity_type == 'articles':
+            return entity_data.get('designation', 'Article inconnu')
+        return str(entity_data.get('id', 'Inconnu'))
     
     # Load settings at startup  
     def load_system_settings():
@@ -78,6 +112,37 @@ def register_routes(app, db):
                     'icon': 'fas fa-truck',
                     'color': 'green'
                 })
+            
+            # Add recent activities from activity logs
+            recent_activities = ActivityLog.query.order_by(ActivityLog.created_at.desc()).limit(5).all()
+            for activity in recent_activities:
+                # Calculate time ago
+                time_diff = datetime.now() - activity.created_at
+                if time_diff.seconds < 3600:
+                    time_ago = f'Il y a {time_diff.seconds // 60} minutes'
+                elif time_diff.days == 0:
+                    time_ago = f'Il y a {time_diff.seconds // 3600} heures'
+                else:
+                    time_ago = f'Il y a {time_diff.days} jours'
+                
+                # Get icon based on action
+                action_icons = {
+                    'CREATE': 'fas fa-plus-circle',
+                    'UPDATE': 'fas fa-edit',
+                    'DELETE': 'fas fa-trash',
+                    'EXPORT': 'fas fa-download',
+                    'IMPORT': 'fas fa-upload'
+                }
+                
+                notifications.append({
+                    'id': f'activity_{activity.id}',
+                    'type': 'info',
+                    'title': 'Activité récente',
+                    'message': activity.get_description(),
+                    'time': time_ago,
+                    'icon': action_icons.get(activity.action, 'fas fa-info-circle'),
+                    'color': 'blue'
+                })
                 
             return jsonify({
                 'notifications': notifications,
@@ -85,6 +150,37 @@ def register_routes(app, db):
             })
         except Exception as e:
             return jsonify({'notifications': [], 'count': 0, 'error': str(e)})
+
+    # Activity Logs API
+    @app.route("/api/activity-logs", methods=['GET'])
+    def get_activity_logs():
+        try:
+            page = request.args.get('page', 1, type=int)
+            limit = request.args.get('limit', 50, type=int)
+            entity_type = request.args.get('entity_type')
+            action = request.args.get('action')
+            
+            # Build query
+            query = ActivityLog.query
+            
+            if entity_type:
+                query = query.filter(ActivityLog.entity_type == entity_type)
+            if action:
+                query = query.filter(ActivityLog.action == action)
+            
+            # Paginate and order by newest first
+            logs = query.order_by(ActivityLog.created_at.desc()).limit(limit).offset((page - 1) * limit).all()
+            total_count = query.count()
+            
+            return jsonify({
+                'logs': [log.to_dict() for log in logs],
+                'totalCount': total_count,
+                'page': page,
+                'limit': limit
+            })
+        except Exception as e:
+            logger.error(f"Activity logs error: {str(e)}")
+            return jsonify({'message': f'Erreur lors de la récupération des logs: {str(e)}'}), 500
     
     @app.route("/api/quick-stats", methods=['GET'])
     def get_quick_stats():
@@ -376,6 +472,16 @@ def register_routes(app, db):
             )
             db.session.add(supplier)
             db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='CREATE',
+                entity_type='suppliers',
+                entity_id=supplier.id,
+                entity_name=get_entity_name('suppliers', data),
+                new_values=data
+            )
+            
             return jsonify(supplier.to_dict()), 201
         except Exception as e:
             db.session.rollback()
@@ -389,12 +495,27 @@ def register_routes(app, db):
                 return jsonify({'message': 'Fournisseur non trouvé'}), 404
             
             data = request.get_json()
+            
+            # Store old values for logging
+            old_values = supplier.to_dict()
+            
             for key, value in data.items():
                 snake_key = key.replace('conditionsPaiement', 'conditions_paiement').replace('delaiLivraison', 'delai_livraison')
                 if hasattr(supplier, snake_key):
                     setattr(supplier, snake_key, value)
             
             db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='UPDATE',
+                entity_type='suppliers',
+                entity_id=supplier.id,
+                entity_name=get_entity_name('suppliers', data),
+                old_values=old_values,
+                new_values=data
+            )
+            
             return jsonify(supplier.to_dict())
         except Exception as e:
             db.session.rollback()
@@ -407,8 +528,22 @@ def register_routes(app, db):
             if not supplier:
                 return jsonify({'message': 'Fournisseur non trouvé'}), 404
             
+            # Store values for logging before deletion
+            old_values = supplier.to_dict()
+            entity_name = get_entity_name('suppliers', old_values)
+            
             db.session.delete(supplier)
             db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='DELETE',
+                entity_type='suppliers',
+                entity_id=supplier_id,
+                entity_name=entity_name,
+                old_values=old_values
+            )
+            
             return '', 204
         except Exception as e:
             db.session.rollback()
@@ -437,6 +572,16 @@ def register_routes(app, db):
             )
             db.session.add(requestor)
             db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='CREATE',
+                entity_type='requestors',
+                entity_id=requestor.id,
+                entity_name=get_entity_name('requestors', data),
+                new_values=data
+            )
+            
             return jsonify(requestor.to_dict()), 201
         except Exception as e:
             db.session.rollback()
@@ -450,11 +595,26 @@ def register_routes(app, db):
                 return jsonify({'message': 'Demandeur non trouvé'}), 404
             
             data = request.get_json()
+            
+            # Store old values for logging
+            old_values = requestor.to_dict()
+            
             for key, value in data.items():
                 if hasattr(requestor, key):
                     setattr(requestor, key, value)
             
             db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='UPDATE',
+                entity_type='requestors',
+                entity_id=requestor.id,
+                entity_name=get_entity_name('requestors', data),
+                old_values=old_values,
+                new_values=data
+            )
+            
             return jsonify(requestor.to_dict())
         except Exception as e:
             db.session.rollback()
@@ -467,8 +627,22 @@ def register_routes(app, db):
             if not requestor:
                 return jsonify({'message': 'Demandeur non trouvé'}), 404
             
+            # Store values for logging before deletion
+            old_values = requestor.to_dict()
+            entity_name = get_entity_name('requestors', old_values)
+            
             db.session.delete(requestor)
             db.session.commit()
+            
+            # Log activity
+            log_activity(
+                action='DELETE',
+                entity_type='requestors',
+                entity_id=requestor_id,
+                entity_name=entity_name,
+                old_values=old_values
+            )
+            
             return '', 204
         except Exception as e:
             db.session.rollback()
@@ -568,6 +742,14 @@ def register_routes(app, db):
             
             db.session.commit()
             
+            # Log activity
+            if imported_count > 0:
+                log_activity(
+                    action='IMPORT',
+                    entity_type='suppliers',
+                    entity_name=f'{imported_count} fournisseurs'
+                )
+            
             return jsonify({
                 'message': f'{imported_count} fournisseur(s) importé(s) avec succès',
                 'imported': imported_count,
@@ -605,6 +787,13 @@ def register_routes(app, db):
                 df.to_excel(writer, sheet_name='Demandeurs', index=False)
             
             output.seek(0)
+            
+            # Log activity
+            log_activity(
+                action='EXPORT',
+                entity_type='requestors',
+                entity_name=f'{len(requestors)} demandeurs'
+            )
             
             # Create response
             filename = f"demandeurs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
@@ -674,6 +863,14 @@ def register_routes(app, db):
                     errors.append(f"Ligne {index + 2}: {str(e)}")
             
             db.session.commit()
+            
+            # Log activity
+            if imported_count > 0:
+                log_activity(
+                    action='IMPORT',
+                    entity_type='requestors',
+                    entity_name=f'{imported_count} demandeurs'
+                )
             
             return jsonify({
                 'message': f'{imported_count} demandeur(s) importé(s) avec succès',

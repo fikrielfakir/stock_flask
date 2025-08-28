@@ -209,3 +209,61 @@ class Outbound(db.Model):
             'observations': self.observations,
             'createdAt': self.created_at.isoformat() if self.created_at else None
         }
+
+# Activity Log Model
+class ActivityLog(db.Model):
+    __tablename__ = 'activity_logs'
+    
+    id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
+    user_id = db.Column(db.String(36), nullable=True, default='system')  # For now, using 'system' as default
+    action = db.Column(db.String(50), nullable=False)  # CREATE, UPDATE, DELETE, EXPORT, IMPORT, etc.
+    entity_type = db.Column(db.String(50), nullable=False)  # suppliers, requestors, articles, etc.
+    entity_id = db.Column(db.String(36), nullable=True)  # ID of affected record
+    entity_name = db.Column(db.Text, nullable=True)  # Human readable name/identifier
+    old_values = db.Column(db.Text, nullable=True)  # JSON string of old values
+    new_values = db.Column(db.Text, nullable=True)  # JSON string of new values  
+    ip_address = db.Column(db.String(45), nullable=True)
+    user_agent = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'userId': self.user_id,
+            'action': self.action,
+            'entityType': self.entity_type,
+            'entityId': self.entity_id,
+            'entityName': self.entity_name,
+            'oldValues': self.old_values,
+            'newValues': self.new_values,
+            'ipAddress': self.ip_address,
+            'userAgent': self.user_agent,
+            'createdAt': self.created_at.isoformat() if self.created_at else None
+        }
+    
+    def get_description(self):
+        """Generate human-readable description of the activity"""
+        action_descriptions = {
+            'CREATE': 'Ajout',
+            'UPDATE': 'Modification', 
+            'DELETE': 'Suppression',
+            'EXPORT': 'Export',
+            'IMPORT': 'Import'
+        }
+        
+        entity_descriptions = {
+            'suppliers': 'fournisseur',
+            'requestors': 'demandeur',
+            'articles': 'article',
+            'purchase_requests': 'demande d\'achat',
+            'receptions': 'réception',
+            'outbounds': 'sortie'
+        }
+        
+        action_desc = action_descriptions.get(self.action, self.action)
+        entity_desc = entity_descriptions.get(self.entity_type, self.entity_type)
+        
+        if self.entity_name:
+            return f"{action_desc} {entity_desc}: {self.entity_name}"
+        else:
+            return f"{action_desc} {entity_desc}"
